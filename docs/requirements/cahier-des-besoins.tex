@@ -1,0 +1,153 @@
+\documentclass[french]{article}
+ 
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{babel}
+
+\usepackage[colorlinks=true,linkcolor=black,urlcolor=blue]{hyperref}
+
+\title{Cahier des besoins - Environnement d'exécution y86+HCL}
+
+\author{
+    BANDET Alexis \\
+    \texttt{alexis.bandet@u-bordeaux.fr} \\
+    GAISSET Valentin \\
+    \texttt{valentin.gaisset@etu.u-bordeaux.fr} \\
+    GUISSET Romain \\
+    \texttt{romain.guisset@etu.u-bordeaux.fr} \\
+    SIMBA Florian \\
+    \texttt{florian.simba@u-bordeaux.fr} \\
+}
+
+\date{30 Janvier 2020}
+
+\begin{document}
+
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+
+\section{Introduction}
+% Rappel du projet, des clients, des tenants et aboutissants
+
+Le projet \textbf{Environnement d'exécution y86+HCL} a pour but d'améliorer un simulateur déjà existant de ce dit environnement. \\
+
+Le \textbf{y86} est une simplification de l'architecture x86 et a été créé à des fins pédagogiques, pour permettre à des étudiants d'appréhender l'architecture des processeurs en faisant abstraction de détails complexes. \\
+Il a été créé par R. E. Bryant et D. R. O'Hallaron, deux professeurs de la \textit{Carnegie Mellon University}. \\
+
+Les outils fournis par ces deux enseignants se font vieux et peu pratiques à utiliser, surtout pour des débutants qui ne sont pas forcément à l'aise avec la compilation en C. Pour palier à ce soucis, différentes applications web ont déjà été développé, plus ou moins complètes, plus ou moins modulaires, etc.\\
+% Rajouter des annotations vers la webographie pour le projet x86 et les différentes webapp
+
+Nos clients, \textbf{Aurélien ESNARD} et \textbf{François PELLEGRINI} ont donc créé ce projet afin d'améliorer l'environnement de travail des futurs étudiants. Plusieurs objectifs sont de mise, à savoir : 
+
+\begin{itemize}
+    \item Une \textbf{interface intuitive} et agréable.
+    \item Gestion du \textbf{HCL} (\textbf{H}ardware \textbf{C}ontrol \textbf{L}anguage) afin de :
+    \begin{itemize}
+        \item Modifier des instructions existantes
+        \item Créer de nouvelles instructions
+        \item Changer le cycle d'exécution d'une instruction (séquentiel pour le moment)
+    \end{itemize}{}
+    \item Avoir une vue détaillée de l'\textbf{état du processeur} (stages).
+    \item L'application doit être \textbf{portable}.
+    \item L'application doit être \textbf{accessible au plus grand nombre}, notamment aux personnes soufrant d'un handicap.
+    \item L'application doit être \textbf{modulaire} et \textbf{documentée} afin de simplifier l'ajout de fonctionnalités ultérieurement.
+\end{itemize}
+
+\section{État de l'art}
+% Etat actuel du projet
+
+\section{Description des besoins}
+
+Nous présenterons ci-dessous les différents besoins auxquels devra répondre l'application développée. Du fait que nous partirons très probablement d'une application déjà existante, certains besoins seront donc déjà implémentés.
+
+\newpage
+\subsection{Besoins fonctionnels}
+% Liste des besoins
+Fonctionnalités de l'application :
+
+\begin{itemize}
+    \item Saisie de code y86 :
+    \begin{itemize}
+        \item Éditeur de code y86 :\\
+        Il doit respecter les contraintes suivantes :
+        \begin{itemize}
+            \item Saisir du code (y86 uniquement)
+            \item Afficher les numéros de lignes
+            \item Colorer syntaxiquement le texte saisi
+            \item Analyser statiquement le code afin d'aider à l'écriture du code
+        \end{itemize}{}
+        \item Charger un fichier de code y86 \textbf{.ys} :
+        \begin{itemize}
+            \item Bouton pour charger un fichier \textbf{.ys} depuis l'ordinateur de l'utilisateur. Le contenu de ce fichier est ensuite mis dans l'éditeur de code y86.
+        \end{itemize}{}
+    \end{itemize}{}
+    
+    \item Compilation :\\
+    L'application doit être capable de générer du code objet (\textbf{.yo}) à partir du code présent dans l'\textbf{éditeur de code y86}.\\
+    Les contraintes suivantes doivent être respectées :
+    \begin{itemize}
+        \item un bouton permet de lancer la compilation de \textbf{ys} vers \textbf{yo}.
+        \item Une fenêtre doit afficher le code \textbf{.yo} généré à partir de l'\textbf{éditeur de code y86}. L'affichage du code objet doit respecté le format des fichiers \textbf{.yo}.
+        \item Si le code en entrée n'est pas valide, l'erreur de compilation doit être affichée, en rouge, dans la fenêtre précédemment citée.
+    \end{itemize}{}
+    
+    \item Exécution :\\
+    Si du code objet est présent (dans la fenêtre de compilation), l'utilisateur doit pouvoir exécuter ce code, d'une traite ou étape par étape, et doit pouvoir voir les valeurs contenues dans les registres, dans la mémoire ainsi que les drapeaux de conditions. Cela correspond à l'état de la machine. Parallèlement à ça, l'état du processeur doit aussi être visible, c'est à dire les valeurs contenues dans les différents circuits du processeur après l'exécution d'une instruction.\\ % circuit 
+    Voici les besoins détaillés :
+    \begin{itemize}
+        \item Affichage de l'état de la machine :
+        \begin{itemize}
+            \item Les registres de \%eax à \%edi (nom, valeur en base 8, valeur en base 10)\\
+            Exemple : \textbf{\%eax 0x00000100 256}
+            \item Les drapeaux de condition (nom, valeur en base 10)\\
+            Exemple : \textbf{SF 0}
+            % L'app actuelle contient un status. Sera-t-il toujours pertinent avec l'état du processeur ?
+        \end{itemize}{}
+        \item Affichage de l'état du processeur :\\
+        Affiche les différents \textit{stages} du processeur, à savoir \textbf{Fetch}, \textbf{Decode / Read}, \textbf{Execute}, \textbf{Memory} et \textbf{PC update} en séquentiel.\\
+        Chaque \textit{stage} affiche une ou plusieurs valeur. Ces valeurs peuvent être de forme textuelle, ou bien numérique.\\
+        Cette fenêtre est mise à jour après chaque exécution d'instruction.
+    \end{itemize}{}
+    
+\end{itemize}{}
+
+\subsection{Besoins non fonctionnels}
+% Liste des besoins
+\begin{itemize}
+    \item Modularité :\\
+    L’objectif à long terme est d’avoir un simulateur flexible et modulaire. De ce fait, un effort sur l’architecture devra être fait afin de permettre de rendre les choses "dynamiques". Le but est d’avoir à modifier le moins de choses possible pour ajouter / modifier un comportement.\\
+    Est notamment concerné le triplet (état du processeur, InstructionSet, HCL).
+    
+    \item Longévité :\\
+    Afin de permettre au projet de vivre dans le temps, le code devra être bien segmenté, une documentation rédigée. Ainsi qu’un cahier de maintenance (très technique) afin d’aider de potentiels successeurs à s’approprier le code et à faire évoluer l'application.
+\end{itemize}
+    
+\subsection{Prototypage et architecture}
+% Schémas de l'interface, de l'architecture que l'on mettrait en place etc..
+% Tout ce qui sert à se représenter ce en quoi consistera notre travail
+Actuellement, la modification de quelques fichiers du simulateur web est nécessaire pour ajouter ou modifier une instruction :
+\begin{itemize}
+    \item \textbf{ace/mode-y86.js} qui contient les expression régulières acceptés par le compilateur.
+    \item \textbf{assem.js} qui contient les fonctions nécessaire pour effectuer la conversion du code assembleur en code binaire.
+    \item \textbf{general.js} qui contient les listes d'instructions avec leurs codages (\textit{icode \& ifun}).
+    \item \textbf{syntax.js} qui contient une liste de toutes les syntaxes possibles.
+    \item \textbf{instr.js} qui contient un tableau avec les actions de chaque instruction. Ce fichier pourra nous être utile pour récupérer l'état du processeur pour chaque étage au cas par cas). \\
+\end{itemize}
+
+Nous sommes entrain de réfléchir comment bien prendre en compte les modifications de l'utilisateur tout en gardant le sens pédagogique de l'outil avec un code flexible et modulaire.
+
+\section{Planification des tâches}
+% Diagrame de Gantt
+
+\section{Bibliographie}
+
+\section{Webographie}
+
+Simulateur y86 (version desktop utilisée) \\
+\url{http://dept-info.labri.fr/ENSEIGNEMENT/archi/sim/sim_tcltk8.6.tgz}
+
+
+
+\end{document}
