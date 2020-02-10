@@ -9,6 +9,23 @@ var PC 		= 0,
 	SF = 0, ZF = 0, OF = 0,
 	ERR = '';
 
+// Processor State
+var NewPC = 0,
+	ValM = 0,
+	ValE = 0,
+	ValC = 0,
+	ValP = 0,
+	ValA = 0,
+	ValB = 0,
+	SrcA = '---',
+	SrcB = '---',
+	DestE = '---',
+	DestM = '---',
+	RegA = '---',
+	RegB = '---',
+	Instr = '---',
+	Bch = 'N';
+
 // Bounds check the register array
 function getRegister (idx) {
 	if (idx < 0 || idx > 8) {
@@ -35,6 +52,8 @@ function RESET() {
 	STAT = 'AOK';
 	SF = 0; ZF = 0; OF = 0;
 	ERR = '';
+
+	clearProcState();
 }
 
 // Load
@@ -374,6 +393,8 @@ function RUN (cb) {
 
 // TODO: eventually, this will become a five-part pipeline
 function STEP () {
+	clearProcState();
+
 	// Fetch
 	var icode = MEMORY[PC] >> 4;
 	var ilen = INSTRUCTION_LEN[icode];
@@ -424,4 +445,23 @@ function toByteArray(str) {
 		}
 	}
 	return bytearr;
+}
+
+// Clear Processor State Values (Indicators)
+function clearProcState(){
+	NewPC = 0;
+	ValM = 0;
+	ValE = 0;
+	ValC = 0;
+	ValP = 0;
+	ValA = 0;
+	ValB = 0;
+	SrcA = '---';
+	SrcB = '---';
+	DestE = '---';
+	DestM = '---';
+	RegA = '---';
+	RegB = '---';
+	Instr = '---';
+	Bch = 'N';
 }

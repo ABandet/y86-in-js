@@ -161,6 +161,51 @@ html, body {
 	flex-direction: column;
 }
 
+.editor h3 {
+	margin: 0 0 6px 0;
+	padding: 2px 0 2px 0;
+	border-bottom: 1px solid #ddd;
+
+	font-family: 'Source Sans Pro';
+	font-weight: 600;
+	font-size: 13px;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+}
+
+.proc_state {
+	padding-bottom: 8px;
+}
+
+.stage {
+	display: -webkit-flex;
+	display: flex;
+}
+
+.Indicator {
+	display: -webkit-flex;
+	display: flex;
+	padding-bottom: 8px;
+
+	font-family: 'Inconsolata';
+	font-size: 14px;
+
+	max-width: 450px;
+	margin-right: 8px;
+}
+
+.Indicator .label {
+	padding-right: 4px;
+	margin-left: 8px;
+	background: #e0e0e0;
+}
+
+.Indicator .value{
+	padding-left: 4px;
+	-webkit-flex: 1 1;
+	flex: 1 1;
+}
+
 .inspector .object .lines-wrapper {
 	display: -webkit-flex;
 	display: flex;
@@ -232,7 +277,7 @@ html, body {
 }
 
 .registers .register_column {
-	width: 70%;
+	width: 75%;
 }
 
 .registers .label {

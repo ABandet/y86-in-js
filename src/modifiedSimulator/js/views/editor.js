@@ -2,6 +2,8 @@ var EditorView = Backbone.View.extend({
 	initialize: function () {
 		this.template = _.template($('#tmpl_editor').html());
 		this.annotate = this._annotate.bind(this);
+		this.processorstate = new ProcosserStateView();
+		this.listenTo(Backbone.Events, 'app:redraw', this.updateProcState);
 		$(window).on('resize', this.resizeEditor.bind(this));
 		this.render();
 	},
@@ -16,6 +18,7 @@ var EditorView = Backbone.View.extend({
 		this.editor.setTheme('ace/theme/textmate');
 		this.editor.getSession().setMode('ace/mode/y86');
 		this.editor.on('change', this.deferredRecompile.bind(this));
+		this.$('.processorstate-wrapper').append(this.processorstate.$el);
 		this.resizeEditor();
 	},
 
@@ -52,5 +55,9 @@ var EditorView = Backbone.View.extend({
 		});
 
 		this.editor.getSession().setAnnotations(errorObjs);
+	},
+
+	updateProcState() {
+		this.processorstate.render();
 	}
 });

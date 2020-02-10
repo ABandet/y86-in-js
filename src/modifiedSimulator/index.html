@@ -12,38 +12,38 @@
     <div id="app"></div>
     <script type="text/template" id="default_y86_code">
         .pos 0
-init:   irmovl Stack, %esp      # Set up Stack pointer
-        jmp Main                # Execute main program
+init:	irmovl Stack, %esp  	# Set up Stack pointer
+        jmp Main		        # Execute main program
 
         .align 4
-array:  .long 0xd
+array:	.long 0xd
         .long 0xc0
         .long 0xb00
         .long 0xa000
 
-Main:   irmovl 4,%eax
-        pushl %eax              # Push 4
+Main:	irmovl 4,%eax
+        pushl %eax	            # Push 4
         irmovl array, %edx
         pushl %edx              # Push array
-        call Sum                # Sum(array, 4)
+        call Sum	            # Sum(array, 4)
         popl %ebx
         popl %ebx
         halt
 
-Sum:    mrmovl 4(%esp),%edx     # edx = Start
-        mrmovl 8(%esp),%ecx     # ecx = Count
-        irmovl 0, %eax          # sum = 0
+Sum:	mrmovl 4(%esp),%edx 	# edx = Start
+        mrmovl 8(%esp),%ecx	    # ecx = Count
+        irmovl 0, %eax		    # sum = 0
 
-Loop:   mrmovl (%edx),%ebx      # get *Start
+Loop:	mrmovl (%edx),%ebx      # get *Start
         addl %ebx,%eax          # add to sum
         iaddl 4, %edx           # Start++
         loop Loop               # Stop when 0
 
-End:    ret                     # result must be abcd in %eax
+End:	ret                     # result must be abcd in %eax
 
         .pos 0x100
-Stack:  # The stack goes here
-Stack:
+Stack:	# The stack goes here
+
     </script>
 
     <script type="text/template" id="tmpl_app">
@@ -70,8 +70,88 @@ Stack:
     </script>
 
     <script type="text/template" id="tmpl_editor">
+        <div class="processorstate-wrapper"></div>
         <h2>Source code</h2>
         <div class="code"><%= code %></div>
+    </script>
+
+    <script type="text/template" id="tmpl_processor_state">
+        <h2>Processor State</h2>
+        <h3>PC Update Stage</h3>
+        <div class="stage">
+            <div class="Indicator">
+                <div class="label">NewPC</div>
+                <div class="value"><%= newPC %></div>
+            </div>
+        </div>
+        <h3>Memory Stage</h3>
+        <div class="stage">
+            <div class="Indicator">
+                <div class="label">ValM</div>
+                <div class="value"><%= valM %></div>
+            </div>
+        </div>
+        <h3>Execute Stage</h3>
+        <div class="stage">
+            <div class="Indicator">
+                <div class="label">Branchement</div>
+                <div class="value"><%= bch %></div>
+            </div>
+            <div class="Indicator">
+                <div class="label">ValE</div>
+                <div class="value"><%= valE %></div>
+            </div>
+        </div>
+        <h3>Decode Stage</h3>
+        <div class="stage">
+            <div class="Indicator">
+                <div class="label">ValA</div>
+                <div class="value"><%= valA %></div>
+            </div>
+            <div class="Indicator">
+                <div class="label">ValB</div>
+                <div class="value"><%= valB %></div>
+            </div>
+            <div class="Indicator">
+                <div class="label">DstE</div>
+                <div class="value"><%= destE %></div>
+            </div>
+            <div class="Indicator">
+                <div class="label">DstM</div>
+                <div class="value"><%= destM %></div>
+            </div>
+            <div class="Indicator">
+                <div class="label">SrcA</div>
+                <div class="value"><%= srcA %></div>
+            </div>
+            <div class="Indicator">
+                <div class="label">SrcB</div>
+                <div class="value"><%= srcB %></div>
+            </div>
+        </div>
+        <h3>Fetch Stage</h3>
+        <div class="stage">
+            <div class="Indicator">
+                <div class="label">Instr</div>
+                <div class="value"><%= instr %></div>
+            </div>
+            <div class="Indicator">
+                <div class="label">RegA</div>
+                <div class="value"><%= regA %></div>
+            </div>
+            <div class="Indicator">
+                <div class="label">RegB</div>
+                <div class="value"><%= regB %></div>
+            </div>
+            <div class="Indicator">
+                <div class="label">ValC</div>
+                <div class="value"><%= valC %></div>
+            </div>
+            <div class="Indicator">
+                <div class="label">ValP</div>
+                <div class="value"><%= valP %></div>
+            </div>
+        </div>
     </script>
 
     <script type="text/template" id="tmpl_inspector">
@@ -206,6 +286,7 @@ Stack:
     <script src="js/views/memory.js"></script>
     <script src="js/views/registers.js"></script>
     <script src="js/views/objcode.js"></script>
+    <script src="js/views/procstate.js"></script>
 
     <script>
         $(function () {
