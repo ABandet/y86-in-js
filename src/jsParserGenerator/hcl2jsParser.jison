@@ -180,7 +180,7 @@ definition
     : INT IDENTIFIER ASSIGN instruction_list
         {
             checkDefinitionUnicity($2)
-            intDefinitions[$2] = $4
+            hcl2jsUtility.intDefinitions[$2] = $4
         }
     | BOOL IDENTIFIER ASSIGN bool_expression SEMI
         {

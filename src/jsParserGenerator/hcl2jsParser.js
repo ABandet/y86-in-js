@@ -136,7 +136,7 @@ break;
 case 11:
 
             checkDefinitionUnicity($$[$0-2])
-            intDefinitions[$$[$0-2]] = $$[$0]
+            hcl2jsUtility.intDefinitions[$$[$0-2]] = $$[$0]
         
 break;
 case 12:
