@@ -1,0 +1,67 @@
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>y86 Simulator</title>
+    <link rel="stylesheet" type="text/css" href="css/themes/dark.css" id="theme">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script type="text/javascript" src="js/init.js"></script>
+  </head>
+  <body>
+    <div id="header">
+      <div id="header-left-container">
+        <span id="header-title">Y86 Simulator</span>
+        <button class="header-button tab-0-enabled-button"><i class="fa fa-bolt"></i>Assemble</button>
+        <button class="header-button tab-1-enabled-button"><i class="fa fa-redo"></i>Reset</button>
+        <button class="header-button tab-0-enabled-button tab-1-enabled-button tab-2-enabled-button tab-3-enabled-button"><i class="fa fa-angle-right"></i>Step</button>
+        <button class="header-button tab-0-enabled-button tab-1-enabled-button"><i class="fa fa-angle-double-right"></i>Continue</button>
+        <button class="header-button tab-0-enabled-button tab-2-enabled-button tab-3-enabled-button"><i class="fa fa-file"></i>Load</button>
+        <button class="header-button tab-0-enabled-button tab-2-enabled-button tab-3-enabled-button"><i class="fa fa-save"></i>Save</button>
+      </div>
+      <div id="header-right-container">
+        <a class="header-button" href="https://github.com/xsznix/js-y86/tree/master/samples">Examples</a>
+        <a class="header-button" href="https://github.com/xsznix/js-y86/wiki">Wiki</a>
+        <a class="header-button" href="https://github.com/orel33/js-y86">GitHub<i class="fab fa-github"></i></a>
+        <button class="header-button icon-only" onclick="nextTheme()"><i class="fa fa-sun"></i></button>
+        <a href="https://www.u-bordeaux.fr/"><img id="branding" src="images/branding.png"></a>
+      </div>
+    </div>
+    <div id="tab-buttons-container">
+      <button id="tab-0-button" class="tab-button" onclick="setActiveTab(0)">Editor</button>
+      <button id="tab-1-button" class="tab-button" onclick="setActiveTab(1)">Execution</button>
+      <button id="tab-2-button" class="tab-button" onclick="setActiveTab(2)">InstructionSet</button>
+      <button id="tab-3-button" class="tab-button" onclick="setActiveTab(3)">HCL</button>
+    </div>
+    <div id="tab-contents-container">
+      <div id="tab-0-content" class="tab-content">
+        <div class="tab-content-container vertical-pane">
+          <div class="horizontal-pane">
+            <div class="view-container expand">
+              <h1 class="view-header">SOURCE CODE</h1>
+              <div class="view-content">console.log("hello world");</div>
+            </div>
+            <div class="view-container expand">
+              <h1 class="view-header">TAVERN</h1>
+              <div class="view-content">Hello traveler!</div>
+            </div>
+          </div>
+          <div class="view-container">
+            <h1 class="view-header">MEMORY</h1>
+            <p>Bip bop</p>
+          </div>
+        </div>
+      </div>
+      <div id="tab-1-content" class="tab-content">
+        <div class="tab-content-container">
+        </div>
+      </div>
+      <div id="tab-2-content" class="tab-content">
+        <div class="tab-content-container">
+        </div>
+      </div>
+      <div id="tab-3-content" class="tab-content">
+        <div class="tab-content-container">
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
