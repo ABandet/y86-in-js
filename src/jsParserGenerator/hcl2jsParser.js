@@ -91,13 +91,13 @@ case 1:
 
             let jsOutput = ""
             // Render user's quotes --- step 1
-            quoteList.forEach(function (item) {
+            hcl2jsUtility.quoteList.forEach(function (item) {
                 jsOutput += item + "\n\n"
             })
 
             // Render int definitions --- step 2
-            for(let name in intDefinitions) {
-                let instrList = intDefinitions[name]
+            for(let name in hcl2jsUtility.intDefinitions) {
+                let instrList = hcl2jsUtility.intDefinitions[name]
                 jsOutput += "function gen_" + name + "() {\n\n"
 
                 instrList.forEach(function (instr) {
@@ -108,8 +108,8 @@ case 1:
             }
 
             // Render bool defintions --- step 3
-            for(let name in boolDefinitions) {
-                let instr = boolDefinitions[name]
+            for(let name in hcl2jsUtility.boolDefinitions) {
+                let instr = hcl2jsUtility.boolDefinitions[name]
                 jsOutput += "function gen_" + name + "() {\n"
                 jsOutput += "    return " + instr + ";\n}\n\n"
             }
@@ -119,18 +119,18 @@ case 1:
         
 break;
 case 8:
- quoteList.push(cleanHclString($$[$0])) 
+ hcl2jsUtility.quoteList.push(cleanHclString($$[$0])) 
 break;
 case 9:
  
             checkSigUnicity($$[$0-1])
-            intsigs[$$[$0-1]] = $$[$0]
+            hcl2jsUtility.intsigs[$$[$0-1]] = $$[$0]
         
 break;
 case 10:
  
             checkSigUnicity($$[$0-1])
-            boolsigs[$$[$0-1]] = $$[$0]
+            hcl2jsUtility.boolsigs[$$[$0-1]] = $$[$0]
         
 break;
 case 11:
@@ -142,7 +142,7 @@ break;
 case 12:
 
             checkDefinitionUnicity($$[$0-3])
-            boolDefinitions[$$[$0-3]] = $$[$0-1]
+            hcl2jsUtility.boolDefinitions[$$[$0-3]] = $$[$0-1]
         
 break;
 case 13:
@@ -186,7 +186,7 @@ case 22:
             
             let i
             for(i = 0; i < list.length; i++) {
-                condition += "(" + exp + " == (" + list[i] +"))"
+                condition += "(" + exp + " === (" + list[i] +"))"
                 if(i != list.length - 1) {
                     condition += " || "
                 }
@@ -368,7 +368,7 @@ parse: function parse(input) {
 
     /*
      * The parser use few variables not instanciated here.
-     * Here is the need code :
+     * Here is the needed code :
      *
      * let quoteList = [] 
      *
@@ -386,11 +386,10 @@ parse: function parse(input) {
     // Checks if both intsig and boolsig have not any
     // value associated to the given identifier
     function checkSigUnicity(identifier) {
-        if(intsigs[identifier]) {
-            console.log(intsigs)
+        if(hcl2jsUtility.intsigs[identifier]) {
             throw identifier + " is already declared as an intsig"
         }
-        if(boolsigs[identifier]) {
+        if(hcl2jsUtility.boolsigs[identifier]) {
             throw identifier + " is already declared as a boolsig"
         }
     }
@@ -398,10 +397,10 @@ parse: function parse(input) {
     // Checks if both int definitions and bool definitions have not any
     // value associated to the given identifier
     function checkDefinitionUnicity(identifier) {
-        if(intDefinitions[identifier]) {
+        if(hcl2jsUtility.intDefinitions[identifier]) {
             throw identifier + " is already defined as an int defintion"
         }
-        if(boolDefinitions[identifier]) {
+        if(hcl2jsUtility.boolDefinitions[identifier]) {
             throw identifier + " is already defined as an bool defintion"
         }
     }
@@ -420,10 +419,10 @@ parse: function parse(input) {
     function getSigValue(identifier) {
         let jsSigName
 
-        if(intsigs[identifier]) {
-            jsSigName = intsigs[identifier]
-        } else if(boolsigs[identifier]) {
-            jsSigName = boolsigs[identifier]
+        if(hcl2jsUtility.intsigs[identifier]) {
+            jsSigName = hcl2jsUtility.intsigs[identifier]
+        } else if(hcl2jsUtility.boolsigs[identifier]) {
+            jsSigName = hcl2jsUtility.boolsigs[identifier]
         } else {
             throw identifier + " is not declared"
         }
