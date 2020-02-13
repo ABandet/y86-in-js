@@ -1,18 +1,29 @@
-/* In Firefox, disable "privacy.file_unique_origin" in about:config when working locally */
-function loadLanguage(language) {
-    var xhr = new XMLHttpRequest();
-    xhr.onload = function() {
-        dump(xhr.responseXML.documentElement.nodeName);
-    }
-    xhr.onerror = function() {
-        dump("Error while getting XML.");
-    }
-    xhr.open("GET", "strings/values-" + language + ".xml");
-    xhr.responseType = "document";
-    xhr.send();
-    return xhr;
+function changeElementTextContentTo(element, newContent) {
+    element.textContent = newContent;
 }
 
-function getString(name) {
-    return "";
+function loadLanguage(language) {
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", "strings/values-" + language + ".xml");
+    xhr.overrideMimeType("text/xml");
+    xhr.onload = function() {
+        if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+            let strings = xhr.responseXML;
+            for (let i = 0; i < stringElements.length; i++) {
+                let stringNodeList = stringElements[i].childNodes;
+                let newStringContent = strings.getElementsByTagName(stringElements[i].id)[0].childNodes[0].nodeValue;
+                let done = false;
+                for (let j = 0; j < stringNodeList.length; j++) {
+                    if (stringNodeList[j].nodeName == "#text") {
+                        changeElementTextContentTo(stringNodeList[j], newStringContent);
+                        done = true;
+                    }
+                }
+                if (!done) {
+                    changeElementTextContentTo(stringElements[i], newStringContent);
+                }
+            }
+        }
+    };
+    xhr.send();
 }
