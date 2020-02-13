@@ -34,3 +34,5 @@ class Context {
     // Memory output
     valM    : number = 0;
 }
+
+export {Context};
