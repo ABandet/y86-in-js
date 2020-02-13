@@ -2,7 +2,7 @@
 %{
     /*
      * The parser use few variables not instanciated here.
-     * Here is the need code :
+     * Here is the needed code :
      *
      * let quoteList = [] 
      *
@@ -20,11 +20,10 @@
     // Checks if both intsig and boolsig have not any
     // value associated to the given identifier
     function checkSigUnicity(identifier) {
-        if(intsigs[identifier]) {
-            console.log(intsigs)
+        if(hcl2jsUtility.intsigs[identifier]) {
             throw identifier + " is already declared as an intsig"
         }
-        if(boolsigs[identifier]) {
+        if(hcl2jsUtility.boolsigs[identifier]) {
             throw identifier + " is already declared as a boolsig"
         }
     }
@@ -32,10 +31,10 @@
     // Checks if both int definitions and bool definitions have not any
     // value associated to the given identifier
     function checkDefinitionUnicity(identifier) {
-        if(intDefinitions[identifier]) {
+        if(hcl2jsUtility.intDefinitions[identifier]) {
             throw identifier + " is already defined as an int defintion"
         }
-        if(boolDefinitions[identifier]) {
+        if(hcl2jsUtility.boolDefinitions[identifier]) {
             throw identifier + " is already defined as an bool defintion"
         }
     }
@@ -54,10 +53,10 @@
     function getSigValue(identifier) {
         let jsSigName
 
-        if(intsigs[identifier]) {
-            jsSigName = intsigs[identifier]
-        } else if(boolsigs[identifier]) {
-            jsSigName = boolsigs[identifier]
+        if(hcl2jsUtility.intsigs[identifier]) {
+            jsSigName = hcl2jsUtility.intsigs[identifier]
+        } else if(hcl2jsUtility.boolsigs[identifier]) {
+            jsSigName = hcl2jsUtility.boolsigs[identifier]
         } else {
             throw identifier + " is not declared"
         }
@@ -122,13 +121,13 @@ final_expression
 
             let jsOutput = ""
             // Render user's quotes --- step 1
-            quoteList.forEach(function (item) {
+            hcl2jsUtility.quoteList.forEach(function (item) {
                 jsOutput += item + "\n\n"
             })
 
             // Render int definitions --- step 2
-            for(let name in intDefinitions) {
-                let instrList = intDefinitions[name]
+            for(let name in hcl2jsUtility.intDefinitions) {
+                let instrList = hcl2jsUtility.intDefinitions[name]
                 jsOutput += "function gen_" + name + "() {\n\n"
 
                 instrList.forEach(function (instr) {
@@ -139,8 +138,8 @@ final_expression
             }
 
             // Render bool defintions --- step 3
-            for(let name in boolDefinitions) {
-                let instr = boolDefinitions[name]
+            for(let name in hcl2jsUtility.boolDefinitions) {
+                let instr = hcl2jsUtility.boolDefinitions[name]
                 jsOutput += "function gen_" + name + "() {\n"
                 jsOutput += "    return " + instr + ";\n}\n\n"
             }
@@ -161,19 +160,19 @@ tmp_expression
 
 quote
     : QUOTE STRING 
-        { quoteList.push(cleanHclString($2)) }
+        { hcl2jsUtility.quoteList.push(cleanHclString($2)) }
     ;
 
 declaration
     : INTSIG IDENTIFIER STRING 
         { 
             checkSigUnicity($2)
-            intsigs[$2] = $3
+            hcl2jsUtility.intsigs[$2] = $3
         }
     | BOOLSIG IDENTIFIER STRING
         { 
             checkSigUnicity($2)
-            boolsigs[$2] = $3
+            hcl2jsUtility.boolsigs[$2] = $3
         }
     ;
 
@@ -181,12 +180,12 @@ definition
     : INT IDENTIFIER ASSIGN instruction_list
         {
             checkDefinitionUnicity($2)
-            intDefinitions[$2] = $4
+            hcl2jsUtility.intDefinitions[$2] = $4
         }
     | BOOL IDENTIFIER ASSIGN bool_expression SEMI
         {
             checkDefinitionUnicity($2)
-            boolDefinitions[$2] = $4
+            hcl2jsUtility.boolDefinitions[$2] = $4
         }
     ;
 
@@ -241,7 +240,7 @@ bool_expression
             
             let i
             for(i = 0; i < list.length; i++) {
-                condition += "(" + exp + " == (" + list[i] +"))"
+                condition += "(" + exp + " === (" + list[i] +"))"
                 if(i != list.length - 1) {
                     condition += " || "
                 }

@@ -7,7 +7,7 @@
     <title>Parser from webpage usage</title>
 </head>
 <body>
-    <textarea name="editor" id="editor" cols="30" rows="10">
+    <textarea name="editor" id="editor" cols="100" rows="30">
 intsig valb 'VALB'
 intsig icode 'ICODE'
 
@@ -15,13 +15,13 @@ bool f = icode in {valb, 3};
     </textarea>
     <input type="button" value="Compile" onclick="onCompile()">
     
-    <div id="output"></div>
+    <textarea id="output" cols="500" rows="200"></textarea>
 </body>
 
 <!-- The generated parser -->
 <script src="js/hcl2jsParser.js"></script>
 
-<!-- Overlayer on hcl2js parser-->
+<!-- Overlayer on hcl2js parser -->
 <script src="js/hcl2jsUtility.js"></script>
 
 <script>
@@ -29,7 +29,7 @@ bool f = icode in {valb, 3};
         try {
             let hclCode = document.getElementById("editor").value
             let jsCode = hcl2js(hclCode)
-            document.getElementById("output").textContent = jsCode
+            document.getElementById("output").value = jsCode
         } catch (error) {
             alert(error)
         }
