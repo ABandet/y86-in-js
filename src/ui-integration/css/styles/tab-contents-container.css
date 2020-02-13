@@ -1,0 +1,16 @@
+div#tab-contents-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--pane-background);
+  color: var(--pane-foreground);
+}
+
+div.tab-content {
+  display: none;
+  height: 100%;
+}
+
+div.active-tab-content {
+  display: block;
+}

@@ -1,0 +1,9 @@
+@import url("fontawesome/css/all.css");
+@import url("styles/defaults.css");
+@import url("styles/header.css");
+@import url("styles/tab-buttons-container.css");
+@import url("styles/tab-contents-container.css");
+@import url("styles/editor.css");
+@import url("styles/execution.css");
+/*@import url("styles/oldSim.css");*/
+@import url("styles/panes.css");

@@ -1,0 +1,24 @@
+
+
+.editor{
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    border-right: 1px solid #ddd;
+
+    width: 50%;
+}
+
+
+.editor h3 {
+    margin: 0 0 6px 0;
+    padding: 2px 0 2px 0;
+    border-bottom: 1px solid #ddd;
+
+    font-family: 'Source Sans Pro';
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
