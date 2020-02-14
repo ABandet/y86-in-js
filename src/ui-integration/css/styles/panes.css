@@ -1,0 +1,34 @@
+div.vertical-pane {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+div.horizontal-pane {
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+/* To visualise better how the panes split the view */
+div.horizontal-pane > *,
+div.vertical-pane > * {
+  /*border: 2px solid red;*/
+}
+
+*.expand {
+  flex-grow: 1;
+}
+
+.view-header {
+  background-color: var(--pane-header-background);
+  color: var(--pane-header-foreground);
+  font-weight: 900;
+  font-size: 16px;
+  margin: 0;
+  padding: 6px 10px;
+}
+
+.view-content {
+
+}

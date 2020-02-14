@@ -31,9 +31,7 @@ div#header > * > * {
   font-size: 16px;
   text-decoration: none;
   cursor: pointer;
-  transition-duration: all .3s;
-  transition: opacity .5s;
-  opacity: 1;
+  transition-duration: .3s;
 }
 
 a.header-button {
@@ -45,10 +43,9 @@ a.header-button {
 }
 
 .header-button:disabled {
-  /*background-color: var(--header-disabled-button-background);
-  color: var(--header-disabled-button-foreground);*/
-  cursor: default;
-  opacity: 0;
+  background-color: var(--header-disabled-button-background);
+  color: var(--header-disabled-button-foreground);
+  cursor: not-allowed;
 }
 
 /* FontAwesome icon */

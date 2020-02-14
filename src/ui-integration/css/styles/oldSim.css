@@ -1,0 +1,461 @@
+@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700);
+@import url(https://fonts.googleapis.com/css?family=Inconsolata:400,700);
+
+
+#app {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+}
+
+#app > div {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+
+    width: 100%;
+    height: 100%;
+
+    background: #e4e4e4;
+}
+
+#app .header {
+    z-index: 2;
+    display: -webkit-flex;
+    display: flex;
+    padding: 0 24px 0 36px;
+
+    background: #2980b9;
+    color: #fff;
+
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+}
+
+#app .header h1 {
+    margin: 8px 16px 8px 0;
+
+    font-family: 'Source Sans Pro';
+    font-weight: 300;
+    font-size: 24px;
+}
+
+#app .header .actions,
+#app .header .links {
+    display: -webkit-flex;
+    display: flex;
+}
+
+#app .header .links {
+    -webkit-flex: 1 1;
+    flex: 1 1;
+    -webkit-justify-content: flex-end;
+    justify-content: flex-end;
+}
+
+#app .header button,
+#app .header .links a {
+    display: block;
+    padding: 0 12px;
+    background: none;
+    border: none;
+    outline: none;
+    color: #fff;
+
+    font-family: 'Source Sans Pro';
+    font-size: 16px;
+    font-weight: 300;
+    text-decoration: none;
+
+    cursor: pointer;
+}
+
+#app .header button.disabled {
+    opacity: 0.25;
+    cursor: default;
+}
+
+#app .header .links a {
+    padding-top: 14px;
+}
+
+#app .header button .fa {
+    margin-right: 4px;
+}
+
+#app .header .links a .fa {
+    margin-left: 6px;
+}
+
+#app .header button:hover,
+#app .header .links a:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+#app .header button.disabled:hover {
+    background: none;
+}
+
+#app .app-body {
+    display: -webkit-flex;
+    display: flex;
+
+    -webkit-flex: 1 1;
+    flex: 1 1;
+
+    background: #fff;
+    box-shadow: 0px 0px 24px #aaa;
+}
+
+#app .app-body h2 {
+    min-height: 18px;
+    margin: 0;
+    padding: 4px 16px 6px 16px;
+
+    background: #3498db;
+    color: rgba(255,255,255,0.7);
+
+    font-family: 'Source Sans Pro';
+    font-weight: 600;
+    font-size: 14px;
+
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* hack to make the h2 blue draw over border */
+.editor h2 {
+    z-index: 1;
+    box-shadow: 2px 0px 0px #3498db;
+}
+
+.editor{
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+
+    width: 50%;
+}
+
+.editor {
+    border-right: 1px solid #ddd;
+}
+
+.inspector {
+    background: #fcfcfc;
+    border-left: 1px solid #ddd;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+
+    width: 60%;
+}
+
+.editor > div {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+}
+
+.editor h3 {
+    margin: 0 0 6px 0;
+    padding: 2px 0 2px 0;
+    border-bottom: 1px solid #ddd;
+
+    font-family: 'Source Sans Pro';
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.processorstate-wrapper {
+    padding-bottom: 8px;
+    width: 50%;
+}
+
+.stage {
+    display: -webkit-flex;
+    display: flex;
+}
+
+.Indicator {
+    display: -webkit-flex;
+    display: flex;
+    padding-bottom: 8px;
+
+    font-family: 'Inconsolata';
+    font-size: 14px;
+
+    max-width: 450px;
+    margin-right: 8px;
+}
+
+.Indicator .label {
+    padding-right: 4px;
+    margin-left: 8px;
+    background: #e0e0e0;
+}
+
+.Indicator .value{
+    padding-left: 4px;
+    -webkit-flex: 1 1;
+    flex: 1 1;
+}
+
+.inspector .object .lines-wrapper {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+}
+
+.lines {
+    position: relative;
+    margin: 8px;
+    border: 2px solid #ddd;
+    padding: 4px 0;
+    -webkit-flex: 1 1;
+    flex: 1 1;
+
+    background: #f0f0f0;
+
+    overflow-x: auto;
+    overflow-y: auto;
+
+    box-shadow: inset 0px 0px 8px rgba(0,0,0,0.02);
+}
+
+.object-code-line {
+    display: -webkit-flex;
+    display: flex;
+    height: 15px;
+    padding: 0 8px;
+
+    font-family: 'Inconsolata';
+    font-size: 14px;
+    white-space: pre;
+}
+
+.object-code-line-error {
+    color: #e74c3c;
+}
+
+.object-code-line-error .line-no {
+    width: 80px;
+}
+
+.object-code-line.highlighted {
+    background: #9de0ad;
+    margin: -1px 0;
+    border-top: 1px solid #45ada8;
+    border-bottom: 1px solid #45ada8;
+}
+
+.object-code-line.highlighted + .object-code-line.highlighted {
+    margin-top: -2px;
+}
+
+.registers {
+    display: -webkit-flex;
+    display: flex;
+    padding-bottom: 8px;
+
+    font-family: 'Inconsolata';
+    font-size: 14px;
+
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+.registers .column {
+    -webkit-flex: 1 1;
+    flex: 1 1;
+}
+
+.registers .register_column {
+    width: 75%;
+}
+
+.registers .label {
+    padding-left: 4px;
+    background: #f0f0f0;
+}
+
+.registers .register {
+    display: -webkit-flex;
+    display: flex;
+}
+
+.registers .register div,
+.registers .status div,
+.registers .pc div {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.registers .register .value_hex,
+.registers .register .value_dec {
+    -webkit-flex: 1 1;
+    flex: 1 1;
+}
+
+.registers .register .label {
+    width: 36px;
+    margin-right: 8px;
+    padding-left: 8px;
+}
+
+.registers .flags,
+.registers .status,
+.registers .err,
+.registers .pc {
+    display: -webkit-flex;
+    display: flex;
+}
+
+.registers .flags .flag {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex: 1 1;
+    flex: 1 1;
+}
+
+.registers .flags .label {
+    width: 19px;
+    margin-right: 6px;
+}
+
+.registers .status .label,
+.registers .err .label,
+.registers .pc .label {
+    width: 34px;
+    margin-right: 6px;
+}
+
+.registers h3 {
+    margin: 0 0 6px 0;
+    padding: 2px 0 2px 0;
+    border-bottom: 1px solid #ddd;
+
+    font-family: 'Source Sans Pro';
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+h3.status_header {
+    margin-top: 12px;
+}
+
+.memory {
+    width: 150px;
+
+    background: #fcfcfc;
+
+    font-family: 'Inconsolata';
+    font-size: 14px;
+}
+
+.memory > div {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+}
+
+.memory .mem-header,
+.memory .word {
+    display: -webkit-flex;
+    display: flex;
+}
+
+.memory .mem-header {
+    margin: 5px 8px 0 5px;
+
+    color: #444;
+
+    font-family: 'Source Sans Pro';
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.memory .mem-words-wrapper {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+}
+
+.memory .mem-words {
+    margin: 2px 8px 8px 0;
+    border: 2px solid #ccc;
+
+    background: #f0f0f0;
+}
+
+.memory .mem-words {
+    overflow-y: auto;
+}
+
+.memory .address {
+    width: 35px;
+}
+
+.memory .value {
+    margin-left: 5px;
+}
+
+.memory .mem-header .value {
+    margin-left: 6px;
+}
+
+.memory .mem-words .address {
+    padding-left: 4px;
+
+    background: #ddd;
+}
+
+.memory .stack-pointers {
+    position: relative;
+}
+
+.memory .ebp,
+.memory .esp {
+    position: absolute;
+    top: 0;
+    width: 36px;
+
+    font-weight: 700;
+
+    -webkit-transition: top 400ms ease-out;
+    -o-transition: top 400ms ease-out;
+    transition: top 400ms ease-out;
+}
+
+.memory .ebp {
+    right: 44px;
+
+    color: #c0392b;
+}
+
+.memory .esp {
+    right: 5px;
+
+    color: #16a085;
+}
+
+.memory .modified {
+    color: #4444ff;
+}
+
+@media screen and (max-width: 1023px) {
+    .registers .register .value_dec {
+        display: none;
+    }
+}
