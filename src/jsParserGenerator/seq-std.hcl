@@ -10,7 +10,7 @@
 ####################################################################
 
 ##### Symbolic representation of Y86 Instruction Codes #############
-intsig NOP 	'I_NOP'
+intsig NOP 	'sim.instructionSet.nop'
 intsig HALT	'I_HALT'
 intsig RRMOVL	'I_RRMOVL'
 intsig IRMOVL	'I_IRMOVL'
