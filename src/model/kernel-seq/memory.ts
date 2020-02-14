@@ -14,9 +14,7 @@ export class Word {
         for(var i = 0; i < Word.SIZE; i++) {
             const byte = value & 0xFF
             this.bytes[i] = byte
-            console.log("Before : " + value)
             value = value >> 8
-            console.log("After : " + value)
         }
     }
 
