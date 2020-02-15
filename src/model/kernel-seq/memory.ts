@@ -2,9 +2,9 @@ export class Word {
     static MAX_VALUE : number = 0xFFFFFFFF
     static SIZE : number = 4
 
-    // Let's suppose word is aabbccdd.
+    // Let's suppose word is 0xaabbccdd.
     // We'll have bytes[0] === 0xdd, bytes[1] === 0xcc, etc...
-    bytes : number[] = [0, 0, 0, 0]
+    private _bytes : number[] = [0, 0, 0, 0]
 
     constructor(value : number = 0) {
         if(value > Word.MAX_VALUE) {
@@ -13,131 +13,89 @@ export class Word {
 
         for(var i = 0; i < Word.SIZE; i++) {
             const byte = value & 0xFF
-            this.bytes[i] = byte
+            this._bytes[i] = byte
             value = value >> 8
         }
     }
 
-    shiftOneRight() {
-        for(var i = 0; i < Word.SIZE - 1; i++) {
-            this.bytes[i] = this.bytes[i + 1]
+    setBytes(newBytes : number[]) {
+        if(newBytes.length != Word.SIZE) {
+            throw "A word must have " + Word.SIZE + " bytes (current = " + newBytes.length
         }
-        this.bytes[Word.SIZE - 1] = 0
-    }   
+        for(var i = 0; i < Word.SIZE; i++) {
+            const value = newBytes[i]
 
-    shiftOneLeft() {
-        for(var i = Word.SIZE - 1; i > 0; i--) {
-            this.bytes[i] = this.bytes[i - 1]
-        }
-        this.bytes[0] = 0
-    }
-    
-    shiftRight(nBytes : number) {
-        if(nBytes < 0) {
-            throw "nBytes must be positive (current : " + nBytes + ")"
-        }
-
-        const bytesToShift = Math.min(nBytes, Word.SIZE)
-        for(var i = 0; i < bytesToShift; i++) {
-            this.shiftOneRight()
+            Word._checkNumberIsByte(value)
+            this._bytes[i] = value
         }
     } 
 
-    shiftLeft(nBytes : number) {
-        if(nBytes < 0) {
-            throw "nBytes must be positive (current : " + nBytes + ")"
-        }
+    setByte(position : number, value : number) {
+        Word._checkPositionIsValid(position)
+        Word._checkNumberIsByte(value)
+        this._bytes[position] = value
+    }
 
-        const bytesToShift = Math.min(nBytes, Word.SIZE)
-        for(var i = 0; i < bytesToShift; i++) {
-            this.shiftOneLeft()
-        }
-    } 
+    getByte(position : number) {
+        Word._checkPositionIsValid(position)
+        return this._bytes[position]
+    }
 
-    // Writes from register (uses little endianness).
-    // If word input is aabbccdd, it'll write ddccbbaa.
-    writeFromRegister(offset : number, length : number, register : Word) {
-        this.checkWriteArgs(offset, length)
+    getBytes() : number[] {
+        return this._bytes
+    }
 
-        const from = Word.SIZE - offset - 1
-        const to = from - length
-
-        for(var i = from; i > to; i--) {
-            this.bytes[i] = register.bytes[0]
-            register.shiftOneRight() // Prepare the next byte to read
+    private static _checkNumberIsByte(value : number) {
+        if(value < 0 || value > 0xff) {
+            throw "A byte must be in [0;255] (current = " + value
         }
     }
 
-    // Writes from memory.
-    // If word input is aabbccdd, it'll write aabbccdd.
-    writeFromMemory(offset : number, length : number, word : Word) {
-        this.checkWriteArgs(offset, length)
-
-        const from = Word.SIZE - offset - 1
-        const to = from - length
-
-        const byteIndex = Word.SIZE - 1
-        for(var i = from; i > to; i--) {
-            this.bytes[i] = word.bytes[byteIndex]
-            word.shiftOneLeft() // Prepare the next byte to read
-        }
-    }
-
-    writeToRegister(offset : number, length : number, register : Word) {
-        this.checkWriteArgs(offset, length)
-
-        const from = Word.SIZE - offset - 1
-        const to = from - length
-
-        for(var i = from; i > to; i--) {
-            register.bytes[0] = this.bytes[i]
-            register.shiftOneLeft()
-        }
-    }
-
-    checkWriteArgs(offset : number, length : number) {
-        if(offset < 0 || offset >= Word.SIZE) {
-            throw "Offset must be in [0;" + Word.SIZE + "[ (current : " + offset + ")"
-        }
-        
-        const maxLength = Word.SIZE - offset
-        if(length  < 0 || length > maxLength) {
-            throw "Length must be in [0;" + maxLength + "] (current : " + length + ")"
+    private static _checkPositionIsValid(position : number) {
+        if(position < 0 || position >= Word.SIZE) {
+            throw "Position must be in [0;" + (Word.SIZE - 1) + "]"
         }
     }
 }
 
-
-
 export class Memory {
     content : Word[] = []
 
-    write(address : number, register : Word) {
-        const wordPosition = Math.floor(address / Word.SIZE)
-        const byteOffset = address % Word.SIZE
-        
-        this._getWord(wordPosition).writeFromRegister(byteOffset, Word.MAX_VALUE - byteOffset, register)
-        this._getWord(wordPosition + 1).writeFromRegister(0, byteOffset, register)
+    writeRegister(address : number, register : Word) {
+        for(var i = 0; i < Word.SIZE; i++) {
+            this._writeByteInMemory(address + i, register.getByte(i))
+        }
     }
 
-    read(address : number) : Word {
-        const wordPosition = Math.floor(address / Word.SIZE)
-        const byteOffset = address % Word.SIZE
-        
+    readRegister(address : number) : Word {
         let register = new Word()
         
-        this._getWord(wordPosition).writeFromRegister(byteOffset, Word.MAX_VALUE - byteOffset, register)
-        this._getWord(wordPosition + 1).writeFromRegister(0, byteOffset, register)
+        for(var i = 0; i < Word.SIZE; i++) {
+            register.setByte(i, this._readByteInMemory(address + i))
+        }
 
         return register
     }
 
-    private _getWord(position : number) {
-        let wordAtAddress = this.content[position]
+    private _writeByteInMemory(address : number, byte : number) {
+        const byteOffset = address % Word.SIZE
+
+        this._getWord(address).setByte(byteOffset, byte)
+    }
+
+    private _readByteInMemory(address : number) : number {
+        const byteOffset = address % Word.SIZE
+
+        return this._getWord(address).getByte(byteOffset)
+    }
+
+    private _getWord(address : number) {
+        const wordPosition = Math.floor(address / Word.SIZE)
+        let wordAtAddress = this.content[wordPosition]
         
         if(!wordAtAddress) {
             wordAtAddress = new Word()
-            this.content[position] = wordAtAddress
+            this.content[wordPosition] = wordAtAddress
         }
 
         return wordAtAddress

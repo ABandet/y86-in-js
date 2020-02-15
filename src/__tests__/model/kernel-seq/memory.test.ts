@@ -1,28 +1,23 @@
-import { Word } from "../../../model/kernel-seq/memory";
+import { Word, Memory } from "../../../model/kernel-seq/memory";
 
-// This unit test is just here to test the lib
-test("Word creation test", () =>{
-    let word = new Word(0xFFFFFFFF)
-    expect(word.bytes[0]).toBe(255)
-    expect(word.bytes[1]).toBe(255)
-    expect(word.bytes[2]).toBe(255)
-    expect(word.bytes[3]).toBe(255)
+test("Memory access test", function() {
+    let memory = new Memory()
+    
+    let word = new Word()
 
-    word = new Word(0)
-    expect(word.bytes[0]).toBe(0)
-    expect(word.bytes[1]).toBe(0)
-    expect(word.bytes[2]).toBe(0)
-    expect(word.bytes[3]).toBe(0)
+    // register is 0xaabbccdd
+    word.setBytes([0xdd, 0xcc, 0xbb, 0xaa])
 
-    word = new Word(255)
-    expect(word.bytes[0]).toBe(255)
-    expect(word.bytes[1]).toBe(0)
-    expect(word.bytes[2]).toBe(0)
-    expect(word.bytes[3]).toBe(0)
+    // Write at address 0
+    memory.writeRegister(0x0, word)
+    expect(memory.readRegister(0x0).getBytes()).toStrictEqual(word.getBytes())
 
-    word = new Word(256)
-    expect(word.bytes[0]).toBe(0)
-    expect(word.bytes[1]).toBe(1)
-    expect(word.bytes[2]).toBe(0)
-    expect(word.bytes[3]).toBe(0)
-});
+    // Write at 0x2. It will should write on two differents words.
+    const address = Word.SIZE / 2
+    memory.writeRegister(address, word)
+    expect(memory.readRegister(address).getBytes()).toStrictEqual(word.getBytes())
+
+    expect(memory.readRegister(0x0).getBytes()).toStrictEqual([0xdd, 0xcc, 0xdd, 0xcc])
+    expect(memory.readRegister(address).getBytes()).toStrictEqual([0xdd, 0xcc, 0xbb, 0xaa])
+    expect(memory.readRegister(address + 2).getBytes()).toStrictEqual([0xbb, 0xaa, 0, 0])
+})
