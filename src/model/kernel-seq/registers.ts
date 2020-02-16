@@ -14,7 +14,7 @@ enum registers {
  * Based on the registers enumerate, it create automatically all the registers and init them at 0.
  */
 class Registers {
-    content!: number[];
+    content: Array<number> = [];
 
     constructor() {
         this.init();
@@ -25,7 +25,7 @@ class Registers {
      */
     init(){
         for (let key in registers) {
-            this.content[key] = 0;
+            this.content.push(0);
         }
     }
 
@@ -43,8 +43,8 @@ class Registers {
      * @param value
      */
     write(register: registers, value: number) {
-        if (value < 0) {
-            throw "Forbiden value in Registers.write(): Must be greater than 0."
+        if (value > 0xffffffff) {
+            throw "Forbiden value in Registers.write(): Must be on 32 bits."
         }
 
         this.content[register] = value;
