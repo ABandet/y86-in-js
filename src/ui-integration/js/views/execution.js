@@ -12,6 +12,7 @@ var ExecutionView = Backbone.View.extend({
     },
 
     render: function () {
+        this.memview.resize();
         this.$el.empty().html(this.template());
 
         this.$('.processorstate').append(this.processorstate.$el);

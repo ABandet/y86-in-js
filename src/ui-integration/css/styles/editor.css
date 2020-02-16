@@ -10,8 +10,8 @@
     width: 50%;
 }
 
-
-#tab-0-content h2 {
+#tab-0-content h2 ,
+#tab-3-content h2 {
     margin: 0 0 6px 0;
     padding: 2px 0 2px 0;
     border-bottom: 1px solid #ddd;
