@@ -6,7 +6,8 @@ enum registers {
     esp,
     esi,
     ebp,
-    edi
+    edi,
+    none,
 }
 
 /**

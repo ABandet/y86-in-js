@@ -1,3 +1,7 @@
+import { registers } from "./registers"
+import { Word } from "./memory";
+import { CC } from "./cc";
+
 class Context {
     // Inner state
     pc      : number = 0;
@@ -7,32 +11,33 @@ class Context {
     // Instruction
     icode   : number = 0;
     ifun    : number = 0;
-    ra      : number = 0;
-    rb      : number = 0;
-    valC    : number = 0;
+    ra      : number = registers.none;
+    rb      : number = registers.none;
+    valC    : Word = new Word();
 
     // Registers output
-    valA    : number = 0;
-    valB    : number = 0;
-    srcA    : number = 0;
-    srcB    : number = 0;
+    valA    : Word = new Word();
+    valB    : Word = new Word();
+    srcA    : number = registers.none;
+    srcB    : number = registers.none;
 
     // Registers input
-    dstE    : number = 0;
-    dstM    : number = 0;
+    dstE    : number = registers.none;
+    dstM    : number = registers.none;
 
     // ALU input
-    aluA    : number = 0;
-    aluB    : number = 0;
+    aluA    : Word = new Word();
+    aluB    : Word = new Word();
 
     // ALU output
-    valE    : number = 0;
+    valE    : Word = new Word();
 
     // Condition flag
-    bch     : number = 0;
+    cc      : CC = CC.NONE
+    bcond   : boolean = false;
 
     // Memory output
-    valM    : number = 0;
+    valM    : Word = new Word();
 }
 
 export {Context};
