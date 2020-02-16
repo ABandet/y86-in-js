@@ -10,21 +10,21 @@ define("ace/mode/hcl_highlight_rules",
 		
 		this.$rules = {
 			"start" : [{
-				"token": "comment",
-				"regex": /#.*/
-			}, {
 				"token": ["storage.type", "directive"],
-				"regex": /\.(?:pos|align|long)/
+				"regex": /#include |return /
 			}, {
 				"token": ["entity.name.function", "symbol"],
-				"regex": /\w+[ \t]*:/
+				"regex": /icode|ifun/
 			}, {
 				"token": "keyword.control",
-				"regex": /boolsig|bool|quote|intsig|int|in /
+				"regex": /boolsig|bool |char |quote|intsig |int |in  /
 			}, {
 				"token": ["variable.language", "register"],
-				"regex": /%(?:icode|ifun)/
+				"regex": /:/
 			}, {
+				"token": "comment",
+				"regex": /#.*/
+			},{
 				"token": "constant.number",
 				"regex": /\$?\-?([0-9]+|\0\x[0-9a-f]+)/
 			}]

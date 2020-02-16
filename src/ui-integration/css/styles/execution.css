@@ -1,4 +1,16 @@
 
+#tab-1-content h2 {
+    margin: 0 0 6px 0;
+    padding: 2px 0 2px 0;
+    border-bottom: 1px solid #ddd;
+
+    font-family: 'Source Sans Pro';
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
 .execution {
     display: -webkit-flex;
     display: flex;
@@ -7,13 +19,26 @@
     -webkit-flex-direction: row;
     flex-direction: row;
 }
-.processorstate-wrapper {
+
+.processorstate{
     display: -webkit-flex;
     display: flex;
     -webkit-flex-direction: column;
     flex-direction: column;
     padding-bottom: 8px;
-    width: fit-content;
+    width: 37%;
+}
+
+.processorstate h3{
+    margin: 40px 0 6px 0;
+    padding: 2px 0 2px 0;
+    border-bottom: 1px solid #ddd;
+
+    font-family: 'Source Sans Pro';
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
 }
 
 .stage {
@@ -52,7 +77,7 @@
     -webkit-flex-direction: column;
     flex-direction: column;
 
-    width: 35%;
+    width: 38%;
 }
 
 .inspector .object .lines-wrapper {
@@ -98,7 +123,7 @@
 }
 
 .object-code-line.highlighted {
-    background: #9de0ad;
+    background: #1ba11c;
     margin: -1px 0;
     border-top: 1px solid #45ada8;
     border-bottom: 1px solid #45ada8;
@@ -202,7 +227,7 @@ h3.status_header {
 }
 
 
-.memory {
+#tab-1-content .memory {
     -webkit-flex: 0 0 auto;
     flex: 0 0 auto;
     width: 198px;
@@ -226,8 +251,6 @@ h3.status_header {
 
 .memory .mem-header {
     margin: 5px 8px 0 5px;
-
-    color: #444;
 
     font-family: 'Source Sans Pro';
     font-weight: 700;

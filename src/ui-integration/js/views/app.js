@@ -4,21 +4,22 @@ var AppView = Backbone.View.extend({
 		this.editor = new EditorView();
 		this.execution = new ExecutionView();
 		// this.instrSet = new InstructionView();
-		// this.hcl_editor = new HclEditorView();
+		this.hcl_editor = new HclEditorView();
 		this.input = document.getElementById("input"); // the input item defined in index.html
 		this.input.addEventListener("change", handleFile, false);
 		this.listenTo(Backbone.Events, 'app:redraw', this.redrawButtons);
 		this.listenTo(Backbone.Events, 'app:load', this.loadFile);
+		$(window).on('load', this.resizeViews.bind(this));
 		this.render();
 	},
 
 	events: {
-		'click #compile': 'compile',
-		'click #reset': 'reset',
-		'click #continue': 'continue',
-		'click #step': 'step',
-		'click #load': 'load',
-		'click #save': 'save'
+		'click #assemble-button': 'assemble',
+		'click #reset-button': 'reset',
+		'click #continue-button': 'continue',
+		'click #step-button': 'step',
+		'click #load-button': 'load',
+		'click #save-button': 'save'
 	},
 
 	render: function () {
@@ -26,18 +27,17 @@ var AppView = Backbone.View.extend({
 		this.$('#tab-0-content .tab-content-container').empty().append(this.editor.$el);
 		this.$('#tab-1-content .tab-content-container').empty().append(this.execution.$el);
 		// this.$('#tab-2-content .tab-content-container').empty().append(this.instrSet.$el);
-		// this.$('#tab-3-content .tab-content-container').empty().append(this.hcl_editor.$el);
+		this.$('#tab-3-content .tab-content-container').empty().append(this.hcl_editor.$el);
 		this.redrawButtons();
 	},
 
-	compile: function () {
+	assemble: function () {
 		var obj = ASSEMBLE(this.editor.getSource());
 		this.execution.setObjectCode(obj);
 		if (obj.errors.length === 0)
 			INIT(obj.obj);
 		Backbone.Events.trigger('app:redraw');
 		this.$('.continue span').text('Start');
-		console.log('hi');
 	},
 
 	reset: function () {
@@ -69,11 +69,22 @@ var AppView = Backbone.View.extend({
 
 	loadFile: function () {
 		var data = this.input.data;
-		// console.log(data);
 		this.editor.setSource(data);
 		RESET();
 		this.$('.continue span').text('Start');
 		Backbone.Events.trigger('app:redraw');
+	},
+
+	save: function () {
+		var data = this.editor.getSource();
+		let filename = "y86-Sim.ys";
+		var type = "text/plain;charset=utf-8";
+
+		var a = document.getElementById("output");
+		var file = new Blob([data], {type: type});
+		a.href = URL.createObjectURL(file);
+		a.download = filename;
+		a.dispatchEvent(new MouseEvent("click"));
 	},
 
 	triggerRedraw: function () {
@@ -87,8 +98,14 @@ var AppView = Backbone.View.extend({
 		} else {
 			this.$('.step, .continue').addClass('disabled');
 		}
-	}
+	},
 
+	resizeViews:function(){
+		this.editor.resizeEditor();
+		this.hcl_editor.resizeEditor();
+		this.execution.resizeObjectView();
+		this.execution.memview.resize();
+	}
 });
 
 function handleFile() { // 'this' is the input item defined in index.html
