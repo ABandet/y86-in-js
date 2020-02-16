@@ -14,12 +14,12 @@ var AppView = Backbone.View.extend({
 	},
 
 	events: {
-		'click #compile': 'compile',
-		'click #reset': 'reset',
-		'click #continue': 'continue',
-		'click #step': 'step',
-		'click #load': 'load',
-		'click #save': 'save'
+		'click #assemble-button': 'assemble',
+		'click #reset-button': 'reset',
+		'click #continue-button': 'continue',
+		'click #step-button': 'step',
+		'click #load-button': 'load',
+		'click #save-button': 'save'
 	},
 
 	render: function () {
@@ -31,7 +31,7 @@ var AppView = Backbone.View.extend({
 		this.redrawButtons();
 	},
 
-	compile: function () {
+	assemble: function () {
 		var obj = ASSEMBLE(this.editor.getSource());
 		this.execution.setObjectCode(obj);
 		if (obj.errors.length === 0)
@@ -69,11 +69,22 @@ var AppView = Backbone.View.extend({
 
 	loadFile: function () {
 		var data = this.input.data;
-		// console.log(data);
 		this.editor.setSource(data);
 		RESET();
 		this.$('.continue span').text('Start');
 		Backbone.Events.trigger('app:redraw');
+	},
+
+	save: function () {
+		var data = this.editor.getSource();
+		let filename = "y86-Sim.ys";
+		var type = "text/plain;charset=utf-8";
+
+		var a = document.getElementById("output");
+		var file = new Blob([data], {type: type});
+		a.href = URL.createObjectURL(file);
+		a.download = filename;
+		a.dispatchEvent(new MouseEvent("click"));
 	},
 
 	triggerRedraw: function () {
@@ -95,7 +106,6 @@ var AppView = Backbone.View.extend({
 		this.execution.resizeObjectView();
 		this.execution.memview.resize();
 	}
-
 });
 
 function handleFile() { // 'this' is the input item defined in index.html

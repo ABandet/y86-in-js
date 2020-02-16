@@ -1,4 +1,4 @@
-.header {
+div#header {
   display: flex;
   background-color: var(--header-background);
   padding: 6px;
@@ -14,7 +14,7 @@
   align-items: center;
 }
 
-.header > * > * {
+div#header > * > * {
   margin: 0 4px;
 }
 
@@ -31,7 +31,9 @@
   font-size: 16px;
   text-decoration: none;
   cursor: pointer;
-  transition-duration: .3s;
+  transition-duration: all .3s;
+  transition: opacity .5s;
+  opacity: 1;
 }
 
 a.header-button {
@@ -43,9 +45,10 @@ a.header-button {
 }
 
 .header-button:disabled {
-  background-color: var(--header-disabled-button-background);
-  color: var(--header-disabled-button-foreground);
-  cursor: not-allowed;
+  /*background-color: var(--header-disabled-button-background);
+  color: var(--header-disabled-button-foreground);*/
+  cursor: default;
+  opacity: 0;
 }
 
 /* FontAwesome icon */

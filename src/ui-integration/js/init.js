@@ -1,18 +1,17 @@
 /* TODO put the declarations bellow into settings.json */
-var language = "en";
-var jsFiles = ["languages.js", "themes.js", "tabs.js"];
+var jsFiles = ["themes.js", "tabs.js"]
 var themes = ["light", "dark"];
 var activeTheme = 1;
 var activeTabId = 0;
-var strings;
+var stringElements;
 
 addJsFilesToHeader(jsFiles);
-
-window.addEventListener("load", function() {
-    strings = loadLanguage(language);
+stringElements = document.getElementsByClassName("string");
+loadLanguage("en");
+window.onload = function() {
     //loadTheme(); // Causes flickering
     setActiveTab(activeTabId);
-});
+};
 
 function addJsFilesToHeader(files) {
     for (let i = 0; i < files.length; i++) {

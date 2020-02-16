@@ -3,14 +3,16 @@
 
 <head>
     <meta charset="utf-8"/>
-    <title>y86 Simulator</title>
+    <title id="app-name" class="string"></title>
     <link rel="stylesheet" type="text/css" href="css/themes/dark.css" id="theme">
     <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script type="text/javascript" src="js/languages.js"></script>
     <script type="text/javascript" src="js/init.js"></script>
 </head>
 
 <body>
     <input type="file" id="input" style="display:none">
+    <a href="" type="file" id="output" style="display:none"></a>
     <div id="app"></div>
     <script type="text/template" id="default_y86_code">
         .pos 0
@@ -32,9 +34,9 @@ Main:	irmovl 4,%eax
         popl %ebx
         halt
 
-Sum:	mrmovl 4(%esp),%edx 	# edx = Start
-        mrmovl 8(%esp),%ecx	    # ecx = Count
-        irmovl 0, %eax		    # sum = 0
+Sum:	mrmovl 4(%esp),%edx     # edx = Start
+        mrmovl 8(%esp),%ecx     # ecx = Count
+        irmovl 0, %eax          # sum = 0
 
 Loop:	mrmovl (%edx),%ebx      # get *Start
         addl %ebx,%eax          # add to sum
@@ -44,7 +46,7 @@ Loop:	mrmovl (%edx),%ebx      # get *Start
 End:	ret                     # result must be abcd in %eax
 
         .pos 0x95
-        Stack:	# The stack goes here
+        Stack:                  # The stack goes here
 
     </script>
     <script type="text/template" id="default_hcl_code">
@@ -243,29 +245,29 @@ End:	ret                     # result must be abcd in %eax
     </script>
 
     <script type="text/template" id="tmpl_app">
-        <div class="header">
+        <div id="header">
             <div id="header-left-container">
-                <span id="header-title">Y86 Simulator</span>
-                <button id="compile" class="header-button tab-0-enabled-button"><i class="fa fa-bolt"></i>Assemble</button>
-                <button id="reset" class="header-button tab-1-enabled-button"><i class="fa fa-redo"></i>Reset</button>
-                <button id="step" class="header-button tab-0-enabled-button tab-1-enabled-button tab-2-enabled-button tab-3-enabled-button"><i class="fa fa-angle-right"></i>Step</button>
-                <button id="continue" class="header-button tab-0-enabled-button tab-1-enabled-button"><i class="fa fa-angle-double-right"></i>Continue</button>
-                <button id="load" class="header-button tab-0-enabled-button tab-2-enabled-button tab-3-enabled-button"><i class="fa fa-file"></i>Load</button>
-                <button id="save" class="header-button tab-0-enabled-button tab-2-enabled-button tab-3-enabled-button"><i class="fa fa-save"></i>Save</button>
+                <span id="header-title" class="string"></span>
+                <button id="assemble-button" class="string header-button tab-0-enabled-button"><i class="fa fa-bolt"></i></button>
+                <button id="reset-button" class="string header-button tab-1-enabled-button"><i class="fa fa-redo"></i></button>
+                <button id="step-button" class="string header-button tab-0-enabled-button tab-1-enabled-button tab-2-enabled-button tab-3-enabled-button"><i class="fa fa-angle-right"></i></button>
+                <button id="continue-button" class="string header-button tab-0-enabled-button tab-1-enabled-button"><i class="fa fa-angle-double-right"></i></button>
+                <button id="load-button" class="string header-button tab-0-enabled-button tab-2-enabled-button tab-3-enabled-button"><i class="fa fa-file"></i></button>
+                <button id="save-button" class="string header-button tab-0-enabled-button tab-2-enabled-button tab-3-enabled-button"><i class="fa fa-save"></i></button>
             </div>
             <div id="header-right-container">
-                <a class="header-button" href="https://github.com/xsznix/js-y86/tree/master/samples">Examples</a>
-                <a class="header-button" href="https://github.com/xsznix/js-y86/wiki">Wiki</a>
-                <a class="header-button" href="https://github.com/orel33/js-y86">GitHub<i class="fab fa-github"></i></a>
+                <a id="examples-link" class="string header-button" href="https://github.com/xsznix/js-y86/tree/master/samples"></a>
+                <a id="wiki-link" class="string header-button" href="https://github.com/xsznix/js-y86/wiki"></a>
+                <a id="git-link" class="string header-button" href="https://github.com/orel33/js-y86"><i class="fab fa-github"></i></a>
                 <button class="header-button icon-only" onclick="nextTheme()"><i class="fa fa-sun"></i></button>
                 <a href="https://www.u-bordeaux.fr/"><img id="branding" src="images/branding.png"></a>
             </div>
         </div>
         <div id="tab-buttons-container">
-            <button id="tab-0-button" class="tab-button" onclick="setActiveTab(0)">Editor</button>
-            <button id="tab-1-button" class="tab-button" onclick="setActiveTab(1)">Execution</button>
-            <button id="tab-2-button" class="tab-button" onclick="setActiveTab(2)">InstructionSet</button>
-            <button id="tab-3-button" class="tab-button" onclick="setActiveTab(3)">HCL</button>
+            <button id="tab-0-button" class="string tab-button" onclick="setActiveTab(0)"></button>
+            <button id="tab-1-button" class="string tab-button" onclick="setActiveTab(1)"></button>
+            <button id="tab-2-button" class="string tab-button" onclick="setActiveTab(2)"></button>
+            <button id="tab-3-button" class="string tab-button" onclick="setActiveTab(3)"></button>
         </div>
         <div id="tab-contents-container">
             <div id="tab-0-content" class="tab-content">
