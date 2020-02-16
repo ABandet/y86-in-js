@@ -1,4 +1,4 @@
-div#header {
+.header {
   display: flex;
   background-color: var(--header-background);
   padding: 6px;
@@ -14,7 +14,7 @@ div#header {
   align-items: center;
 }
 
-div#header > * > * {
+.header > * > * {
   margin: 0 4px;
 }
 
