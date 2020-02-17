@@ -15,12 +15,15 @@ let hcl2jsUtility = new function() {
   this.intDefinitions = []; // Pairs int function <-> instruction list
   this.boolDefinitions = []; // Pairs bool function <-> instruction
 
+  this.identifiersList = [];
+
   this.cleanParser = function() {
     this.quoteList = [];
     this.intsigs = [];
     this.boolsigs = [];
     this.intDefinitions = [];
     this.boolDefinitions = [];
+    this.identifiersList = [];
   }
 };
 

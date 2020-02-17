@@ -61,7 +61,24 @@
             throw identifier + " is not declared"
         }
 
-        return cleanHclString(jsSigName)
+        let finalValue = cleanHclString(jsSigName)
+        hcl2jsUtility.identifiersList.push(finalValue)
+        return finalValue
+    }
+
+    function generateIdentifiersVerificationJs(identifiersList) {
+        if(identifiersList.length === 0) {
+            return ""
+        }
+
+        jsOutput  = "   // Checks if some identifiers are undefined\n"
+        jsOutput += "   if((" + identifiersList[0] + ") === undefined"
+        
+        for(var i = 1; i < identifiersList.length; i++) {
+            jsOutput += " || (" + identifiersList[i] + ") === undefined"
+        }
+
+        return jsOutput + ") { throw \"Invalid identifier in HCL\" }\n\n"
     }
 %}
 
@@ -127,11 +144,15 @@ final_expression
 
             // Render int definitions --- step 2
             for(let name in hcl2jsUtility.intDefinitions) {
-                let instrList = hcl2jsUtility.intDefinitions[name]
-                jsOutput += "function gen_" + name + "() {\n\n"
+                const instrList = hcl2jsUtility.intDefinitions[name].definition
+                const identifiersList = hcl2jsUtility.intDefinitions[name].identifiersList
+
+                jsOutput += "export function gen_" + name + "() {\n\n"
+
+                jsOutput += generateIdentifiersVerificationJs(identifiersList)
 
                 instrList.forEach(function (instr) {
-                    jsOutput += "    " + instr + "\n"
+                    jsOutput += "   " + instr + "\n"
                 }) 
 
                 jsOutput += "}\n\n"
@@ -139,9 +160,12 @@ final_expression
 
             // Render bool defintions --- step 3
             for(let name in hcl2jsUtility.boolDefinitions) {
-                let instr = hcl2jsUtility.boolDefinitions[name]
-                jsOutput += "function gen_" + name + "() {\n"
-                jsOutput += "    return " + instr + ";\n}\n\n"
+                const instr = hcl2jsUtility.boolDefinitions[name].definition
+                const identifiersList = hcl2jsUtility.boolDefinitions[name].identifiersList
+
+                jsOutput += "export function gen_" + name + "() {\n"
+                jsOutput += generateIdentifiersVerificationJs(identifiersList)
+                jsOutput += "   return " + instr + ";\n}\n\n"
             }
 
             $$ = jsOutput
@@ -180,12 +204,24 @@ definition
     : INT IDENTIFIER ASSIGN instruction_list
         {
             checkDefinitionUnicity($2)
-            hcl2jsUtility.intDefinitions[$2] = $4
+            var content = {
+                definition: $4,
+                identifiersList: hcl2jsUtility.identifiersList,
+            }
+            hcl2jsUtility.intDefinitions[$2] = content
+
+            hcl2jsUtility.identifiersList = []
         }
     | BOOL IDENTIFIER ASSIGN bool_expression SEMI
         {
             checkDefinitionUnicity($2)
-            hcl2jsUtility.boolDefinitions[$2] = $4
+            var content = {
+                definition: $4,
+                identifiersList: hcl2jsUtility.identifiersList,
+            }
+            hcl2jsUtility.boolDefinitions[$2] = content
+
+            hcl2jsUtility.identifiersList = []
         }
     ;
 

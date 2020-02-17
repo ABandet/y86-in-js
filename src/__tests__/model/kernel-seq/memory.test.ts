@@ -80,3 +80,27 @@ test("Memory access test", () => {
         memory.readRegister(Memory.LAST_ADDRESS + 1)
     }).toThrow()
 })
+
+test("Memory load program test", () => {
+    let memory = new Memory()
+    let program = `
+    | 
+    | # Support commentary ?
+    0x0000:              | .pos 0
+    0x0000:              | Init:
+    0x0000: 400fec010000 |     rmmovl %eax, 0x1ec
+                         |     
+    0x0006:              | .pos 0x100
+    0x0100:              | Stack:
+                         |       
+    `
+    
+    memory.loadProgram(program)
+    let result = 
+    [0x40, 0x0f, 0xec, 0x01, 
+     0x00, 0x00, 0x00, 0x00]
+
+    for(let i = 0; i < result.length; i++) {
+        expect(memory.readByte(i).toNumber()).toBe(result[i])
+    }
+})

@@ -9,6 +9,8 @@
 #    Declarations.  Do not change/remove/delete any of these       #
 ####################################################################
 
+quote 'import { ctx } from "./stages"'
+
 ##### Symbolic representation of Y86 Instruction Codes #############
 intsig NOP 			'ctx.instructionSet.nop'
 intsig HALT			'ctx.instructionSet.halt'

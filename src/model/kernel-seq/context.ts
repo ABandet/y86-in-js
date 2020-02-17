@@ -38,6 +38,8 @@ class Context {
 
     // Memory output
     valM    : Word = new Word();
+
+    instructionSet = {}
 }
 
 export {Context};

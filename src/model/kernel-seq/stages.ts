@@ -2,6 +2,33 @@ import { Sim } from "./sim"
 import { Byte, Word } from "./memory"
 import { registers } from "./registers"
 
+// Declaration of HCL functions
+// Used at compile-time and for unit tests
+import * as hcl from "./hcl"
+
+var gen_srcA        = hcl.gen_srcA
+var gen_srcB        = hcl.gen_srcB
+var gen_dstE        = hcl.gen_dstE
+var gen_dstM        = hcl.gen_dstM
+var gen_aluA        = hcl.gen_aluA
+var gen_aluB        = hcl.gen_aluB
+var gen_alufun      = hcl.gen_alufun
+var gen_mem_addr    = hcl.gen_mem_addr
+var gen_mem_data    = hcl.gen_mem_data
+var gen_new_pc      = hcl.gen_new_pc
+var gen_need_regids = hcl.gen_need_regids;
+var gen_need_valC   = hcl.gen_need_valC;
+var gen_instr_valid = hcl.gen_instr_valid
+var gen_set_cc      = hcl.gen_set_cc
+var gen_mem_read    = hcl.gen_mem_read
+var gen_mem_write   = hcl.gen_mem_write
+
+//
+// End of HCL declaration
+//
+
+export let ctx : any = {}
+
 function decode(sim : Sim) {
     let valp = sim.context.pc
     let byte = sim.memory.readByte(valp)
@@ -10,7 +37,12 @@ function decode(sim : Sim) {
     sim.context.icode = byte.HI4()
     sim.context.ifun = byte.LO4()
 
-    if(true /* gen_need_regids() */) {
+    ctx = {
+        instructionSet: sim.context.instructionSet,
+        icode: sim.context.icode,
+    }
+
+    if(gen_need_regids()) {
         byte = sim.memory.readByte(valp)
         valp++
 
@@ -21,7 +53,7 @@ function decode(sim : Sim) {
         sim.context.rb = registers.none
     }
 
-    if(true /* gen_need_valC() */) {
+    if(gen_need_valC()) {
         sim.context.valC = sim.memory.readRegister(valp)
         valp += Word.SIZE
     } else {
