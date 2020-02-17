@@ -1,5 +1,3 @@
-import { memory } from "./stages"
-
 class Memory {
     /**
      * The last reachable address.

@@ -23,17 +23,21 @@ bool f = icode in {valb, 3};
 
 <!-- Overlayer on hcl2js parser -->
 <script src="js/hcl2jsUtility.js"></script>
+<script src="js/bundle.js"></script>
 
-<script>
+<!-- <script>
     function onCompile() {
         try {
             let hclCode = document.getElementById("editor").value
             let jsCode = hcl2js(hclCode)
             document.getElementById("output").value = jsCode
+            let sim = new Sim()
+            sim.step()
+            alert(sim.errorMessage)
         } catch (error) {
             alert(error)
         }
     }
-</script>
+</script> -->
 
 </html>
