@@ -1,3 +1,5 @@
+import { Word } from "./memory";
+
 enum registers {
     eax,
     ebx,
@@ -15,7 +17,7 @@ enum registers {
  * Based on the registers enumerate, it create automatically all the registers and init them at 0.
  */
 class Registers {
-    content: Array<number> = [];
+    content: Array<Word> = [];
 
     constructor() {
         this.init();
@@ -26,7 +28,8 @@ class Registers {
      */
     init(){
         for (let key in registers) {
-            this.content.push(0);
+            let empty_word = new Word();
+            this.content.push(empty_word);
         }
     }
 
@@ -43,10 +46,10 @@ class Registers {
      * @param register
      * @param value
      */
-    write(register: registers, value: number) {
-        if (value > 0xffffffff) {
+    write(register: registers, value: Word) {
+        /*if (value > 0xffffffff) {
             throw "Forbiden value in Registers.write(): Must be on 32 bits."
-        }
+        }*/
 
         this.content[register] = value;
     }
