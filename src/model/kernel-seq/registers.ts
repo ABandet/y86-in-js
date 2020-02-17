@@ -1,5 +1,8 @@
 import { Word } from "./memory";
 
+/**
+ * Enum wich contains all the registers plus the special register "none".
+ */
 enum registers {
     eax,
     ebx,
@@ -14,19 +17,19 @@ enum registers {
 
 /**
  * Class who contains all the registers of the CPU.
- * Based on the registers enumerate, it create automatically all the registers and init them at 0.
+ * Based on the registers enumerate, it create automatically all the registers and init them with an empty word.
+ * Registers works with Word type. They have no treatment on data. They just store word.
  */
 class Registers {
+    /**
+     * Array for all registers. Size based on the size of "registers" enumerate.
+     */
     content: Array<Word> = [];
 
-    constructor() {
-        this.init();
-    }
-
     /**
-     * Create all registers and set them to the default value 0.
+     * Set all registers to the default value 0.
      */
-    init(){
+    constructor() {
         for (let key in registers) {
             let empty_word = new Word();
             this.content.push(empty_word);
@@ -34,23 +37,22 @@ class Registers {
     }
 
     /**
-     * Just a Registers.init wrapper.
+     * Reset all registers with an empty value.
      */
     reset(){
-        this.init()
+        for (let key in registers) {
+            let empty_word = new Word();
+            this.content[key] = empty_word;
+        }
     }
 
 
     /**
-     * Write value in register @param register.
+     * Write Word in register @param register.
      * @param register
      * @param value
      */
     write(register: registers, value: Word) {
-        /*if (value > 0xffffffff) {
-            throw "Forbiden value in Registers.write(): Must be on 32 bits."
-        }*/
-
         this.content[register] = value;
     }
 
