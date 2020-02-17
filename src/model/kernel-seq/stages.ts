@@ -29,7 +29,7 @@ var gen_mem_write   = hcl.gen_mem_write
 
 export let ctx : any = {}
 
-function decode(sim : Sim) {
+function fetch(sim : Sim) {
     let valp = sim.context.pc
     let byte = sim.memory.readByte(valp)
     valp++
@@ -66,12 +66,30 @@ function decode(sim : Sim) {
     //        we'll not be able to perform any call to HCL functions from here.
 }
 
-function fetch(sim : Sim) {
+function decode(sim : Sim) {
+    sim.context.srcA = gen_srcA();
+    if (sim.context.srcA != registers.none) {
+        sim.context.valA = new Word(sim.context.srcA);
+    }
+    else {
+        sim.context.valA = new Word(0);
+    }
 
+    sim.context.srcB = gen_srcB();
+    if (sim.context.srcB != registers.none) {
+        sim.context.valB = new Word(sim.context.srcB);
+    }
+    else {
+        sim.context.valB = new Word(0);
+    }
+
+    sim.context.dstE = gen_dstE();
+    sim.context.dstM = gen_dstM();
 }
 
 function execute(sim : Sim) {
-
+    // TODO : Finish that part
+    
 }
 
 function memory(sim : Sim) {
@@ -82,4 +100,8 @@ function writeBack(sim : Sim) {
 
 }
 
-export { decode, fetch, execute, memory, writeBack }
+function updatePC(sim : Sim) {
+    sim.context.pc = gen_new_pc();
+}
+
+export { decode, fetch, execute, memory, writeBack, updatePC }
