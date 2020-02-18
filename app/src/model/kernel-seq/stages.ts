@@ -1,5 +1,6 @@
 import { Sim } from "./sim"
 import { registers_enum } from "./registers"
+import { Memory } from "./memory"
 
 // Declaration of HCL functions
 // Used at compile-time and for unit tests
@@ -33,8 +34,8 @@ function fetch(sim : Sim) {
     let byte = sim.memory.readByte(valp)
     valp++
     
-    sim.context.icode = byte.HI4()
-    sim.context.ifun = byte.LO4()
+    sim.context.icode = Memory.HI4(byte)
+    sim.context.ifun = Memory.LO4(byte)
 
     ctx = {
         instructionSet: sim.context.instructionSet,
@@ -45,8 +46,8 @@ function fetch(sim : Sim) {
         byte = sim.memory.readByte(valp)
         valp++
 
-        sim.context.ra = byte.HI4()
-        sim.context.rb = byte.LO4()
+        sim.context.ra = Memory.HI4(byte)
+        sim.context.rb = Memory.LO4(byte)
     } else {
         sim.context.ra = registers_enum.none
         sim.context.rb = registers_enum.none
@@ -54,7 +55,7 @@ function fetch(sim : Sim) {
 
     if(gen_need_valC()) {
         sim.context.valC = sim.memory.readRegister(valp)
-        valp += Word.SIZE
+        valp += Memory.WORD_SIZE
     } else {
         sim.context.valC = 0
     }
