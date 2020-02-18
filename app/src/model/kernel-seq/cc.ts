@@ -4,3 +4,4 @@ export enum CC {
     SF = 2,
     OF = 3,
 }
+

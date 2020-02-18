@@ -1,7 +1,6 @@
 import { Sim } from "./sim"
 import { Byte, Word } from "./memory"
 import { registers } from "./registers"
-import { alu_compute } from "./alu"
 
 // Declaration of HCL functions
 // Used at compile-time and for unit tests
@@ -103,16 +102,18 @@ function execute(sim : Sim) {
 
     // compute in valE from aluA and aluB
     try {
-        sim.context.valE = alu_compute(sim.context.aluA, sim.context.aluB, alu_fun);
+        sim.context.valE = sim.alu.compute_alu(sim.context.aluA, sim.context.aluB, alu_fun);
     }
     catch (e) {
         console.log("Cannot compute in alu : " + e);
     }
 
-    // Conditional branch
+    // Set flags
     if (gen_set_cc()) {
-
+        sim.alu.compute_cc(sim.context.aluA, sim.context.aluB, alu_fun);
     }
+
+    //TODO : Conditional branch
 }
 
 /**
