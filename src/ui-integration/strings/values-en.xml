@@ -19,4 +19,7 @@
   <tab-1-button>Execution</tab-1-button>
   <tab-2-button>InstructionSet</tab-2-button>
   <tab-3-button>HCL</tab-3-button>
+
+  <!--  Editor Tab-->
+  <editor-title>Source code</editor-title>
 </resources>
