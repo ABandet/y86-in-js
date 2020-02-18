@@ -1,6 +1,7 @@
 import { Sim } from "./sim"
 import { Byte, Word } from "./memory"
 import { registers } from "./registers"
+import { alu_compute } from "./alu"
 
 // Declaration of HCL functions
 // Used at compile-time and for unit tests
@@ -91,8 +92,27 @@ function decode(sim : Sim) {
     sim.context.dstM = gen_dstM();
 }
 
+/**
+ * Execute stage. Call alu_compute function.
+ * @param sim
+ */
 function execute(sim : Sim) {
+    sim.context.aluA = gen_aluA();
+    sim.context.aluB = gen_aluB();
+    let alu_fun = gen_alufun();
 
+    // compute in valE from aluA and aluB
+    try {
+        sim.context.valE = alu_compute(sim.context.aluA, sim.context.aluB, alu_fun);
+    }
+    catch (e) {
+        console.log("Cannot compute in alu : " + e);
+    }
+
+    // Conditional branch
+    if (gen_set_cc()) {
+
+    }
 }
 
 /**

@@ -6,7 +6,6 @@ const cc_1 = require("./cc");
 class Context {
     constructor() {
         this.pc = 0;
-        this.status = 0;
         this.valP = 0;
         this.icode = 0;
         this.ifun = 0;

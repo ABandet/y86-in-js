@@ -59,14 +59,14 @@ exports.fetch = fetch;
 function decode(sim) {
     sim.context.srcA = gen_srcA();
     if (sim.context.srcA != registers_1.registers.none) {
-        sim.context.valA = new memory_1.Word(sim.context.srcA);
+        sim.context.valA = sim.registers.read(sim.context.srcA);
     }
     else {
         sim.context.valA = new memory_1.Word(0);
     }
     sim.context.srcB = gen_srcB();
     if (sim.context.srcB != registers_1.registers.none) {
-        sim.context.valB = new memory_1.Word(sim.context.srcB);
+        sim.context.valB = sim.registers.read(sim.context.srcB);
     }
     else {
         sim.context.valB = new memory_1.Word(0);
@@ -79,9 +79,35 @@ function execute(sim) {
 }
 exports.execute = execute;
 function memory(sim) {
+    let mem_addr = gen_mem_addr();
+    let mem_data = new memory_1.Word(gen_mem_data());
+    if (gen_mem_read()) {
+        try {
+            sim.context.valM = sim.memory.readRegister(mem_addr);
+        }
+        catch (e) {
+            console.log("error in stage memory: " + e);
+        }
+    }
+    else if (gen_mem_write()) {
+        try {
+            sim.memory.writeRegister(mem_addr, mem_data);
+        }
+        catch (e) {
+            console.log("error in stage memory: " + e);
+        }
+    }
 }
 exports.memory = memory;
 function writeBack(sim) {
+    if (sim.context.dstE != registers_1.registers.none) {
+        let valE = sim.context.valE;
+        sim.registers.write(sim.context.dstE, valE);
+    }
+    if (sim.context.dstM != registers_1.registers.none) {
+        let valM = sim.context.valM;
+        sim.registers.write(sim.context.dstM, valM);
+    }
 }
 exports.writeBack = writeBack;
 function updatePC(sim) {
