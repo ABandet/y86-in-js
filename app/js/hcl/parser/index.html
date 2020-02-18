@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Parser from webpage usage</title>
+</head>
+<body>
+    <textarea name="editor" id="editor" cols="100" rows="30">
+intsig valb 'VALB'
+intsig icode 'ICODE'
+
+bool f = icode in {valb, 3};
+    </textarea>
+    <input type="button" value="Compile" onclick="onCompile()">
+    
+    <textarea id="output" cols="500" rows="200"></textarea>
+</body>
+
+<!-- The generated parser -->
+<script src="../hcl2jsParser.js"></script>
+
+<!-- Overlayer on hcl2js parser -->
+<script src="../hcl2jsUtility.js"></script>
+
+<script>
+    function onCompile() {
+        try {
+            let hclCode = document.getElementById("editor").value
+            let jsCode = hcl2js(hclCode)
+            document.getElementById("output").value = jsCode
+        } catch (error) {
+            alert(error)
+        }
+    }
+</script>
+
+</html>
