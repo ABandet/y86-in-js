@@ -4,11 +4,13 @@ import { alufct } from "./aluEnum";
 import { Word, Memory } from "./memory";
 import * as stages from "./stages";
 import { simStatus } from "./status"
+import {Alu} from "./alu";
 
 export class Sim {
     context: Context = new Context();
     registers: Registers = new Registers();
     memory : Memory = new Memory();
+    alu : Alu = new Alu();
     status : simStatus = simStatus.AOK
     errorMessage : string = ""
 
