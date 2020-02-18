@@ -1,4 +1,4 @@
-import { registers } from "./registers"
+import { registers_enum } from "./registers"
 import { Memory } from "./memory";
 import { CC } from "./cc";
 
@@ -10,19 +10,19 @@ class Context {
     // Instruction
     icode   : number = 0;
     ifun    : number = 0;
-    ra      : number = registers.none;
-    rb      : number = registers.none;
+    ra      : number = registers_enum.none;
+    rb      : number = registers_enum.none;
     valC    : number = 0;
 
     // Registers output
     valA    : number = 0;
     valB    : number = 0;
-    srcA    : number = registers.none;
-    srcB    : number = registers.none;
+    srcA    : number = registers_enum.none;
+    srcB    : number = registers_enum.none;
 
     // Registers input
-    dstE    : number = registers.none;
-    dstM    : number = registers.none;
+    dstE    : number = registers_enum.none;
+    dstM    : number = registers_enum.none;
 
     // ALU input
     aluA    : number = 0;

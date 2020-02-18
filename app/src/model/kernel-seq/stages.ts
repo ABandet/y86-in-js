@@ -1,6 +1,5 @@
 import { Sim } from "./sim"
-import { Byte, Word } from "./memory"
-import { registers } from "./registers"
+import { registers_enum } from "./registers"
 
 // Declaration of HCL functions
 // Used at compile-time and for unit tests
@@ -49,15 +48,15 @@ function fetch(sim : Sim) {
         sim.context.ra = byte.HI4()
         sim.context.rb = byte.LO4()
     } else {
-        sim.context.ra = registers.none
-        sim.context.rb = registers.none
+        sim.context.ra = registers_enum.none
+        sim.context.rb = registers_enum.none
     }
 
     if(gen_need_valC()) {
         sim.context.valC = sim.memory.readRegister(valp)
         valp += Word.SIZE
     } else {
-        sim.context.valC = new Word(0)
+        sim.context.valC = 0
     }
 
     // TODO : status (AOK, STOP, etc...)
@@ -72,19 +71,19 @@ function fetch(sim : Sim) {
  */
 function decode(sim : Sim) {
     sim.context.srcA = gen_srcA();
-    if (sim.context.srcA != registers.none) {
+    if (sim.context.srcA != registers_enum.none) {
         sim.context.valA = sim.registers.read(sim.context.srcA);
     }
     else {
-        sim.context.valA = new Word(0);
+        sim.context.valA = 0;
     }
 
     sim.context.srcB = gen_srcB();
-    if (sim.context.srcB != registers.none) {
+    if (sim.context.srcB != registers_enum.none) {
         sim.context.valB = sim.registers.read(sim.context.srcB);
     }
     else {
-        sim.context.valB = new Word(0);
+        sim.context.valB = 0;
     }
 
     sim.context.dstE = gen_dstE();
@@ -123,7 +122,7 @@ function execute(sim : Sim) {
  */
 function memory(sim : Sim) {
     let mem_addr = gen_mem_addr();
-    let mem_data = new Word(gen_mem_data());
+    let mem_data = gen_mem_data();
 
     if (gen_mem_read()) {
         try {
@@ -154,12 +153,12 @@ function memory(sim : Sim) {
  * @param sim
  */
 function writeBack(sim : Sim) {
-    if (sim.context.dstE != registers.none) {
+    if (sim.context.dstE != registers_enum.none) {
         let valE = sim.context.valE;
         sim.registers.write(sim.context.dstE, valE);
     }
 
-    if (sim.context.dstM != registers.none) {
+    if (sim.context.dstM != registers_enum.none) {
         let valM = sim.context.valM;
         sim.registers.write(sim.context.dstM, valM);
     }
