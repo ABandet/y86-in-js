@@ -1,5 +1,5 @@
 import { Sim } from "./sim"
-import { Byte, Word } from "./memory"
+import { Memory } from "./memory"
 import { registers } from "./registers"
 
 // Declaration of HCL functions
@@ -34,8 +34,8 @@ function fetch(sim : Sim) {
     let byte = sim.memory.readByte(valp)
     valp++
     
-    sim.context.icode = byte.HI4()
-    sim.context.ifun = byte.LO4()
+    sim.context.icode = Memory.HI4(byte)
+    sim.context.ifun = Memory.LO4(byte)
 
     ctx = {
         instructionSet: sim.context.instructionSet,
@@ -46,8 +46,8 @@ function fetch(sim : Sim) {
         byte = sim.memory.readByte(valp)
         valp++
 
-        sim.context.ra = byte.HI4()
-        sim.context.rb = byte.LO4()
+        sim.context.ra = Memory.HI4(byte)
+        sim.context.rb = Memory.LO4(byte)
     } else {
         sim.context.ra = registers.none
         sim.context.rb = registers.none
@@ -55,9 +55,9 @@ function fetch(sim : Sim) {
 
     if(gen_need_valC()) {
         sim.context.valC = sim.memory.readRegister(valp)
-        valp += Word.SIZE
+        valp += Memory.WORD_SIZE
     } else {
-        sim.context.valC = new Word(0)
+        sim.context.valC = 0
     }
 
     // TODO : status (AOK, STOP, etc...)
@@ -76,7 +76,7 @@ function decode(sim : Sim) {
         sim.context.valA = sim.registers.read(sim.context.srcA);
     }
     else {
-        sim.context.valA = new Word(0);
+        sim.context.valA = 0;
     }
 
     sim.context.srcB = gen_srcB();
@@ -84,7 +84,7 @@ function decode(sim : Sim) {
         sim.context.valB = sim.registers.read(sim.context.srcB);
     }
     else {
-        sim.context.valB = new Word(0);
+        sim.context.valB = 0;
     }
 
     sim.context.dstE = gen_dstE();
@@ -123,7 +123,7 @@ function execute(sim : Sim) {
  */
 function memory(sim : Sim) {
     let mem_addr = gen_mem_addr();
-    let mem_data = new Word(gen_mem_data());
+    let mem_data = gen_mem_data();
 
     if (gen_mem_read()) {
         try {
