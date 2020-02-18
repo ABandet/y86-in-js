@@ -12,7 +12,7 @@ class SimulatorException {
 
 class MemoryException extends SimulatorException {
     constructor(address : number) {
-        super("Error while accessing address " + address.toString(16))
+        super("Error while accessing address 0x" + address.toString(16))
     }
 }
 

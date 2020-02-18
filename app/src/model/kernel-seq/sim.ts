@@ -1,7 +1,7 @@
 import { Registers } from "./registers"
 import { Context } from "./context";
 import { alufct } from "./aluEnum";
-import { Word, Memory } from "./memory";
+import { Memory } from "./memory";
 import * as stages from "./stages";
 import { simStatus } from "./status"
 import {Alu} from "./alu";

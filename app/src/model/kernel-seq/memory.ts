@@ -1,9 +1,13 @@
+import { MemoryException } from "../exceptions/simulatorException"
+
 class Memory {
     /**
      * The last reachable address.
      */
-    static LAST_ADDRESS : number = 0x1ffc
-    content : Word[] = []
+    static LAST_ADDRESS = 0x1ffc
+    static WORD_SIZE    = 4
+    
+    private _content    = new Uint8Array(Memory.LAST_ADDRESS)
 
     /**
      * Inserts a word starting at the given address.
@@ -16,9 +20,14 @@ class Memory {
      * @param address 
      * @param register
      */
-    writeRegister(address : number, register : Word) {
-        for(var i = 0; i < Word.SIZE; i++) {
-            this._writeByteInMemory(address + i, register.getByte(i))
+    writeRegister(address : number, register : number) {
+        if(address < 0 || address + Memory.WORD_SIZE > Memory.LAST_ADDRESS) {
+            throw new MemoryException(address)
+        }
+
+        for(var i = 0; i < Memory.WORD_SIZE; i++) {
+            this._content[address + i] = register & 0xff
+            register >>>= 8
         }
     }
 
@@ -32,11 +41,13 @@ class Memory {
      * and we read at 0x4, we will get the 0xddccbbaa word.
      * @param address 
      */
-    readRegister(address : number) : Word {
-        let register = new Word()
-        
-        for(var i = 0; i < Word.SIZE; i++) {
-            register.setByte(i, this.readByte(address + i))
+    readRegister(address : number) : number {
+        Memory._checkAddress(address, Memory.WORD_SIZE)
+
+        let register = this._content[address]
+
+        for(let i = 1; i < Memory.WORD_SIZE; i++) {
+            register |= this._content[address + i] << (i * 8)
         }
 
         return register
@@ -46,10 +57,68 @@ class Memory {
      * Returns the byte at the given address.
      * @param address 
      */
-    readByte(address : number) : Byte {
-        const byteOffset = address % Word.SIZE
+    readByte(address : number) : number {
+        Memory._checkAddress(address, 0)
 
-        return this._getWordView(address).getByte(byteOffset)
+        return this._content[address]
+    }
+
+    static byteArrayToWord(bytes : number[] = []) {
+        if(bytes.length > Memory.WORD_SIZE) {
+            throw "A word can not hold more than " + Memory.WORD_SIZE + " bytes (current : " + bytes.length + ")"
+        }
+
+        let value = 0
+        for(let i = 0; i < bytes.length; i++) {
+            if(!Memory.isByte(bytes[i])) {
+                throw "Can not insert something else than a byte on a word (byte : " + bytes[i] + ")"
+            }
+            value |= bytes[i] << (i * 8)
+        }
+
+        return value
+    }
+
+    static numberToByteArray(value : number) : number[] {
+        let bytes : number[] = []
+
+        while(value != 0) {
+            const byte = value & 0xff
+            bytes.push(byte)
+            value = (value - byte) / 256
+        }
+
+        return bytes
+    }
+
+    static isByte(value : number) : boolean {
+        return value >= -128 && value <= 255
+    }
+
+    /**
+     * Returns the 4 HSB of the current byte.
+     */
+    static HI4(value : number) : number {
+        if(!Memory.isByte(value)) {
+            throw "Memory.HI4() was expecting a byte as argument (current : " + value + ")"
+        }
+        return (value >> 4) & 0xf
+    }
+
+    /**
+     * Returns the 4 LSB of the current byte.
+     */
+    static LO4(value : number) : number {
+        if(!Memory.isByte(value)) {
+            throw "Memory.LO4() was expecting a byte as argument (current : " + value + ")"
+        }
+        return value & 0xf
+    }
+
+    private static _checkAddress(address : number, offset : number) {
+        if(address < 0 || address + offset > Memory.LAST_ADDRESS) {
+            throw new MemoryException(address)
+        }
     }
 
     /**
@@ -79,286 +148,19 @@ class Memory {
     
                 if(instructionsWithAddressSplitted.length == 2) {
                     const address = Number(instructionsWithAddressSplitted[0])
-                    const instruction = Number("0x" + instructionsWithAddressSplitted[1].trim())
+                    let instruction = Number("0x" + instructionsWithAddressSplitted[1].trim())
         
                     if(!Number.isNaN(address) && !Number.isNaN(instruction)) {
-                        const bytes = Byte.numberToBytes(instruction)
-                        let addressOffset = 0
-        
-                        for(let i = bytes.length - 1; i >= 0; i--) {
-                            this._writeByteInMemory(address + addressOffset, bytes[i])
-                            addressOffset++
+                        const bytes = Memory.numberToByteArray(instruction)
+                        
+                        for(let i = 0; i < bytes.length; i++) {
+                            this._content[address + bytes.length - i - 1] = bytes[i]
                         }
                     }
                 }
             }
         })
     }
-
-    /**
-     * Writes a byte at the given address.
-     * @param address 
-     * @param byte 
-     */
-    private _writeByteInMemory(address : number, byte : Byte) {
-        const byteOffset = address % Word.SIZE
-
-        this._getWord(address).setByte(byteOffset, byte)
-    }
-
-    /**
-     * Returns the word holding the byte contained at 
-     * the given address.
-     * @param address 
-     */
-    private _getWord(address : number) {        
-        Memory._checkPositionIsValid(address)
-        const wordPosition = Math.floor(address / Word.SIZE)
-
-        let wordAtAddress = this.content[wordPosition]
-        
-        if(!wordAtAddress) {
-            wordAtAddress = new Word()
-            this.content[wordPosition] = wordAtAddress
-        }
-
-        return wordAtAddress
-    }
-
-    /**
-     * Returns the word holding the byte contained at 
-     * the given address.
-     * If there is no word instanciated for this byte, returns
-     * an empty word and does not insert it into the memory.
-     * @param address 
-     */
-    private _getWordView(address : number) {        
-        Memory._checkPositionIsValid(address)
-        const wordPosition = Math.floor(address / Word.SIZE)
-
-        let wordAtAddress = this.content[wordPosition]
-        
-        if(!wordAtAddress) {
-            wordAtAddress = new Word()
-        }
-
-        return wordAtAddress
-    }
-
-    /**
-     * Checks if an address in memory can be accessed.
-     * @param address 
-     */
-    private static _checkPositionIsValid(address : number) {
-        let position = Math.floor(address / Word.SIZE)
-        let maxPosition = Math.floor(Memory.LAST_ADDRESS / Word.SIZE)
-        
-        if(position < 0 || position > maxPosition) {
-            throw "The address must be in [0;" + (Memory.LAST_ADDRESS + Word.SIZE - 1) + "] (current = " + address.toString(16) + ")"
-        }
-    }
 }
 
-/**
- * Represents an ordered set of bytes.
- */
-class Word {
-    /**
-     * The maximum value a word can hold.
-     */
-    static MAX_VALUE : number = 0xFFFFFFFF
-
-    /**
-     * The number of bytes a word contains.
-     */
-    static SIZE : number = 4
-
-    private _value : number = 0
-
-    constructor(value : number = 0) {
-        if(value < 0 || value > Word.MAX_VALUE) {
-            throw "Value is expected to be in [0;0xFFFFFFFF] (current : " + value.toString(16) + ")"
-        }
-
-        this._value = value
-    }
-
-    /**
-     * Returns the number representation of the given word.
-     */
-    toNumber() : number {
-        return this._value
-    }
-
-    /**
-     * Insert a byte at the given position.
-     * If the position is out of bound, an exception is thrown.
-     * @param position The position of the byte. Must be in [0; Word.SIZE[
-     * @param value The byte to set
-     */
-    setByte(position : number, value : Byte) {
-        Word._checkPositionIsValid(position)
-        
-        const offsetInBits = position * 8
-        const mask = shiftLeft(0xff, offsetInBits)
-        const byteToSet = shiftLeft(value.toNumber(), offsetInBits)
-
-        this._value |= mask
-        this._value ^= byteToSet
-        this._value ^= mask
-    }
-
-    /**
-     * Returns the byte at the given position.
-     * If the position is out of bound, an exception is thrown.
-     * @param position The position of the byte. Must be in [0; Word.SIZE[
-     */
-    getByte(position : number) : Byte {
-        Word._checkPositionIsValid(position)
-        
-        const offsetInBits = position * 8
-        
-        return new Byte((this._value >>> offsetInBits) & 0xff)
-    }
-
-    /**
-     * Checks if the given word is equals to the given word.
-     * @param other The other word to compare.
-     */
-    equals(other : Word) {
-        for(let i = 0; i < Word.SIZE; i++) {
-            if(this.getByte(i).toNumber() != other.getByte(i).toNumber()) {
-                return false
-            }
-        }
-        return true
-    }
-    
-    /**
-     * Performs 'plus' operation on two words.
-     * @param left 
-     * @param right 
-     */
-    static add(left : Word, right : Word) : Word {
-        return new Word(left._value + right._value)
-    }
-
-    /**
-     * Performs 'minus' operation on two words.
-     * @param left 
-     * @param right 
-     */
-    static substract(left : Word, right : Word) : Word {
-        return new Word(left._value - right._value)
-    }
-
-    /**
-     * Performs bitwise XOR on two words.
-     * @param left 
-     * @param right 
-     */
-    static xor(left : Word, right : Word) : Word {
-        return new Word(left._value ^ right._value)
-    }
-
-    /**
-     * Performs bitwise AND on two words.
-     * @param left 
-     * @param right 
-     */
-    static and(left : Word, right : Word) : Word {
-        return new Word(left._value & right._value)
-    }
-
-    /**
-     * Throw an exception if the given position is out of bound
-     * of the word.
-     * @param position The position to check
-     */
-    private static _checkPositionIsValid(position : number) {
-        if(position < 0 || position >= Word.SIZE) {
-            throw "Position must be in [0;" + (Word.SIZE - 1) + "]"
-        }
-    }
-}
-
-/**
- * Represents a byte, which is a number in [0;255]
- */
-class Byte {
-    private _value : number = 0
-
-    constructor(value : number = 0) {
-        Byte._checkNumberIsByte(value)
-        this._value = value
-    }
-
-    /**
-     * Returns the number representation of the current byte.
-     */
-    toNumber() : number {
-        return this._value
-    }
-
-    /**
-     * Returns the 4 HSB of the current byte.
-     */
-    HI4() : number {
-        return (this._value >> 4) & 0xf
-    }
-
-    /**
-     * Returns the 4 LSB of the current byte.
-     */
-    LO4() : number {
-        return this._value & 0xf
-    }
-
-    /**
-     * Can the given number be considered as a byte ?
-     * @param value 
-     */
-    static isByte(value : number) : boolean {
-        return value >= 0 && value <= 0xff
-    }
-
-    /**
-     * Converts a given number to a byte array.
-     * The LSB is at position 0.
-     * @param value the number to convert
-     */
-    static numberToBytes(value : number) : Byte[] {
-        let bytes : Byte[] = []
-
-        while(value != 0) {
-            const byte = value & 0xff
-            bytes.push(new Byte(byte))
-            value = (value - byte) / 256
-        }
-
-        return bytes
-    }
-
-    /**
-     * Throw an exception if the number can not
-     * be considered as a byte.
-     * @param value The number to check
-     */
-    private static _checkNumberIsByte(value : number) {
-        if(!Byte.isByte(value)) {
-            throw "A byte must be in [0;255] (current = " + value
-        }
-    }
-}
-
-/**
- * As JavaScript does not support shift on integers > 32 bits,
- * we use this to perform shift left operation.
- * @param value The value to shift
- * @param nBits The number of bits to shift
- */
-function shiftLeft(value : number, nBits : number) {
-    return value * Math.pow(2, nBits)
-}
-
-export { Byte, Word, Memory }
+export { Memory }

@@ -1,5 +1,5 @@
 import { registers } from "./registers"
-import { Word } from "./memory";
+import { Memory } from "./memory";
 import { CC } from "./cc";
 
 class Context {
@@ -12,11 +12,11 @@ class Context {
     ifun    : number = 0;
     ra      : number = registers.none;
     rb      : number = registers.none;
-    valC    : Word = new Word();
+    valC    : number = 0;
 
     // Registers output
-    valA    : Word = new Word();
-    valB    : Word = new Word();
+    valA    : number = 0;
+    valB    : number = 0;
     srcA    : number = registers.none;
     srcB    : number = registers.none;
 
@@ -25,18 +25,18 @@ class Context {
     dstM    : number = registers.none;
 
     // ALU input
-    aluA    : Word = new Word();
-    aluB    : Word = new Word();
+    aluA    : number = 0;
+    aluB    : number = 0;
 
     // ALU output
-    valE    : Word = new Word();
+    valE    : number = 0;
 
     // Condition flag
     cc      : CC = CC.NONE
     bcond   : boolean = false;
 
     // Memory output
-    valM    : Word = new Word();
+    valM    : number = 0;
 
     instructionSet = {}
 }
