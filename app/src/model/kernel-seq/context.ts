@@ -5,7 +5,6 @@ import { CC } from "./cc";
 class Context {
     // Inner state
     pc      : number = 0;
-    status  : number = 0;
     valP    : number = 0;
 
     // Instruction
