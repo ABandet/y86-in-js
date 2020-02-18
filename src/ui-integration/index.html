@@ -291,12 +291,12 @@ End:	ret                     # result must be abcd in %eax
     </script>
 
     <script type="text/template" id="tmpl_execution">
-        <div class="execution">
-            <div class="processorstate"></div>
+        <div class="execution horizontal-pane">
             <div class="inspector vertical-pane">
-                <div class="object"></div>
+                <div class="processorstate"></div>
                 <div class="registers-wrapper"></div>
             </div>
+            <div class="object"></div>
             <div class="memory"></div>
         </div>
     </script>
@@ -380,39 +380,6 @@ End:	ret                     # result must be abcd in %eax
         </div>
     </script>
 
-    <script type="text/template" id="tmpl_memory">
-        <h2>Memory</h2>
-        <div class="mem-header">
-            <div class="address">Addr</div>
-            <div class="value">Value</div>
-        </div>
-        <div class="mem-words-wrapper">
-            <div class="mem-words">
-                <div class="stack-pointers">
-                    <div class="ebp"><i class="fa fa-caret-left"></i> EBP</div>
-                    <div class="esp"><i class="fa fa-caret-left"></i> ESP</div>
-                </div>
-            </div>
-        </div>
-    </script>
-
-    <script type="text/template" id="tmpl_object_code">
-        <h2>Object code</h2>
-        <div class="lines-wrapper">
-            <div class="lines"></div>
-        </div>
-    </script>
-
-    <script type="text/template" id="tmpl_object_code_error">
-        <div class="line-no">Line <%= lineno %></div>
-        <div class="source"><%= source %></div>
-    </script>
-
-    <script type="text/template" id="tmpl_mem_word">
-        <div class="address"><%= address %></div>
-        <div class="value"><%= value %></div>
-    </script>
-
     <script type="text/template" id="tmpl_registers">
         <div class="column register_column">
             <h3>Registers</h3>
@@ -487,6 +454,39 @@ End:	ret                     # result must be abcd in %eax
                 <div class="value"><%= pc %></div>
             </div>
         </div>
+    </script>
+
+    <script type="text/template" id="tmpl_memory">
+        <h2>Memory</h2>
+        <div class="mem-header">
+            <div class="address">Addr</div>
+            <div class="value">Value</div>
+        </div>
+        <div class="mem-words-wrapper">
+            <div class="mem-words">
+                <div class="stack-pointers">
+                    <div class="ebp"><i class="fa fa-caret-left"></i> EBP</div>
+                    <div class="esp"><i class="fa fa-caret-left"></i> ESP</div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/template" id="tmpl_object_code">
+        <h2>Object code</h2>
+        <div class="lines-wrapper">
+            <div class="lines"></div>
+        </div>
+    </script>
+
+    <script type="text/template" id="tmpl_object_code_error">
+        <div class="line-no">Line <%= lineno %></div>
+        <div class="source"><%= source %></div>
+    </script>
+
+    <script type="text/template" id="tmpl_mem_word">
+        <div class="address"><%= address %></div>
+        <div class="value"><%= value %></div>
     </script>
 
     <script type="text/template" id="tmpl_hcl_editor">

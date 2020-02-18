@@ -42,6 +42,6 @@ var ExecutionView = Backbone.View.extend({
 
     resizeObjectView: function () {
         var $lines = this.$objcode.$('.lines-wrapper');
-        $lines.height($(window).height() - $lines.position().top - this.$('.registers-wrapper').height());
+        $lines.height($(window).height() - $lines.position().top );
     }
 });

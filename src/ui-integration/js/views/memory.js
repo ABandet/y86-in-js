@@ -28,9 +28,9 @@ var MemoryView = Backbone.View.extend({
 			this.resize();
 
 			// Widen the memory panel if there's a scroll bar.
-			var width = 386 - this.$('.stack-pointers').width()
-			this.$el.width(width);
-			this.$el.parent().width(width);
+			// var width = 250 - this.$('.stack-pointers').width()
+			// this.$el.width(width);
+			// this.$el.parent().width(width);
 		}.bind(this), 0);
 	},
 
