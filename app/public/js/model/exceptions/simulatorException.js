@@ -16,4 +16,10 @@ class MemoryException extends SimulatorException {
     }
 }
 exports.MemoryException = MemoryException;
+class HclException extends SimulatorException {
+    constructor(error) {
+        super("HCL : " + error);
+    }
+}
+exports.HclException = HclException;
 //# sourceMappingURL=simulatorException.js.map

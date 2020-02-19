@@ -5,6 +5,8 @@ import { Memory } from "./memory";
 import * as stages from "./stages";
 import { simStatus } from "./status"
 import {Alu} from "./alu";
+import { HclException } from "model/exceptions/simulatorException";
+import * as hcl from "./hcl"
 
 export class Sim {
     context: Context = new Context();
@@ -20,6 +22,7 @@ export class Sim {
 
     step() : simStatus {
         try {
+            hcl.setCtx(this.context)
             stages.decode(this)
             stages.fetch(this)
             stages.execute(this)

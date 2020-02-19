@@ -66,19 +66,20 @@
         return finalValue
     }
 
-    function generateIdentifiersVerificationJs(identifiersList) {
+    function generateIdentifiersVerificationJs(identifiersList, functionName) {
         if(identifiersList.length === 0) {
             return ""
         }
 
         jsOutput  = "   // Checks if some identifiers are undefined\n"
-        jsOutput += "   if((" + identifiersList[0] + ") === undefined"
-        
-        for(var i = 1; i < identifiersList.length; i++) {
-            jsOutput += " || (" + identifiersList[i] + ") === undefined"
-        }
 
-        return jsOutput + ") { throw \"Invalid identifier in HCL\" }\n\n"
+        for(var i = 0; i < identifiersList.length; i++) {
+            jsOutput += "   if((" + identifiersList[i] + ") === undefined) { throw \"HCL : " 
+            + identifiersList[i] + " is undefined in function '" + functionName + "'\" }\n"
+        }
+        jsOutput += "   // End of checks\n\n"
+        
+        return jsOutput
     }
 %}
 
@@ -136,7 +137,7 @@ final_expression
             * The js file is generated here in 3 steps.
             */
 
-            let jsOutput = ""
+            let jsOutput = "new function() {\n\n"
             // Render user's quotes --- step 1
             hcl2jsUtility.quoteList.forEach(function (item) {
                 jsOutput += item + "\n\n"
@@ -147,9 +148,9 @@ final_expression
                 const instrList = hcl2jsUtility.intDefinitions[name].definition
                 const identifiersList = hcl2jsUtility.intDefinitions[name].identifiersList
 
-                jsOutput += "export function gen_" + name + "() {\n\n"
+                jsOutput += "this." + name + " = () => {\n\n"
 
-                jsOutput += generateIdentifiersVerificationJs(identifiersList)
+                jsOutput += generateIdentifiersVerificationJs(identifiersList, name)
 
                 instrList.forEach(function (instr) {
                     jsOutput += "   " + instr + "\n"
@@ -163,12 +164,13 @@ final_expression
                 const instr = hcl2jsUtility.boolDefinitions[name].definition
                 const identifiersList = hcl2jsUtility.boolDefinitions[name].identifiersList
 
-                jsOutput += "export function gen_" + name + "() {\n"
-                jsOutput += generateIdentifiersVerificationJs(identifiersList)
+                jsOutput += "this." + name + " = () => {\n"
+                jsOutput += generateIdentifiersVerificationJs(identifiersList, name)
                 jsOutput += "   return " + instr + ";\n}\n\n"
             }
 
-            $$ = jsOutput
+            jsOutput += "}"
+            $$ = jsOutput 
             return $$
         }
     ;

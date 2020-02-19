@@ -16,4 +16,10 @@ class MemoryException extends SimulatorException {
     }
 }
 
-export { SimulatorException, MemoryException }
+class HclException extends SimulatorException {
+    constructor(error : string) {
+        super("HCL : " + error)
+    }
+}
+
+export { SimulatorException, MemoryException, HclException }

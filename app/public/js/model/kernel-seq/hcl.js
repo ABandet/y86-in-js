@@ -1,199 +1,367 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const stages_1 = require("./stages");
-function gen_srcA() {
-    if ((stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.rrmovl) === undefined || (stages_1.ctx.instructionSet.rmmovl) === undefined || (stages_1.ctx.instructionSet.alu) === undefined || (stages_1.ctx.instructionSet.pushl) === undefined || (stages_1.ctx.ra) === undefined || (stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.popl) === undefined || (stages_1.ctx.instructionSet.ret) === undefined || (stages_1.ctx.registers.esp) === undefined || (stages_1.ctx.registers.none) === undefined) {
-        throw "Invalid identifier in HCL";
+const simulatorException_1 = require("../exceptions/simulatorException");
+function call(name) {
+    if (!(hclHandler[name] instanceof Function)) {
+        throw new simulatorException_1.HclException(name + " function does not exist");
     }
-    if (((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.rrmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.rmmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.alu)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.pushl))) {
-        return stages_1.ctx.ra;
-    }
-    if (((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.popl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.ret))) {
-        return stages_1.ctx.registers.esp;
-    }
-    if (1) {
-        return stages_1.ctx.registers.none;
+    else {
+        return hclHandler[name]();
     }
 }
-exports.gen_srcA = gen_srcA;
-function gen_srcB() {
-    if ((stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.alu) === undefined || (stages_1.ctx.instructionSet.alui) === undefined || (stages_1.ctx.instructionSet.rmmovl) === undefined || (stages_1.ctx.instructionSet.mrmovl) === undefined || (stages_1.ctx.rb) === undefined || (stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.pushl) === undefined || (stages_1.ctx.instructionSet.popl) === undefined || (stages_1.ctx.instructionSet.call) === undefined || (stages_1.ctx.instructionSet.ret) === undefined || (stages_1.ctx.registers.esp) === undefined || (stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.loop) === undefined || (stages_1.ctx.registers.ecx) === undefined || (stages_1.ctx.registers.none) === undefined) {
-        throw "Invalid identifier in HCL";
+exports.call = call;
+function setHandler(handler) {
+    if (!(handler instanceof Object)) {
+        throw new simulatorException_1.HclException("The given handler is not an object (type : " + typeof handler + ")");
     }
-    if (((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.alu)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.alui)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.rmmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.mrmovl))) {
-        return stages_1.ctx.rb;
+    if (!(handler.ctx instanceof Object)) {
+        throw new simulatorException_1.HclException("The given handler has no ctx field or ctx is not an Object");
     }
-    if (((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.pushl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.popl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.call)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.ret))) {
-        return stages_1.ctx.registers.esp;
-    }
-    if (((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.loop))) {
-        return stages_1.ctx.registers.ecx;
-    }
-    if (1) {
-        return stages_1.ctx.registers.none;
-    }
+    hclHandler = handler;
 }
-exports.gen_srcB = gen_srcB;
-function gen_dstE() {
-    if ((stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.rrmovl) === undefined || (stages_1.ctx.instructionSet.irmovl) === undefined || (stages_1.ctx.instructionSet.alu) === undefined || (stages_1.ctx.instructionSet.alui) === undefined || (stages_1.ctx.rb) === undefined || (stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.pushl) === undefined || (stages_1.ctx.instructionSet.popl) === undefined || (stages_1.ctx.instructionSet.call) === undefined || (stages_1.ctx.instructionSet.ret) === undefined || (stages_1.ctx.registers.esp) === undefined || (stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.loop) === undefined || (stages_1.ctx.registers.ecx) === undefined || (stages_1.ctx.registers.none) === undefined) {
-        throw "Invalid identifier in HCL";
-    }
-    if (((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.rrmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.irmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.alu)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.alui))) {
-        return stages_1.ctx.rb;
-    }
-    if (((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.pushl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.popl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.call)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.ret))) {
-        return stages_1.ctx.registers.esp;
-    }
-    if (((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.loop))) {
-        return stages_1.ctx.registers.ecx;
-    }
-    if (1) {
-        return stages_1.ctx.registers.none;
-    }
+exports.setHandler = setHandler;
+function setCtx(ctx) {
+    hclHandler.ctx = ctx;
 }
-exports.gen_dstE = gen_dstE;
-function gen_dstM() {
-    if ((stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.mrmovl) === undefined || (stages_1.ctx.instructionSet.popl) === undefined || (stages_1.ctx.ra) === undefined || (stages_1.ctx.registers.none) === undefined) {
-        throw "Invalid identifier in HCL";
-    }
-    if (((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.mrmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.popl))) {
-        return stages_1.ctx.ra;
-    }
-    if (1) {
-        return stages_1.ctx.registers.none;
-    }
-}
-exports.gen_dstM = gen_dstM;
-function gen_aluA() {
-    if ((stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.rrmovl) === undefined || (stages_1.ctx.instructionSet.alu) === undefined || (stages_1.ctx.vala) === undefined || (stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.irmovl) === undefined || (stages_1.ctx.instructionSet.rmmovl) === undefined || (stages_1.ctx.instructionSet.mrmovl) === undefined || (stages_1.ctx.instructionSet.alui) === undefined || (stages_1.ctx.valc) === undefined || (stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.call) === undefined || (stages_1.ctx.instructionSet.pushl) === undefined || (stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.ret) === undefined || (stages_1.ctx.instructionSet.popl) === undefined || (stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.loop) === undefined) {
-        throw "Invalid identifier in HCL";
-    }
-    if (((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.rrmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.alu))) {
-        return stages_1.ctx.vala;
-    }
-    if (((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.irmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.rmmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.mrmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.alui))) {
-        return stages_1.ctx.valc;
-    }
-    if (((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.call)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.pushl))) {
-        return -4;
-    }
-    if (((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.ret)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.popl))) {
-        return 4;
-    }
-    if (((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.loop))) {
-        return -1;
-    }
-}
-exports.gen_aluA = gen_aluA;
-function gen_aluB() {
-    if ((stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.rmmovl) === undefined || (stages_1.ctx.instructionSet.mrmovl) === undefined || (stages_1.ctx.instructionSet.alu) === undefined || (stages_1.ctx.instructionSet.alui) === undefined || (stages_1.ctx.instructionSet.call) === undefined || (stages_1.ctx.instructionSet.pushl) === undefined || (stages_1.ctx.instructionSet.ret) === undefined || (stages_1.ctx.instructionSet.popl) === undefined || (stages_1.ctx.instructionSet.loop) === undefined || (stages_1.ctx.valb) === undefined || (stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.rrmovl) === undefined || (stages_1.ctx.instructionSet.irmovl) === undefined) {
-        throw "Invalid identifier in HCL";
-    }
-    if (((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.rmmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.mrmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.alu)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.alui)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.call)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.pushl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.ret)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.popl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.loop))) {
-        return stages_1.ctx.valb;
-    }
-    if (((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.rrmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.irmovl))) {
-        return 0;
-    }
-}
-exports.gen_aluB = gen_aluB;
-function gen_alufun() {
-    if ((stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.alu) === undefined || (stages_1.ctx.instructionSet.alui) === undefined || (stages_1.ctx.ifun) === undefined || (stages_1.ctx.alufct.A_ADD) === undefined) {
-        throw "Invalid identifier in HCL";
-    }
-    if (((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.alu)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.alui))) {
-        return stages_1.ctx.ifun;
-    }
-    if (1) {
-        return stages_1.ctx.alufct.A_ADD;
-    }
-}
-exports.gen_alufun = gen_alufun;
-function gen_mem_addr() {
-    if ((stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.rmmovl) === undefined || (stages_1.ctx.instructionSet.pushl) === undefined || (stages_1.ctx.instructionSet.call) === undefined || (stages_1.ctx.instructionSet.mrmovl) === undefined || (stages_1.ctx.vale) === undefined || (stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.popl) === undefined || (stages_1.ctx.instructionSet.ret) === undefined || (stages_1.ctx.vala) === undefined) {
-        throw "Invalid identifier in HCL";
-    }
-    if (((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.rmmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.pushl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.call)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.mrmovl))) {
-        return stages_1.ctx.vale;
-    }
-    if (((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.popl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.ret))) {
-        return stages_1.ctx.vala;
-    }
-}
-exports.gen_mem_addr = gen_mem_addr;
-function gen_mem_data() {
-    if ((stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.rmmovl) === undefined || (stages_1.ctx.instructionSet.pushl) === undefined || (stages_1.ctx.vala) === undefined || (stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.call) === undefined || (stages_1.ctx.valp) === undefined) {
-        throw "Invalid identifier in HCL";
-    }
-    if (((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.rmmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.pushl))) {
-        return stages_1.ctx.vala;
-    }
-    if (stages_1.ctx.icode == stages_1.ctx.instructionSet.call) {
-        return stages_1.ctx.valp;
-    }
-}
-exports.gen_mem_data = gen_mem_data;
-function gen_new_pc() {
-    if ((stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.call) === undefined || (stages_1.ctx.valc) === undefined || (stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.jxx) === undefined || (stages_1.ctx.bcond) === undefined || (stages_1.ctx.valc) === undefined || (stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.ret) === undefined || (stages_1.ctx.valm) === undefined || (stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.loop) === undefined || (stages_1.ctx.vale) === undefined || (stages_1.ctx.valc) === undefined || (stages_1.ctx.valp) === undefined) {
-        throw "Invalid identifier in HCL";
-    }
-    if (stages_1.ctx.icode == stages_1.ctx.instructionSet.call) {
-        return stages_1.ctx.valc;
-    }
-    if (stages_1.ctx.icode == stages_1.ctx.instructionSet.jxx && stages_1.ctx.bcond) {
-        return stages_1.ctx.valc;
-    }
-    if (stages_1.ctx.icode == stages_1.ctx.instructionSet.ret) {
-        return stages_1.ctx.valm;
-    }
-    if (stages_1.ctx.icode == stages_1.ctx.instructionSet.loop && stages_1.ctx.vale != 0) {
-        return stages_1.ctx.valc;
-    }
-    if (1) {
-        return stages_1.ctx.valp;
-    }
-}
-exports.gen_new_pc = gen_new_pc;
-function gen_need_regids() {
-    if ((stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.rrmovl) === undefined || (stages_1.ctx.instructionSet.alu) === undefined || (stages_1.ctx.instructionSet.alui) === undefined || (stages_1.ctx.instructionSet.pushl) === undefined || (stages_1.ctx.instructionSet.popl) === undefined || (stages_1.ctx.instructionSet.irmovl) === undefined || (stages_1.ctx.instructionSet.rmmovl) === undefined || (stages_1.ctx.instructionSet.mrmovl) === undefined) {
-        throw "Invalid identifier in HCL";
-    }
-    return ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.rrmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.alu)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.alui)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.pushl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.popl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.irmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.rmmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.mrmovl));
-}
-exports.gen_need_regids = gen_need_regids;
-function gen_need_valC() {
-    if ((stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.irmovl) === undefined || (stages_1.ctx.instructionSet.rmmovl) === undefined || (stages_1.ctx.instructionSet.mrmovl) === undefined || (stages_1.ctx.instructionSet.jxx) === undefined || (stages_1.ctx.instructionSet.call) === undefined || (stages_1.ctx.instructionSet.loop) === undefined) {
-        throw "Invalid identifier in HCL";
-    }
-    return ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.irmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.rmmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.mrmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.jxx)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.call)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.loop));
-}
-exports.gen_need_valC = gen_need_valC;
-function gen_instr_valid() {
-    if ((stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.nop) === undefined || (stages_1.ctx.instructionSet.halt) === undefined || (stages_1.ctx.instructionSet.rrmovl) === undefined || (stages_1.ctx.instructionSet.irmovl) === undefined || (stages_1.ctx.instructionSet.rmmovl) === undefined || (stages_1.ctx.instructionSet.mrmovl) === undefined || (stages_1.ctx.instructionSet.alu) === undefined || (stages_1.ctx.instructionSet.alui) === undefined || (stages_1.ctx.instructionSet.jxx) === undefined || (stages_1.ctx.instructionSet.call) === undefined || (stages_1.ctx.instructionSet.ret) === undefined || (stages_1.ctx.instructionSet.pushl) === undefined || (stages_1.ctx.instructionSet.popl) === undefined || (stages_1.ctx.instructionSet.loop) === undefined) {
-        throw "Invalid identifier in HCL";
-    }
-    return ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.nop)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.halt)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.rrmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.irmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.rmmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.mrmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.alu)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.alui)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.jxx)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.call)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.ret)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.pushl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.popl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.loop));
-}
-exports.gen_instr_valid = gen_instr_valid;
-function gen_set_cc() {
-    if ((stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.alu) === undefined || (stages_1.ctx.instructionSet.alui) === undefined) {
-        throw "Invalid identifier in HCL";
-    }
-    return ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.alu)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.alui));
-}
-exports.gen_set_cc = gen_set_cc;
-function gen_mem_read() {
-    if ((stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.mrmovl) === undefined || (stages_1.ctx.instructionSet.popl) === undefined || (stages_1.ctx.instructionSet.ret) === undefined) {
-        throw "Invalid identifier in HCL";
-    }
-    return ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.mrmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.popl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.ret));
-}
-exports.gen_mem_read = gen_mem_read;
-function gen_mem_write() {
-    if ((stages_1.ctx.icode) === undefined || (stages_1.ctx.instructionSet.rmmovl) === undefined || (stages_1.ctx.instructionSet.pushl) === undefined || (stages_1.ctx.instructionSet.call) === undefined) {
-        throw "Invalid identifier in HCL";
-    }
-    return ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.rmmovl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.pushl)) || ((stages_1.ctx.icode) === (stages_1.ctx.instructionSet.call));
-}
-exports.gen_mem_write = gen_mem_write;
+exports.setCtx = setCtx;
+let hclHandler = eval(`new function() {
+
+   this.externCtx = {}
+   
+   let ctx = this.externCtx
+   
+   this.srcA = () => {
+   
+      // Checks if some identifiers are undefined
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'srcA'" }
+      if((ctx.instructionSet.rrmovl) === undefined) { throw "HCL : ctx.instructionSet.rrmovl is undefined in function 'srcA'" }
+      if((ctx.instructionSet.rmmovl) === undefined) { throw "HCL : ctx.instructionSet.rmmovl is undefined in function 'srcA'" }
+      if((ctx.instructionSet.alu) === undefined) { throw "HCL : ctx.instructionSet.alu is undefined in function 'srcA'" }
+      if((ctx.instructionSet.pushl) === undefined) { throw "HCL : ctx.instructionSet.pushl is undefined in function 'srcA'" }
+      if((ctx.ra) === undefined) { throw "HCL : ctx.ra is undefined in function 'srcA'" }
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'srcA'" }
+      if((ctx.instructionSet.popl) === undefined) { throw "HCL : ctx.instructionSet.popl is undefined in function 'srcA'" }
+      if((ctx.instructionSet.ret) === undefined) { throw "HCL : ctx.instructionSet.ret is undefined in function 'srcA'" }
+      if((ctx.registers.esp) === undefined) { throw "HCL : ctx.registers.esp is undefined in function 'srcA'" }
+      if((ctx.registers.none) === undefined) { throw "HCL : ctx.registers.none is undefined in function 'srcA'" }
+      // End of checks
+   
+      if(((ctx.icode) === (ctx.instructionSet.rrmovl)) || ((ctx.icode) === (ctx.instructionSet.rmmovl)) || ((ctx.icode) === (ctx.instructionSet.alu)) || ((ctx.icode) === (ctx.instructionSet.pushl))) { return ctx.ra; } 
+   
+      if(((ctx.icode) === (ctx.instructionSet.popl)) || ((ctx.icode) === (ctx.instructionSet.ret))) { return ctx.registers.esp; } 
+   
+      if(1) { return ctx.registers.none; } 
+   
+   }
+   
+   this.srcB = () => {
+   
+      // Checks if some identifiers are undefined
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'srcB'" }
+      if((ctx.instructionSet.alu) === undefined) { throw "HCL : ctx.instructionSet.alu is undefined in function 'srcB'" }
+      if((ctx.instructionSet.alui) === undefined) { throw "HCL : ctx.instructionSet.alui is undefined in function 'srcB'" }
+      if((ctx.instructionSet.rmmovl) === undefined) { throw "HCL : ctx.instructionSet.rmmovl is undefined in function 'srcB'" }
+      if((ctx.instructionSet.mrmovl) === undefined) { throw "HCL : ctx.instructionSet.mrmovl is undefined in function 'srcB'" }
+      if((ctx.rb) === undefined) { throw "HCL : ctx.rb is undefined in function 'srcB'" }
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'srcB'" }
+      if((ctx.instructionSet.pushl) === undefined) { throw "HCL : ctx.instructionSet.pushl is undefined in function 'srcB'" }
+      if((ctx.instructionSet.popl) === undefined) { throw "HCL : ctx.instructionSet.popl is undefined in function 'srcB'" }
+      if((ctx.instructionSet.call) === undefined) { throw "HCL : ctx.instructionSet.call is undefined in function 'srcB'" }
+      if((ctx.instructionSet.ret) === undefined) { throw "HCL : ctx.instructionSet.ret is undefined in function 'srcB'" }
+      if((ctx.registers.esp) === undefined) { throw "HCL : ctx.registers.esp is undefined in function 'srcB'" }
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'srcB'" }
+      if((ctx.instructionSet.loop) === undefined) { throw "HCL : ctx.instructionSet.loop is undefined in function 'srcB'" }
+      if((ctx.registers.ecx) === undefined) { throw "HCL : ctx.registers.ecx is undefined in function 'srcB'" }
+      if((ctx.registers.none) === undefined) { throw "HCL : ctx.registers.none is undefined in function 'srcB'" }
+      // End of checks
+   
+      if(((ctx.icode) === (ctx.instructionSet.alu)) || ((ctx.icode) === (ctx.instructionSet.alui)) || ((ctx.icode) === (ctx.instructionSet.rmmovl)) || ((ctx.icode) === (ctx.instructionSet.mrmovl))) { return ctx.rb; } 
+   
+      if(((ctx.icode) === (ctx.instructionSet.pushl)) || ((ctx.icode) === (ctx.instructionSet.popl)) || ((ctx.icode) === (ctx.instructionSet.call)) || ((ctx.icode) === (ctx.instructionSet.ret))) { return ctx.registers.esp; } 
+   
+      if(((ctx.icode) === (ctx.instructionSet.loop))) { return ctx.registers.ecx; } 
+   
+      if(1) { return ctx.registers.none; } 
+   
+   }
+   
+   this.dstE = () => {
+   
+      // Checks if some identifiers are undefined
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'dstE'" }
+      if((ctx.instructionSet.rrmovl) === undefined) { throw "HCL : ctx.instructionSet.rrmovl is undefined in function 'dstE'" }
+      if((ctx.instructionSet.irmovl) === undefined) { throw "HCL : ctx.instructionSet.irmovl is undefined in function 'dstE'" }
+      if((ctx.instructionSet.alu) === undefined) { throw "HCL : ctx.instructionSet.alu is undefined in function 'dstE'" }
+      if((ctx.instructionSet.alui) === undefined) { throw "HCL : ctx.instructionSet.alui is undefined in function 'dstE'" }
+      if((ctx.rb) === undefined) { throw "HCL : ctx.rb is undefined in function 'dstE'" }
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'dstE'" }
+      if((ctx.instructionSet.pushl) === undefined) { throw "HCL : ctx.instructionSet.pushl is undefined in function 'dstE'" }
+      if((ctx.instructionSet.popl) === undefined) { throw "HCL : ctx.instructionSet.popl is undefined in function 'dstE'" }
+      if((ctx.instructionSet.call) === undefined) { throw "HCL : ctx.instructionSet.call is undefined in function 'dstE'" }
+      if((ctx.instructionSet.ret) === undefined) { throw "HCL : ctx.instructionSet.ret is undefined in function 'dstE'" }
+      if((ctx.registers.esp) === undefined) { throw "HCL : ctx.registers.esp is undefined in function 'dstE'" }
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'dstE'" }
+      if((ctx.instructionSet.loop) === undefined) { throw "HCL : ctx.instructionSet.loop is undefined in function 'dstE'" }
+      if((ctx.registers.ecx) === undefined) { throw "HCL : ctx.registers.ecx is undefined in function 'dstE'" }
+      if((ctx.registers.none) === undefined) { throw "HCL : ctx.registers.none is undefined in function 'dstE'" }
+      // End of checks
+   
+      if(((ctx.icode) === (ctx.instructionSet.rrmovl)) || ((ctx.icode) === (ctx.instructionSet.irmovl)) || ((ctx.icode) === (ctx.instructionSet.alu)) || ((ctx.icode) === (ctx.instructionSet.alui))) { return ctx.rb; } 
+   
+      if(((ctx.icode) === (ctx.instructionSet.pushl)) || ((ctx.icode) === (ctx.instructionSet.popl)) || ((ctx.icode) === (ctx.instructionSet.call)) || ((ctx.icode) === (ctx.instructionSet.ret))) { return ctx.registers.esp; } 
+   
+      if(((ctx.icode) === (ctx.instructionSet.loop))) { return ctx.registers.ecx; } 
+   
+      if(1) { return ctx.registers.none; } 
+   
+   }
+   
+   this.dstM = () => {
+   
+      // Checks if some identifiers are undefined
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'dstM'" }
+      if((ctx.instructionSet.mrmovl) === undefined) { throw "HCL : ctx.instructionSet.mrmovl is undefined in function 'dstM'" }
+      if((ctx.instructionSet.popl) === undefined) { throw "HCL : ctx.instructionSet.popl is undefined in function 'dstM'" }
+      if((ctx.ra) === undefined) { throw "HCL : ctx.ra is undefined in function 'dstM'" }
+      if((ctx.registers.none) === undefined) { throw "HCL : ctx.registers.none is undefined in function 'dstM'" }
+      // End of checks
+   
+      if(((ctx.icode) === (ctx.instructionSet.mrmovl)) || ((ctx.icode) === (ctx.instructionSet.popl))) { return ctx.ra; } 
+   
+      if(1) { return ctx.registers.none; } 
+   
+   }
+   
+   this.aluA = () => {
+   
+      // Checks if some identifiers are undefined
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'aluA'" }
+      if((ctx.instructionSet.rrmovl) === undefined) { throw "HCL : ctx.instructionSet.rrmovl is undefined in function 'aluA'" }
+      if((ctx.instructionSet.alu) === undefined) { throw "HCL : ctx.instructionSet.alu is undefined in function 'aluA'" }
+      if((ctx.vala) === undefined) { throw "HCL : ctx.vala is undefined in function 'aluA'" }
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'aluA'" }
+      if((ctx.instructionSet.irmovl) === undefined) { throw "HCL : ctx.instructionSet.irmovl is undefined in function 'aluA'" }
+      if((ctx.instructionSet.rmmovl) === undefined) { throw "HCL : ctx.instructionSet.rmmovl is undefined in function 'aluA'" }
+      if((ctx.instructionSet.mrmovl) === undefined) { throw "HCL : ctx.instructionSet.mrmovl is undefined in function 'aluA'" }
+      if((ctx.instructionSet.alui) === undefined) { throw "HCL : ctx.instructionSet.alui is undefined in function 'aluA'" }
+      if((ctx.valc) === undefined) { throw "HCL : ctx.valc is undefined in function 'aluA'" }
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'aluA'" }
+      if((ctx.instructionSet.call) === undefined) { throw "HCL : ctx.instructionSet.call is undefined in function 'aluA'" }
+      if((ctx.instructionSet.pushl) === undefined) { throw "HCL : ctx.instructionSet.pushl is undefined in function 'aluA'" }
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'aluA'" }
+      if((ctx.instructionSet.ret) === undefined) { throw "HCL : ctx.instructionSet.ret is undefined in function 'aluA'" }
+      if((ctx.instructionSet.popl) === undefined) { throw "HCL : ctx.instructionSet.popl is undefined in function 'aluA'" }
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'aluA'" }
+      if((ctx.instructionSet.loop) === undefined) { throw "HCL : ctx.instructionSet.loop is undefined in function 'aluA'" }
+      // End of checks
+   
+      if(((ctx.icode) === (ctx.instructionSet.rrmovl)) || ((ctx.icode) === (ctx.instructionSet.alu))) { return ctx.vala; } 
+   
+      if(((ctx.icode) === (ctx.instructionSet.irmovl)) || ((ctx.icode) === (ctx.instructionSet.rmmovl)) || ((ctx.icode) === (ctx.instructionSet.mrmovl)) || ((ctx.icode) === (ctx.instructionSet.alui))) { return ctx.valc; } 
+   
+      if(((ctx.icode) === (ctx.instructionSet.call)) || ((ctx.icode) === (ctx.instructionSet.pushl))) { return -4; } 
+   
+      if(((ctx.icode) === (ctx.instructionSet.ret)) || ((ctx.icode) === (ctx.instructionSet.popl))) { return 4; } 
+   
+      if(((ctx.icode) === (ctx.instructionSet.loop))) { return -1; } 
+   
+   }
+   
+   this.aluB = () => {
+   
+      // Checks if some identifiers are undefined
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'aluB'" }
+      if((ctx.instructionSet.rmmovl) === undefined) { throw "HCL : ctx.instructionSet.rmmovl is undefined in function 'aluB'" }
+      if((ctx.instructionSet.mrmovl) === undefined) { throw "HCL : ctx.instructionSet.mrmovl is undefined in function 'aluB'" }
+      if((ctx.instructionSet.alu) === undefined) { throw "HCL : ctx.instructionSet.alu is undefined in function 'aluB'" }
+      if((ctx.instructionSet.alui) === undefined) { throw "HCL : ctx.instructionSet.alui is undefined in function 'aluB'" }
+      if((ctx.instructionSet.call) === undefined) { throw "HCL : ctx.instructionSet.call is undefined in function 'aluB'" }
+      if((ctx.instructionSet.pushl) === undefined) { throw "HCL : ctx.instructionSet.pushl is undefined in function 'aluB'" }
+      if((ctx.instructionSet.ret) === undefined) { throw "HCL : ctx.instructionSet.ret is undefined in function 'aluB'" }
+      if((ctx.instructionSet.popl) === undefined) { throw "HCL : ctx.instructionSet.popl is undefined in function 'aluB'" }
+      if((ctx.instructionSet.loop) === undefined) { throw "HCL : ctx.instructionSet.loop is undefined in function 'aluB'" }
+      if((ctx.valb) === undefined) { throw "HCL : ctx.valb is undefined in function 'aluB'" }
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'aluB'" }
+      if((ctx.instructionSet.rrmovl) === undefined) { throw "HCL : ctx.instructionSet.rrmovl is undefined in function 'aluB'" }
+      if((ctx.instructionSet.irmovl) === undefined) { throw "HCL : ctx.instructionSet.irmovl is undefined in function 'aluB'" }
+      // End of checks
+   
+      if(((ctx.icode) === (ctx.instructionSet.rmmovl)) || ((ctx.icode) === (ctx.instructionSet.mrmovl)) || ((ctx.icode) === (ctx.instructionSet.alu)) || ((ctx.icode) === (ctx.instructionSet.alui)) || ((ctx.icode) === (ctx.instructionSet.call)) || ((ctx.icode) === (ctx.instructionSet.pushl)) || ((ctx.icode) === (ctx.instructionSet.ret)) || ((ctx.icode) === (ctx.instructionSet.popl)) || ((ctx.icode) === (ctx.instructionSet.loop))) { return ctx.valb; } 
+   
+      if(((ctx.icode) === (ctx.instructionSet.rrmovl)) || ((ctx.icode) === (ctx.instructionSet.irmovl))) { return 0; } 
+   
+   }
+   
+   this.alufun = () => {
+   
+      // Checks if some identifiers are undefined
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'alufun'" }
+      if((ctx.instructionSet.alu) === undefined) { throw "HCL : ctx.instructionSet.alu is undefined in function 'alufun'" }
+      if((ctx.instructionSet.alui) === undefined) { throw "HCL : ctx.instructionSet.alui is undefined in function 'alufun'" }
+      if((ctx.ifun) === undefined) { throw "HCL : ctx.ifun is undefined in function 'alufun'" }
+      if((ctx.alufct.A_ADD) === undefined) { throw "HCL : ctx.alufct.A_ADD is undefined in function 'alufun'" }
+      // End of checks
+   
+      if(((ctx.icode) === (ctx.instructionSet.alu)) || ((ctx.icode) === (ctx.instructionSet.alui))) { return ctx.ifun; } 
+   
+      if(1) { return ctx.alufct.A_ADD; } 
+   
+   }
+   
+   this.mem_addr = () => {
+   
+      // Checks if some identifiers are undefined
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'mem_addr'" }
+      if((ctx.instructionSet.rmmovl) === undefined) { throw "HCL : ctx.instructionSet.rmmovl is undefined in function 'mem_addr'" }
+      if((ctx.instructionSet.pushl) === undefined) { throw "HCL : ctx.instructionSet.pushl is undefined in function 'mem_addr'" }
+      if((ctx.instructionSet.call) === undefined) { throw "HCL : ctx.instructionSet.call is undefined in function 'mem_addr'" }
+      if((ctx.instructionSet.mrmovl) === undefined) { throw "HCL : ctx.instructionSet.mrmovl is undefined in function 'mem_addr'" }
+      if((ctx.vale) === undefined) { throw "HCL : ctx.vale is undefined in function 'mem_addr'" }
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'mem_addr'" }
+      if((ctx.instructionSet.popl) === undefined) { throw "HCL : ctx.instructionSet.popl is undefined in function 'mem_addr'" }
+      if((ctx.instructionSet.ret) === undefined) { throw "HCL : ctx.instructionSet.ret is undefined in function 'mem_addr'" }
+      if((ctx.vala) === undefined) { throw "HCL : ctx.vala is undefined in function 'mem_addr'" }
+      // End of checks
+   
+      if(((ctx.icode) === (ctx.instructionSet.rmmovl)) || ((ctx.icode) === (ctx.instructionSet.pushl)) || ((ctx.icode) === (ctx.instructionSet.call)) || ((ctx.icode) === (ctx.instructionSet.mrmovl))) { return ctx.vale; } 
+   
+      if(((ctx.icode) === (ctx.instructionSet.popl)) || ((ctx.icode) === (ctx.instructionSet.ret))) { return ctx.vala; } 
+   
+   }
+   
+   this.mem_data = () => {
+   
+      // Checks if some identifiers are undefined
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'mem_data'" }
+      if((ctx.instructionSet.rmmovl) === undefined) { throw "HCL : ctx.instructionSet.rmmovl is undefined in function 'mem_data'" }
+      if((ctx.instructionSet.pushl) === undefined) { throw "HCL : ctx.instructionSet.pushl is undefined in function 'mem_data'" }
+      if((ctx.vala) === undefined) { throw "HCL : ctx.vala is undefined in function 'mem_data'" }
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'mem_data'" }
+      if((ctx.instructionSet.call) === undefined) { throw "HCL : ctx.instructionSet.call is undefined in function 'mem_data'" }
+      if((ctx.valp) === undefined) { throw "HCL : ctx.valp is undefined in function 'mem_data'" }
+      // End of checks
+   
+      if(((ctx.icode) === (ctx.instructionSet.rmmovl)) || ((ctx.icode) === (ctx.instructionSet.pushl))) { return ctx.vala; } 
+   
+      if(ctx.icode == ctx.instructionSet.call) { return ctx.valp; } 
+   
+   }
+   
+   this.new_pc = () => {
+   
+      // Checks if some identifiers are undefined
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'new_pc'" }
+      if((ctx.instructionSet.call) === undefined) { throw "HCL : ctx.instructionSet.call is undefined in function 'new_pc'" }
+      if((ctx.valc) === undefined) { throw "HCL : ctx.valc is undefined in function 'new_pc'" }
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'new_pc'" }
+      if((ctx.instructionSet.jxx) === undefined) { throw "HCL : ctx.instructionSet.jxx is undefined in function 'new_pc'" }
+      if((ctx.bcond) === undefined) { throw "HCL : ctx.bcond is undefined in function 'new_pc'" }
+      if((ctx.valc) === undefined) { throw "HCL : ctx.valc is undefined in function 'new_pc'" }
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'new_pc'" }
+      if((ctx.instructionSet.ret) === undefined) { throw "HCL : ctx.instructionSet.ret is undefined in function 'new_pc'" }
+      if((ctx.valm) === undefined) { throw "HCL : ctx.valm is undefined in function 'new_pc'" }
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'new_pc'" }
+      if((ctx.instructionSet.loop) === undefined) { throw "HCL : ctx.instructionSet.loop is undefined in function 'new_pc'" }
+      if((ctx.vale) === undefined) { throw "HCL : ctx.vale is undefined in function 'new_pc'" }
+      if((ctx.valc) === undefined) { throw "HCL : ctx.valc is undefined in function 'new_pc'" }
+      if((ctx.valp) === undefined) { throw "HCL : ctx.valp is undefined in function 'new_pc'" }
+      // End of checks
+   
+      if(ctx.icode == ctx.instructionSet.call) { return ctx.valc; } 
+   
+      if(ctx.icode == ctx.instructionSet.jxx && ctx.bcond) { return ctx.valc; } 
+   
+      if(ctx.icode == ctx.instructionSet.ret) { return ctx.valm; } 
+   
+      if(ctx.icode == ctx.instructionSet.loop && ctx.vale != 0) { return ctx.valc; } 
+   
+      if(1) { return ctx.valp; } 
+   
+   }
+   
+   this.need_regids = () => {
+      // Checks if some identifiers are undefined
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'need_regids'" }
+      if((ctx.instructionSet.rrmovl) === undefined) { throw "HCL : ctx.instructionSet.rrmovl is undefined in function 'need_regids'" }
+      if((ctx.instructionSet.alu) === undefined) { throw "HCL : ctx.instructionSet.alu is undefined in function 'need_regids'" }
+      if((ctx.instructionSet.alui) === undefined) { throw "HCL : ctx.instructionSet.alui is undefined in function 'need_regids'" }
+      if((ctx.instructionSet.pushl) === undefined) { throw "HCL : ctx.instructionSet.pushl is undefined in function 'need_regids'" }
+      if((ctx.instructionSet.popl) === undefined) { throw "HCL : ctx.instructionSet.popl is undefined in function 'need_regids'" }
+      if((ctx.instructionSet.irmovl) === undefined) { throw "HCL : ctx.instructionSet.irmovl is undefined in function 'need_regids'" }
+      if((ctx.instructionSet.rmmovl) === undefined) { throw "HCL : ctx.instructionSet.rmmovl is undefined in function 'need_regids'" }
+      if((ctx.instructionSet.mrmovl) === undefined) { throw "HCL : ctx.instructionSet.mrmovl is undefined in function 'need_regids'" }
+      // End of checks
+   
+      return ((ctx.icode) === (ctx.instructionSet.rrmovl)) || ((ctx.icode) === (ctx.instructionSet.alu)) || ((ctx.icode) === (ctx.instructionSet.alui)) || ((ctx.icode) === (ctx.instructionSet.pushl)) || ((ctx.icode) === (ctx.instructionSet.popl)) || ((ctx.icode) === (ctx.instructionSet.irmovl)) || ((ctx.icode) === (ctx.instructionSet.rmmovl)) || ((ctx.icode) === (ctx.instructionSet.mrmovl));
+   }
+   
+   this.need_valC = () => {
+      // Checks if some identifiers are undefined
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'need_valC'" }
+      if((ctx.instructionSet.irmovl) === undefined) { throw "HCL : ctx.instructionSet.irmovl is undefined in function 'need_valC'" }
+      if((ctx.instructionSet.rmmovl) === undefined) { throw "HCL : ctx.instructionSet.rmmovl is undefined in function 'need_valC'" }
+      if((ctx.instructionSet.mrmovl) === undefined) { throw "HCL : ctx.instructionSet.mrmovl is undefined in function 'need_valC'" }
+      if((ctx.instructionSet.jxx) === undefined) { throw "HCL : ctx.instructionSet.jxx is undefined in function 'need_valC'" }
+      if((ctx.instructionSet.call) === undefined) { throw "HCL : ctx.instructionSet.call is undefined in function 'need_valC'" }
+      if((ctx.instructionSet.loop) === undefined) { throw "HCL : ctx.instructionSet.loop is undefined in function 'need_valC'" }
+      // End of checks
+   
+      return ((ctx.icode) === (ctx.instructionSet.irmovl)) || ((ctx.icode) === (ctx.instructionSet.rmmovl)) || ((ctx.icode) === (ctx.instructionSet.mrmovl)) || ((ctx.icode) === (ctx.instructionSet.jxx)) || ((ctx.icode) === (ctx.instructionSet.call)) || ((ctx.icode) === (ctx.instructionSet.loop));
+   }
+   
+   this.instr_valid = () => {
+      // Checks if some identifiers are undefined
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'instr_valid'" }
+      if((ctx.instructionSet.nop) === undefined) { throw "HCL : ctx.instructionSet.nop is undefined in function 'instr_valid'" }
+      if((ctx.instructionSet.halt) === undefined) { throw "HCL : ctx.instructionSet.halt is undefined in function 'instr_valid'" }
+      if((ctx.instructionSet.rrmovl) === undefined) { throw "HCL : ctx.instructionSet.rrmovl is undefined in function 'instr_valid'" }
+      if((ctx.instructionSet.irmovl) === undefined) { throw "HCL : ctx.instructionSet.irmovl is undefined in function 'instr_valid'" }
+      if((ctx.instructionSet.rmmovl) === undefined) { throw "HCL : ctx.instructionSet.rmmovl is undefined in function 'instr_valid'" }
+      if((ctx.instructionSet.mrmovl) === undefined) { throw "HCL : ctx.instructionSet.mrmovl is undefined in function 'instr_valid'" }
+      if((ctx.instructionSet.alu) === undefined) { throw "HCL : ctx.instructionSet.alu is undefined in function 'instr_valid'" }
+      if((ctx.instructionSet.alui) === undefined) { throw "HCL : ctx.instructionSet.alui is undefined in function 'instr_valid'" }
+      if((ctx.instructionSet.jxx) === undefined) { throw "HCL : ctx.instructionSet.jxx is undefined in function 'instr_valid'" }
+      if((ctx.instructionSet.call) === undefined) { throw "HCL : ctx.instructionSet.call is undefined in function 'instr_valid'" }
+      if((ctx.instructionSet.ret) === undefined) { throw "HCL : ctx.instructionSet.ret is undefined in function 'instr_valid'" }
+      if((ctx.instructionSet.pushl) === undefined) { throw "HCL : ctx.instructionSet.pushl is undefined in function 'instr_valid'" }
+      if((ctx.instructionSet.popl) === undefined) { throw "HCL : ctx.instructionSet.popl is undefined in function 'instr_valid'" }
+      if((ctx.instructionSet.loop) === undefined) { throw "HCL : ctx.instructionSet.loop is undefined in function 'instr_valid'" }
+      // End of checks
+   
+      return ((ctx.icode) === (ctx.instructionSet.nop)) || ((ctx.icode) === (ctx.instructionSet.halt)) || ((ctx.icode) === (ctx.instructionSet.rrmovl)) || ((ctx.icode) === (ctx.instructionSet.irmovl)) || ((ctx.icode) === (ctx.instructionSet.rmmovl)) || ((ctx.icode) === (ctx.instructionSet.mrmovl)) || ((ctx.icode) === (ctx.instructionSet.alu)) || ((ctx.icode) === (ctx.instructionSet.alui)) || ((ctx.icode) === (ctx.instructionSet.jxx)) || ((ctx.icode) === (ctx.instructionSet.call)) || ((ctx.icode) === (ctx.instructionSet.ret)) || ((ctx.icode) === (ctx.instructionSet.pushl)) || ((ctx.icode) === (ctx.instructionSet.popl)) || ((ctx.icode) === (ctx.instructionSet.loop));
+   }
+   
+   this.set_cc = () => {
+      // Checks if some identifiers are undefined
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'set_cc'" }
+      if((ctx.instructionSet.alu) === undefined) { throw "HCL : ctx.instructionSet.alu is undefined in function 'set_cc'" }
+      if((ctx.instructionSet.alui) === undefined) { throw "HCL : ctx.instructionSet.alui is undefined in function 'set_cc'" }
+      // End of checks
+   
+      return ((ctx.icode) === (ctx.instructionSet.alu)) || ((ctx.icode) === (ctx.instructionSet.alui));
+   }
+   
+   this.mem_read = () => {
+      // Checks if some identifiers are undefined
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'mem_read'" }
+      if((ctx.instructionSet.mrmovl) === undefined) { throw "HCL : ctx.instructionSet.mrmovl is undefined in function 'mem_read'" }
+      if((ctx.instructionSet.popl) === undefined) { throw "HCL : ctx.instructionSet.popl is undefined in function 'mem_read'" }
+      if((ctx.instructionSet.ret) === undefined) { throw "HCL : ctx.instructionSet.ret is undefined in function 'mem_read'" }
+      // End of checks
+   
+      return ((ctx.icode) === (ctx.instructionSet.mrmovl)) || ((ctx.icode) === (ctx.instructionSet.popl)) || ((ctx.icode) === (ctx.instructionSet.ret));
+   }
+   
+   this.mem_write = () => {
+      // Checks if some identifiers are undefined
+      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'mem_write'" }
+      if((ctx.instructionSet.rmmovl) === undefined) { throw "HCL : ctx.instructionSet.rmmovl is undefined in function 'mem_write'" }
+      if((ctx.instructionSet.pushl) === undefined) { throw "HCL : ctx.instructionSet.pushl is undefined in function 'mem_write'" }
+      if((ctx.instructionSet.call) === undefined) { throw "HCL : ctx.instructionSet.call is undefined in function 'mem_write'" }
+      // End of checks
+   
+      return ((ctx.icode) === (ctx.instructionSet.rmmovl)) || ((ctx.icode) === (ctx.instructionSet.pushl)) || ((ctx.icode) === (ctx.instructionSet.call));
+   }
+   
+   }`);
 //# sourceMappingURL=hcl.js.map
