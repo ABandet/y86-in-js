@@ -1,6 +1,6 @@
 import { Sim } from "./sim"
+import { registers_enum } from "./registers"
 import { Memory } from "./memory"
-import { registers } from "./registers"
 
 // Used at compile-time and for unit tests
 import * as hcl from "./hcl"
@@ -20,8 +20,8 @@ function fetch(sim : Sim) {
         sim.context.ra = Memory.HI4(byte)
         sim.context.rb = Memory.LO4(byte)
     } else {
-        sim.context.ra = registers.none
-        sim.context.rb = registers.none
+        sim.context.ra = registers_enum.none
+        sim.context.rb = registers_enum.none
     }
 
     if(hcl.call("gen_need_valC")) {
@@ -43,7 +43,7 @@ function fetch(sim : Sim) {
  */
 function decode(sim : Sim) {
     sim.context.srcA = hcl.call("gen_srcA");
-    if (sim.context.srcA != registers.none) {
+    if (sim.context.srcA != registers_enum.none) {
         sim.context.valA = sim.registers.read(sim.context.srcA);
     }
     else {
@@ -51,7 +51,7 @@ function decode(sim : Sim) {
     }
 
     sim.context.srcB = hcl.call("gen_srcB");
-    if (sim.context.srcB != registers.none) {
+    if (sim.context.srcB != registers_enum.none) {
         sim.context.valB = sim.registers.read(sim.context.srcB);
     }
     else {
@@ -125,12 +125,12 @@ function memory(sim : Sim) {
  * @param sim
  */
 function writeBack(sim : Sim) {
-    if (sim.context.dstE != registers.none) {
+    if (sim.context.dstE != registers_enum.none) {
         let valE = sim.context.valE;
         sim.registers.write(sim.context.dstE, valE);
     }
 
-    if (sim.context.dstM != registers.none) {
+    if (sim.context.dstM != registers_enum.none) {
         let valM = sim.context.valM;
         sim.registers.write(sim.context.dstM, valM);
     }

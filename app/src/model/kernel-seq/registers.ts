@@ -1,9 +1,7 @@
-import { Word } from "./memory";
-
 /**
  * Enum wich contains all the registers plus the special register "none".
  */
-enum registers {
+enum registers_enum {
     eax,
     ebx,
     ecx,
@@ -24,15 +22,14 @@ class Registers {
     /**
      * Array for all registers. Size based on the size of "registers" enumerate.
      */
-    content: Array<Word> = [];
+    content: Array<number> = [];
 
     /**
      * Set all registers to the default value 0.
      */
     constructor() {
-        for (let key in registers) {
-            let empty_word = new Word();
-            this.content.push(empty_word);
+        for (let key in registers_enum) {
+            this.content.push(0);
         }
     }
 
@@ -40,9 +37,8 @@ class Registers {
      * Reset all registers with an empty value.
      */
     reset(){
-        for (let key in registers) {
-            let empty_word = new Word();
-            this.content[key] = empty_word;
+        for (let key in registers_enum) {
+            this.content[key] = 0;
         }
     }
 
@@ -52,7 +48,7 @@ class Registers {
      * @param register
      * @param value
      */
-    write(register: registers, value: Word) {
+    write(register: registers_enum, value: number) {
         this.content[register] = value;
     }
 
@@ -60,10 +56,10 @@ class Registers {
      * Return value contains in one register.
      * @param register
      */
-    read(register: registers) {
+    read(register: registers_enum) {
         return this.content[register];
     }
 }
 
 
-export {Registers, registers};
+export {Registers, registers_enum};

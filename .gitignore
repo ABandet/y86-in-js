@@ -6,6 +6,7 @@ src/package-lock.json
 app/node_modules
 app/package-lock.json
 app/js/model
+app/public/js/model
 
 .DS_Store
 

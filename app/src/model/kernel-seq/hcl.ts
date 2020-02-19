@@ -1,9 +1,9 @@
 import { HclException } from "../exceptions/simulatorException"
 import * as registersModule from "./registers"
 
-let registers = registersModule.registers
+let registers = registersModule.registers_enum
 
-export { call, setHandler, setCtx }
+export { call, setHandlerCode, setCtx }
 
 /**
  * Calls a function from the current handler.
@@ -23,12 +23,13 @@ function call(name : string) : any {
  * This handler must have a field 'ctx : Object'. If not, an exception is thrown.
  * @param handler 
  */
-function setHandler(handler : any) {
+function setHandlerCode(code : string) {
+   let handler = eval(code)
    if(!(handler instanceof Object)) {
       throw new HclException("The given handler is not an object (type : " + typeof handler + ")")
    }
-   if(!(handler.ctx instanceof Object)) {
-      throw new HclException("The given handler has no ctx field or ctx is not an Object")
+   if(!(handler.externCtx instanceof Object)) {
+      throw new HclException("The given handler has no externCtx field or ctx is not an Object")
    }
    hclHandler = handler
 }
@@ -40,23 +41,10 @@ function setHandler(handler : any) {
  * @param ctx 
  */
 function setCtx(ctx : Object) {
-   hclHandler.ctx = ctx
+   hclHandler.externCtx = ctx
 }
 
 let hclHandler = eval(`new function() {
-
-   this.test = () => {
-   
-      // Checks if some identifiers are undefined
-      if((registers.ebx) === undefined) { throw "HCL : registers.ebx is undefined in function 'test'" }
-      // End of checks
-   
-      if(1) { return registers.ebx; } 
-   
-   }
-   
-   }`)
-/*eval(`new function() {
 
    this.externCtx = {}
    
@@ -395,4 +383,4 @@ let hclHandler = eval(`new function() {
       return ((ctx.icode) === (ctx.instructionSet.rmmovl)) || ((ctx.icode) === (ctx.instructionSet.pushl)) || ((ctx.icode) === (ctx.instructionSet.call));
    }
    
-   }`)*/
+   }`)
