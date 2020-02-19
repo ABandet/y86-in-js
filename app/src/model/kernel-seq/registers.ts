@@ -22,14 +22,14 @@ class Registers {
     /**
      * Array for all registers. Size based on the size of "registers" enumerate.
      */
-    content: Array<number> = [];
+    content: Uint32Array = new Uint32Array(Object.keys(registers_enum).length);
 
     /**
      * Set all registers to the default value 0.
      */
     constructor() {
         for (let key in registers_enum) {
-            this.content.push(0);
+            this.content[key] = 0;
         }
     }
 
