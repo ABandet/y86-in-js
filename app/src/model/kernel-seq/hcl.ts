@@ -1,7 +1,12 @@
 import { HclException } from "../exceptions/simulatorException"
 import * as registersModule from "./registers"
+import * as aluModule from "./aluEnum"
 
+//
+// Alias for enum usable in HCL code
+//
 let registers = registersModule.registers_enum
+let alufct = aluModule.alufct
 
 export { call, setHandlerCode, setCtx }
 

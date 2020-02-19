@@ -115,8 +115,8 @@ class Memory {
         return value & 0xf
     }
 
-    private static _checkAddress(address : number, offset : number) {
-        if(address < 0 || address + offset > Memory.LAST_ADDRESS) {
+    private static _checkAddress(address : number, size : number) {
+        if(address < 0 || address + size > Memory.LAST_ADDRESS) {
             throw new MemoryException(address)
         }
     }
@@ -147,14 +147,16 @@ class Memory {
                 }
     
                 if(instructionsWithAddressSplitted.length == 2) {
-                    const address = Number(instructionsWithAddressSplitted[0])
+                    const firstAddress = Number(instructionsWithAddressSplitted[0])
                     let instruction = Number("0x" + instructionsWithAddressSplitted[1].trim())
         
-                    if(!Number.isNaN(address) && !Number.isNaN(instruction)) {
+                    if(!Number.isNaN(firstAddress) && !Number.isNaN(instruction)) {
                         const bytes = Memory.numberToByteArray(instruction)
-                        
+
                         for(let i = 0; i < bytes.length; i++) {
-                            this._content[address + bytes.length - i - 1] = bytes[i]
+                            const address = firstAddress + bytes.length - i - 1
+                            Memory._checkAddress(address, 0)
+                            this._content[address] = bytes[i]
                         }
                     }
                 }
