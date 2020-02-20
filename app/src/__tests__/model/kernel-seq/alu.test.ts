@@ -82,19 +82,19 @@ test("Alu(compute_cc - SUB) test", () => {
     flags_test(10,0, alufct.A_SUB, false, false, false);
     flags_test(0,0x7FFFFFFF, alufct.A_SUB, false, true, false);
     // one negative
-    flags_test(-10,0, alufct.A_SUB, false, false, false);
+    flags_test(-10,0, alufct.A_SUB, false, true, false);
     flags_test(0,-12, alufct.A_SUB, false, false, false);
     // result = 0
-    flags_test(-12,12, alufct.A_SUB, true, false, false);
+    flags_test(12,12, alufct.A_SUB, true, false, false);
     // result positive
     flags_test(50,30, alufct.A_SUB, false, false, false);
     flags_test(12,-11, alufct.A_SUB, false, false, false);
     flags_test(-11,-12, alufct.A_SUB, false, false, false);
     // result negative
     flags_test(-50,30, alufct.A_SUB, false, true, false);
-    flags_test(10,-11, alufct.A_SUB, false, true, false);
-    flags_test(-10,-11, alufct.A_SUB, false, true, false);
+    flags_test(10,-11, alufct.A_SUB, false, false, false);
+    flags_test(-10,-11, alufct.A_SUB, false, false, false);
     // overflow test
-    flags_test(0x7FFFFFFF,1, alufct.A_SUB, false, true, true);
-    flags_test(0x80000000,-1, alufct.A_SUB, false, false, true);
+    flags_test(0x7FFFFFFF,-1, alufct.A_SUB, false, true, true);
+    flags_test(0x80000000,1, alufct.A_SUB, false, false, true);
 });

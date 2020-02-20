@@ -57,9 +57,9 @@ class Alu {
         this.flags[CC.SF] = val[0] > 0x7FFFFFFF;
         // set Overflow flag
         if (alu_fun == alufct.A_ADD)
-            this.flags[CC.OF] = sgnA && sgnB && !sgnV || !sgnA && !sgnB && sgnV;
+            this.flags[CC.OF] = (sgnA && sgnB && !sgnV) || (!sgnA && !sgnB && sgnV);
         else if (alu_fun == alufct.A_SUB) {
-            this.flags[CC.OF] = sgnA && sgnB && !sgnV || !sgnA && !sgnB && sgnV;
+            this.flags[CC.OF] = (sgnA != sgnB) && (sgnB == sgnV);
         }
         else {
             this.flags[CC.OF] = false;
