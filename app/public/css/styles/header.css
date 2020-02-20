@@ -56,15 +56,16 @@ a.header-button {
   font-size: 16px;
 }
 div#header-left-container > .header-button > i.fa {
-  padding-right: 8px;
+  padding-right: 2px;
 }
 div#header-right-container > .header-button > i.fab {
-  padding-left: 8px;
+  padding-left: 2px;
 }
 .icon-only > i.fa {
-  padding: 1px 0;
+  padding: 0;
 }
 img#branding {
+  padding-top: 4px;
   width: 30px;
   height: 30px;
 }
