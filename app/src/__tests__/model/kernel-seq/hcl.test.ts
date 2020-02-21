@@ -2,7 +2,8 @@ import * as hcl from "../../../model/kernel-seq/hcl";
 import {registers_enum} from "../../../model/kernel-seq/registers";
 
 test("hcl test", () => {
-    hcl.setHandlerCode(`new function() {
+    // Does this simple example compile ?
+    hcl.setHclCode(`new function() {
 
         this.externCtx = {}
 
@@ -18,10 +19,12 @@ test("hcl test", () => {
         
         }`)
 
+    // The function 'test' must exist and return ebx
     expect(hcl.call("test")).toBe(registers_enum.ebx)
 
+    // Without the externCtx, the hcl compilation shall fail
     expect(() => {
-        hcl.setHandlerCode(`new function() {
+        hcl.setHclCode(`new function() {
 
             // this.externCtx = {} We remove the external context
     
@@ -38,12 +41,13 @@ test("hcl test", () => {
             }`)
     }).toThrow()
 
-
+    // Empty code shall throw
     expect(() => {
-        hcl.setHandlerCode(``)
+        hcl.setHclCode(``)
     }).toThrow()
 
-    hcl.setHandlerCode(`new function() {
+    // Use of non existent fields must not throw at compile-time....
+    hcl.setHclCode(`new function() {
         this.externCtx = {}
         this.test = () => {
 
@@ -56,11 +60,12 @@ test("hcl test", () => {
         }
     }`)
 
+    // ......, that kind of errors are reported at run-time.
     expect(() => {
         hcl.call("test")
     }).toThrow()
 
-    hcl.setHandlerCode(`new function() {
+    hcl.setHclCode(`new function() {
         this.externCtx = {}
         this.test = () => {
 
@@ -73,10 +78,12 @@ test("hcl test", () => {
         }
     }`)
 
+    // The test function must throw because of the aaax register does not exist
     expect(() => {
         hcl.call("test")
     }).toThrow()
 
+    // The nofunc does not exist
     expect(() => {
         hcl.call("nofunc")
     }).toThrow()

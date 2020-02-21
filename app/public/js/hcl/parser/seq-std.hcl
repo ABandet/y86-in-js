@@ -9,33 +9,36 @@
 #    Declarations.  Do not change/remove/delete any of these       #
 ####################################################################
 
+quote 'this.externCtx = {}'
+quote 'let ctx = this.externCtx'
+
 ##### Symbolic representation of Y86 Instruction Codes #############
-intsig NOP 			'ctx.instructionSet.nop'
-intsig HALT			'ctx.instructionSet.halt'
-intsig RRMOVL		'ctx.instructionSet.rrmovl'
-intsig IRMOVL		'ctx.instructionSet.irmovl'
-intsig RMMOVL		'ctx.instructionSet.rmmovl'
-intsig MRMOVL		'ctx.instructionSet.mrmovl'
-intsig OPL			'ctx.instructionSet.alu'
-intsig IOPL			'ctx.instructionSet.alui'
-intsig JXX			'ctx.instructionSet.jxx'
-intsig CALL			'ctx.instructionSet.call'
-intsig RET			'ctx.instructionSet.ret'
-intsig PUSHL		'ctx.instructionSet.pushl'
-intsig POPL			'ctx.instructionSet.popl'
-intsig JMEM			'ctx.instructionSet.jmem'
-intsig JREG			'ctx.instructionSet.jreg'
-intsig LEAVE		'ctx.instructionSet.leave'
-intsig LOOP 		'ctx.instructionSet.loop'
+intsig NOP 			'instructionSet.nop.icode'
+intsig HALT			'instructionSet.halt.icode'
+intsig RRMOVL		'instructionSet.rrmovl.icode'
+intsig IRMOVL		'instructionSet.irmovl.icode'
+intsig RMMOVL		'instructionSet.rmmovl.icode'
+intsig MRMOVL		'instructionSet.mrmovl.icode'
+intsig OPL			'instructionSet.alu.icode'
+intsig IOPL			'instructionSet.alui.icode'
+intsig JXX			'instructionSet.jxx.icode'
+intsig CALL			'instructionSet.call.icode'
+intsig RET			'instructionSet.ret.icode'
+intsig PUSHL		'instructionSet.pushl.icode'
+intsig POPL			'instructionSet.popl.icode'
+intsig JMEM			'instructionSet.jmem.icode'
+intsig JREG			'instructionSet.jreg.icode'
+intsig LEAVE		'instructionSet.leave.icode'
+intsig LOOP 		'instructionSet.loop.icode'
 
 ##### Symbolic representation of Y86 Registers referenced explicitly #####
-intsig RESP     	'ctx.registers.esp'    	# Stack Pointer
-intsig REBP     	'ctx.registers.ebp'    	# Frame Pointer
-intsig RECX			'ctx.registers.ecx'		# Loop condition register
-intsig RNONE    	'ctx.registers.none'   	# Special value indicating "no register"
+intsig RESP     	'registers.esp'    	# Stack Pointer
+intsig REBP     	'registers.ebp'    	# Frame Pointer
+intsig RECX			'registers.ecx'		# Loop condition register
+intsig RNONE    	'registers.none'   	# Special value indicating "no register"
 
 ##### ALU Functions referenced explicitly                            #####
-intsig ALUADD		'ctx.alufct.A_ADD'		# ALU should add its arguments
+intsig ALUADD		'alufct.A_ADD'		# ALU should add its arguments
 
 ##### Signals that can be referenced by control logic ####################
 

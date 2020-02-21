@@ -8,7 +8,7 @@ import * as aluModule from "./aluEnum"
 let registers = registersModule.registers_enum
 let alufct = aluModule.alufct
 
-export { call, setHandlerCode, setCtx }
+export { call, setHclCode, setCtx }
 
 /**
  * Calls a function from the current handler.
@@ -28,7 +28,7 @@ function call(name : string) : any {
  * This handler must have a field 'ctx : Object'. If not, an exception is thrown.
  * @param handler 
  */
-function setHandlerCode(code : string) {
+function setHclCode(code : string) {
    let handler = eval(code)
    if(!(handler instanceof Object)) {
       throw new HclException("The given handler is not an object (type : " + typeof handler + ")")

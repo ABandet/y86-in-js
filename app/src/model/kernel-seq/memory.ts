@@ -18,16 +18,16 @@ class Memory {
      * 0x8 : cc dd 00 00
      * ...
      * @param address 
-     * @param register
+     * @param word
      */
-    writeRegister(address : number, register : number) {
+    writeWord(address : number, word : number) {
         if(address < 0 || address + Memory.WORD_SIZE > Memory.LAST_ADDRESS) {
             throw new MemoryException(address)
         }
 
         for(var i = 0; i < Memory.WORD_SIZE; i++) {
-            this._content[address + i] = register & 0xff
-            register >>>= 8
+            this._content[address + i] = word & 0xff
+            word >>>= 8
         }
     }
 
@@ -41,7 +41,7 @@ class Memory {
      * and we read at 0x4, we will get the 0xddccbbaa word.
      * @param address 
      */
-    readRegister(address : number) : number {
+    readWord(address : number) : number {
         Memory._checkAddress(address, Memory.WORD_SIZE)
 
         let register = this._content[address]
@@ -63,7 +63,7 @@ class Memory {
         return this._content[address]
     }
 
-    static byteArrayToWord(bytes : number[] = []) {
+    static byteArrayToWord(bytes : number[]) {
         if(bytes.length > Memory.WORD_SIZE) {
             throw "A word can not hold more than " + Memory.WORD_SIZE + " bytes (current : " + bytes.length + ")"
         }
