@@ -1,19 +1,42 @@
 :root {
-    --header-background: #2980b9;
-    --header-foreground: #f5f5f5;
-    --header-button-hover-shadow: rgba(33, 33, 33, .4);
-    --header-disabled-button-background: #1679b9;
-    --header-disabled-button-foreground: #333333;
-    --header-enabled-button-background: var(--active-tab-button-background);
-    --header-enabled-button-foreground: var(--header-foreground);
-    --inactive-tab-button-background: var(--header-background);
-    --inactive-tab-button-foreground: #dddddd;
-    --inactive-tab-button-hover-background: var(--active-tab-button-background);
-    --inactive-tab-button-hover-foreground: var(--active-tab-button-foreground);
-    --active-tab-button-background: #3498d8;
-    --active-tab-button-foreground: var(--header-foreground);
-    --pane-header-background: var(--active-tab-button-background);
-    --pane-header-foreground: var(--active-tab-button-foreground);
-    --pane-background: #333333;
-    --pane-foreground: #f5f5f5;
+  /* TODO remove the disabled-button things */
+  --header-background: #2980b9;
+  --header-foreground: #f5f5f5;
+  --header-button-hover-shadow: rgba(33, 33, 33, .4);
+  --header-disabled-button-background: #1679b9;
+  --header-disabled-button-foreground: #333333;
+  --header-enabled-button-background: var(--active-tab-button-background);
+  --header-enabled-button-foreground: var(--header-foreground);
+  --inactive-tab-button-background: var(--header-background);
+  --inactive-tab-button-foreground: #dddddd;
+  --inactive-tab-button-hover-background: var(--active-tab-button-background);
+  --inactive-tab-button-hover-foreground: var(--active-tab-button-foreground);
+  --active-tab-button-background: #3498d8;
+  --active-tab-button-foreground: var(--header-foreground);
+  --pane-header-background: var(--active-tab-button-background);
+  --pane-header-foreground: var(--active-tab-button-foreground);
+  --pane-background: #333333;
+  --pane-foreground: #f5f5f5;
+  /* Editor */
+  --editor-background: var(--pane-background);
+  --editor-foreground: var(--pane-foreground);
+  --editor-gutter-background: #444444;
+  --editor-gutter-foreground: #dddddd;
+  --editor-gutter-active-line-background: #5a5a5a;
+  --editor-cursor-color: var(--active-tab-button-background);
+  /* Editor syntax highlight */
+  --editor-indent-guide-color: #646d82;
+  --editor-keyword-color: #6699ff;
+  --editor-constant-color: #cc66cc;
+  --editor-invalid-background: #ff3333;
+  --editor-comment-color: #888888;
+  --editor-variable-color: #5cd65c;
+  --editor-function-color: #ff9933;
+  --editor-selection-background: rgba(100, 109, 130, 0.3);
+  --editor-active-line-background: #444444;
+  --editor-print-margin-color: var(--editor-indent-guide-color);
+  /* Execution */
+  --execution-label-background: #5a5a5a;
+  --execution-label-foreground: var(--pane-foreground);
+  --execution-memory-address-background: #5a5a5a;
 }

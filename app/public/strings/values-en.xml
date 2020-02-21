@@ -19,7 +19,19 @@
   <tab-1-button>Execution</tab-1-button>
   <tab-2-button>InstructionSet</tab-2-button>
   <tab-3-button>HCL</tab-3-button>
-
-  <!--  Editor Tab-->
-  <editor-title>Source code</editor-title>
+  <!-- View headers -->
+  <source-code-header>SOURCE CODE</source-code-header>
+  <processor-state-header>PROCESSOR STATE</processor-state-header>
+  <object-code-header>OBJECT CODE</object-code-header>
+  <memory-header>MEMORY</memory-header>
+  <hcl-code-header>HCL CODE</hcl-code-header>
+  <!-- View sub-headers -->
+  <pc-update-stage-subheader>PC UPDATE STAGE</pc-update-stage-subheader>
+  <memory-stage-subheader>MEMORY STAGE</memory-stage-subheader>
+  <execute-stage-subheader>EXECUTE STAGE</execute-stage-subheader>
+  <decode-stage-subheader>DECODE STAGE</decode-stage-subheader>
+  <fetch-stage-subheader>FETCH STAGE</fetch-stage-subheader>
+  <registers-subheader>REGISTERS</registers-subheader>
+  <flags-subheader>FLAGS</flags-subheader>
+  <status-subheader>STATUS</status-subheader>
 </resources>

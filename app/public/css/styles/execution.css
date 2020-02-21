@@ -1,16 +1,4 @@
-
-#tab-1-content h2 {
-    margin: 0 0 6px 0;
-    padding: 2px 0 2px 0;
-    border-bottom: 1px solid #ddd;
-
-    font-family: 'Source Sans Pro';
-    font-weight: 600;
-    font-size: 16px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
+/* FIXME: Clean up the style bellow */
 .execution {
     display: -webkit-flex;
     display: flex;
@@ -20,25 +8,17 @@
     flex-direction: row;
 }
 
-.inspector {
-    border-left: 1px solid #ddd;
-    display: -webkit-flex;
-    display: flex;
-    -webkit-flex-direction: column;
-    flex-direction: column;
-    width: 45%;
-}
-
 .processorstate{
     display: -webkit-flex;
     display: flex;
     -webkit-flex-direction: column;
     flex-direction: column;
-    padding-bottom: 30px;
+    padding-bottom: 8px;
+    width: 37%;
 }
 
 .processorstate h3{
-    margin: 20px 0 6px 0;
+    margin: 40px 0 6px 0;
     padding: 2px 0 2px 0;
     border-bottom: 1px solid #ddd;
 
@@ -78,18 +58,20 @@
     flex: 1 1;
 }
 
-
-.object {
-    width: 40%;
-}
-
-.object .lines-wrapper {
-    border-left: 1px solid #ddd;
+.inspector {
     display: -webkit-flex;
     display: flex;
     -webkit-flex-direction: column;
     flex-direction: column;
 
+    width: 38%;
+}
+
+.inspector .object .lines-wrapper {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
 }
 
 .lines {
@@ -147,6 +129,7 @@
     font-size: 14px;
 
     max-width: 450px;
+    margin: 0 auto;
 }
 
 .registers .column {
@@ -221,7 +204,7 @@
 
     font-family: 'Source Sans Pro';
     font-weight: 600;
-    font-size: 16px;
+    font-size: 13px;
     letter-spacing: 1px;
     text-transform: uppercase;
 }
@@ -231,15 +214,14 @@ h3.status_header {
 }
 
 
-.memory {
-    width: fit-content;
+/*#tab-1-content .memory {
     -webkit-flex: 0 0 auto;
     flex: 0 0 auto;
+    width: 198px;
 
     font-family: 'Inconsolata';
     font-size: 14px;
-    width: 250px;
-}
+}*/
 
 .memory > div {
     display: -webkit-flex;
@@ -252,6 +234,7 @@ h3.status_header {
 .memory .word {
     display: -webkit-flex;
     display: flex;
+    font-family: 'Source Sans Pro';
 }
 
 .memory .mem-header {
@@ -271,7 +254,6 @@ h3.status_header {
 }
 
 .memory .mem-words {
-    margin: 2px 8px 8px 0;
     border: 2px solid #ccc;
 }
 
@@ -291,11 +273,6 @@ h3.status_header {
     margin-left: 6px;
 }
 
-.memory .mem-words .address {
-    padding-left: 4px;
-
-    background: #a4a4a4;
-}
 
 .memory .stack-pointers {
     position: relative;
@@ -334,4 +311,46 @@ h3.status_header {
     .registers .register .value_dec {
         display: none;
     }
+}
+/* Until here */
+
+.memory .mem-words .address {
+  background-color: var(--execution-memory-address-background) !important;
+  padding-left: 1px !important;
+  width: 41px !important;
+}
+
+.memory .mem-words .value {
+  margin-left: 0px !important;
+}
+
+.stage .Indicator .label,
+.register_column .register .label,
+.status_column .label {
+  background-color: var(--execution-label-background);
+  color: var(--execution-label-foreground);
+}
+
+.stage .Indicator > *,
+.register_column .register > *,
+.status_column > * {
+  padding: 4px;
+}
+
+.processorstate {
+  flex: 2 !important;
+  width: auto !important;
+}
+
+.inspector {
+  flex: 2 !important;
+  width: auto !important;
+}
+
+.memory {
+  flex: 1.2 !important;
+  width: auto !important;
+}
+.memory > div {
+    width: auto !important;
 }

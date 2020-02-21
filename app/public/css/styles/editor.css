@@ -1,175 +1,105 @@
-
-
-.editor{
-    display: -webkit-flex;
-    display: flex;
-    -webkit-flex-direction: column;
-    flex-direction: column;
-    border-right: 1px solid #ddd;
-
-    width: 50%;
-}
-
-#tab-0-content h2 ,
-#tab-3-content h2 {
-    margin: 0 0 6px 0;
-    padding: 2px 0 2px 0;
-    border-bottom: 1px solid #ddd;
-
-    font-family: 'Source Sans Pro';
-    font-weight: 600;
-    font-size: 16px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+/* The following CSS rules abuse the !important statement because of the way
+ * ace has its style hard coded in the JavaScript files.
+ */
+.ace-tm .ace_content {
+  background-color: var(--editor-background) !important;
+  color: var(--editor-foreground) !important;
 }
 
 .ace-tm .ace_gutter {
-    background: #f0f0f0;
-    color: #333;
+  background-color: var(--editor-gutter-background) !important;
+  color: var(--editor-gutter-foreground) !important;
 }
-
-.ace-tm .ace_print-margin {
-    width: 1px;
-    /*background: #e8e8e8;*/
-}
-
-.ace-tm .ace_fold {
-    background-color: #6B72E6;
-}
-
-.ace-tm {
-    /*background-color: #FFFFFF;*/
-    /*color: black;*/
+.ace-tm .ace_gutter-active-line {
+  background-color: var(--editor-gutter-active-line-background) !important;
 }
 
 .ace-tm .ace_cursor {
-    /*color: black;*/
+  color: var(--editor-cursor-color) !important;
+  /* FIXME: on some words the cursor is not where it should be */
 }
 
-.ace-tm .ace_invisible {
-    color: rgb(191, 191, 191);
-}
-
+/* Syntax highlight */
 .ace-tm .ace_storage,
 .ace-tm .ace_keyword {
-    color: #4f4dfb;
+  color: var(--editor-keyword-color) !important;
 }
 
-.ace-tm .ace_constant {
-    color: rgb(255, 0, 0);
-}
-
-.ace-tm .ace_constant.ace_buildin {
-    color: rgb(88, 72, 246);
-}
-
-.ace-tm .ace_constant.ace_language {
-    color: rgb(88, 92, 246);
-}
-
-.ace-tm .ace_constant.ace_library {
-    color: rgb(6, 150, 14);
+.ace-tm .ace_constant,
+.ace-tm .ace-constant * {
+  color: var(--editor-constant-color) !important;
 }
 
 .ace-tm .ace_invalid {
-    background-color: rgba(255, 0, 0, 0.1);
-    color: red;
-}
-
-.ace-tm .ace_support.ace_function {
-    color: rgb(60, 76, 114);
-}
-
-.ace-tm .ace_support.ace_constant {
-    color: rgb(6, 150, 14);
-}
-
-.ace-tm .ace_support.ace_type,
-.ace-tm .ace_support.ace_class {
-    color: rgb(109, 121, 222);
-}
-
-.ace-tm .ace_keyword.ace_operator {
-    color: rgb(104, 118, 135);
-}
-
-.ace-tm .ace_string {
-    color: rgb(3, 106, 7);
+  background-color: var(--editor-invalid-background) !important;
+  color: var(--editor-foreground) !important;
 }
 
 .ace-tm .ace_comment {
-    color: rgb(76, 136, 107);
-}
-
-.ace-tm .ace_comment.ace_doc {
-    color: rgb(0, 102, 255);
-}
-
-.ace-tm .ace_comment.ace_doc.ace_tag {
-    color: rgb(128, 159, 191);
-}
-
-.ace-tm .ace_constant.ace_numeric {
-    color: rgb(0, 0, 205);
+  color: var(--editor-comment-color) !important;
 }
 
 .ace-tm .ace_variable {
-    color: rgb(49, 132, 149);
+  color: var(--editor-variable-color) !important;
 }
 
-.ace-tm .ace_xml-pe {
-    color: rgb(104, 104, 91);
-}
-
-.ace-tm .ace_entity.ace_name.ace_function {
-    color: #d37500;
-}
-
-
-.ace-tm .ace_heading {
-    color: rgb(12, 7, 255);
-}
-
-.ace-tm .ace_list {
-    color:rgb(185, 6, 144);
-}
-
-.ace-tm .ace_meta.ace_tag {
-    color:rgb(0, 22, 142);
-}
-
-.ace-tm .ace_string.ace_regex {
-    color: rgb(255, 0, 0)
+.ace-tm .ace_function {
+  color: var(--editor-function-color) !important;
 }
 
 .ace-tm .ace_marker-layer .ace_selection {
-    background: rgb(181, 213, 255);
-}
-.ace-tm.ace_multiselect .ace_selection.ace_start {
-    box-shadow: 0 0 3px 0px white;
-}
-.ace-tm .ace_marker-layer .ace_step {
-    background: rgb(252, 255, 0);
-}
-
-.ace-tm .ace_marker-layer .ace_stack {
-    background: rgb(164, 229, 101);
-}
-
-.ace-tm .ace_marker-layer .ace_bracket {
-    margin: -1px 0 0 -1px;
-    border: 1px solid rgb(192, 192, 192);
+  background-color: var(--editor-selection-background) !important;
 }
 
 .ace-tm .ace_marker-layer .ace_active-line {
-    background: rgba(0, 0, 0, 0.07);
+  background-color: var(--editor-active-line-background) !important;
 }
 
-.ace-tm .ace_gutter-active-line {
-    background-color : #dcdcdc;
+.ace-tm .ace_print-margin {
+  width: 2px !important;
+  background: var(--editor-print-margin-color) !important;
 }
 
 .ace-tm .ace_marker-layer .ace_selected-word {
-    background: rgb(250, 250, 255);
-    border: 1px solid rgb(200, 200, 250);
+  background-color: var(--editor-selection-background) !important;
+  border: none !important;
+  border-bottom: 1px solid var(--editor-keyword-color) !important;
 }
+.ace-tm .ace_indent-guide {
+  border-left: 4px solid var(--editor-indent-guide-color) !important;
+  background: none !important;
+}
+
+.ace_editor * {
+  font-family: "Inconsolata" !important;
+  font-size: 14px !important;
+}
+
+/*.ace_cursor-layer {
+z-index: 4;
+}
+.ace_cursor {
+z-index: 4;
+position: absolute;
+-moz-box-sizing: border-box;
+-webkit-box-sizing: border-box;
+box-sizing: border-box;
+border-left: 2px solid
+}
+.ace_slim-cursors .ace_cursor {
+border-left-width: 1px;
+}
+.ace_overwrite-cursors .ace_cursor {
+border-left-width: 0;
+border-bottom: 1px solid;
+}
+.ace_hidden-cursors .ace_cursor {
+opacity: 0.2;
+}
+.ace_smooth-blinking .ace_cursor {
+-webkit-transition: opacity 0.18s;
+transition: opacity 0.18s;
+}
+.ace_editor.ace_multiselect .ace_cursor {
+border-left-width: 1px;
+}*/

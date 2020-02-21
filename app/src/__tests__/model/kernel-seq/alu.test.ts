@@ -82,19 +82,100 @@ test("Alu(compute_cc - SUB) test", () => {
     flags_test(10,0, alufct.A_SUB, false, false, false);
     flags_test(0,0x7FFFFFFF, alufct.A_SUB, false, true, false);
     // one negative
-    flags_test(-10,0, alufct.A_SUB, false, false, false);
+    flags_test(-10,0, alufct.A_SUB, false, true, false);
     flags_test(0,-12, alufct.A_SUB, false, false, false);
     // result = 0
-    flags_test(-12,12, alufct.A_SUB, true, false, false);
+    flags_test(12,12, alufct.A_SUB, true, false, false);
+    flags_test(-12,-12, alufct.A_SUB, true, false, false);
     // result positive
     flags_test(50,30, alufct.A_SUB, false, false, false);
     flags_test(12,-11, alufct.A_SUB, false, false, false);
     flags_test(-11,-12, alufct.A_SUB, false, false, false);
     // result negative
     flags_test(-50,30, alufct.A_SUB, false, true, false);
-    flags_test(10,-11, alufct.A_SUB, false, true, false);
-    flags_test(-10,-11, alufct.A_SUB, false, true, false);
+    flags_test(10,-11, alufct.A_SUB, false, false, false);
     // overflow test
-    flags_test(0x7FFFFFFF,1, alufct.A_SUB, false, true, true);
-    flags_test(0x80000000,-1, alufct.A_SUB, false, false, true);
+    flags_test(0x7FFFFFFF,-1, alufct.A_SUB, false, true, true);
+    flags_test(0x80000000,1, alufct.A_SUB, false, false, true);
+});
+
+/**
+ * Test the compute_cc function with the AND operation.
+ */
+test("Alu(compute_cc - AND) test", () => {
+
+    // double zero
+    flags_test(0,0, alufct.A_AND, true, false, false);
+    // one positive
+    flags_test(10,0, alufct.A_AND, true, false, false);
+    flags_test(0,0x7FFFFFFF, alufct.A_AND, true, false, false);
+    // one negative
+    flags_test(-10,0, alufct.A_AND, true, false, false);
+    flags_test(0,-12, alufct.A_AND, true, false, false);
+    // result = 0
+    flags_test(0X8,0X7, alufct.A_AND, true, false, false);
+    flags_test(-0X8,0X7, alufct.A_AND, true, false, false);
+    // result positive
+    flags_test(50,30, alufct.A_AND, false, false, false);
+    flags_test(12,-11, alufct.A_AND, false, false, false);
+    flags_test(12,12, alufct.A_AND, false, false, false);
+    // result negative
+    flags_test(-10,-11, alufct.A_AND, false, true, false);
+    flags_test(-11,-11, alufct.A_AND, false, true, false);
+    // overflow test
+    // no overflow are possible while using '&' operator.
+});
+
+/**
+ * Test the compute_cc function with the XOR operation.
+ */
+test("Alu(compute_cc - XOR) test", () => {
+
+    // double zero
+    flags_test(0,0, alufct.A_XOR, true, false, false);
+    // one positive
+    flags_test(10,0, alufct.A_XOR, false, false, false);
+    flags_test(0,0x7FFFFFFF, alufct.A_XOR, false, false, false);
+    // one negative
+    flags_test(-10,0, alufct.A_XOR, false, true, false);
+    flags_test(0,-12, alufct.A_XOR, false, true, false);
+    // result = 0
+    flags_test(0X8,0X8, alufct.A_XOR, true, false, false);
+    flags_test(-0X8,-0X8, alufct.A_XOR, true, false, false);
+    // result positive
+    flags_test(50,30, alufct.A_XOR, false, false, false);
+    flags_test(-10,-11, alufct.A_XOR, false, false, false);
+    // result negative
+    flags_test(12,-11, alufct.A_XOR, false, true, false);
+    // overflow test
+    // no overflow are possible while using '&' operator.
+});
+
+/**
+ * Test the compute_cc function with the NONE operation.
+ */
+test("Alu(compute_cc - NONE) test", () => {
+    try {
+        flags_test(0,0, alufct.A_NONE, true, false, false);
+        expect(true).toBe(false);
+    }
+    catch (e) {
+    }
+
+    try {
+        flags_test(30,354, alufct.A_NONE, true, false, false);
+        expect(true).toBe(false);
+    }
+    catch (e) {
+    }
+
+    try {
+        flags_test(-10,30, alufct.A_NONE, true, false, false);
+        expect(true).toBe(false);
+    }
+    catch (e) {
+    }
+
+
+    expect(true).toBe(true);
 });
