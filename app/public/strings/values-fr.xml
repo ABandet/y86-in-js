@@ -15,9 +15,9 @@
   <wiki-link>Wiki</wiki-link>
   <git-link>GitHub</git-link>
   <!-- Tab names -->
-  <tab-0-button>Editeur</tab-0-button>
+  <tab-0-button>Éditeur</tab-0-button>
   <tab-1-button>Exécution</tab-1-button>
-  <tab-2-button>Set d'instructions</tab-2-button>
+  <tab-2-button>Jeux d'instructions</tab-2-button>
   <tab-3-button>HCL</tab-3-button>
   <!-- View headers -->
   <source-code-header>SOURCE CODE</source-code-header>

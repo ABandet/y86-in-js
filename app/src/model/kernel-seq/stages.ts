@@ -98,7 +98,7 @@ function memory(sim : Sim) {
 
     if (hcl.call("mem_read")) {
         try {
-            sim.context.valM = sim.memory.readRegister(mem_addr);
+            sim.context.valM = sim.memory.readWord(mem_addr);
         }
         catch (e) {
             console.log("error in stage memory: " + e);
@@ -107,7 +107,7 @@ function memory(sim : Sim) {
 
     else if (hcl.call("mem_write")) {
         try {
-            sim.memory.writeRegister(mem_addr, mem_data);
+            sim.memory.writeWord(mem_addr, mem_data);
         }
         catch (e) {
             console.log("error in stage memory: " + e);
