@@ -19,19 +19,24 @@ class Alu {
         let val = new Uint32Array(2);
         val[0] = aluA;
         val[1] = aluB;
+        let result = new  Uint32Array(1);
 
 
         if (alu_fun == alufct.A_ADD) {
-            return val[0] + val[1];
+            result[0] = val[0] + val[1]
+            return result[0];
         }
         else if (alu_fun == alufct.A_AND) {
-            return val[0] & val[1];
+            result[0] = val[0] & val[1]
+            return result[0];
         }
         else if (alu_fun == alufct.A_SUB) {
-            return val[0] - val[1];
+            result[0] = val[0] - val[1]
+            return result[0];
         }
         else if (alu_fun == alufct.A_XOR) {
-            return val[0] ^ val[1];
+            result[0] = val[0] ^ val[1]
+            return result[0];
         }
         else if (alu_fun == alufct.A_NONE) {
             throw "A_NONE constant setted."

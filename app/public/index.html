@@ -243,7 +243,7 @@ int new_pc = [
         <div id="header">
             <div id="header-left-container">
                 <span id="header-title" class="string"></span>
-                <button class="header-button tab-0-enabled-button">
+                <button class="header-button tab-0-enabled-button tab-2-enabled-button tab-3-enabled-button">
                     <i class="fa fa-bolt"></i>
                     <span id="assemble-button" class="string"></span>
                 </button>
@@ -251,7 +251,7 @@ int new_pc = [
                     <i class="fa fa-redo"></i>
                     <span id="reset-button" class="string"></span>
                 </button>
-                <button class="header-button tab-0-enabled-button tab-1-enabled-button tab-2-enabled-button tab-3-enabled-button">
+                <button class="header-button tab-0-enabled-button tab-1-enabled-button">
                     <i class="fa fa-angle-right"></i>
                     <span id="step-button" class="string"></span>
                 </button>
@@ -259,11 +259,11 @@ int new_pc = [
                     <i class="fa fa-angle-double-right"></i>
                     <span id="continue-button" class="string"></span>
                 </button>
-                <button class="header-button tab-0-enabled-button tab-2-enabled-button tab-3-enabled-button">
+                <button class="header-button tab-0-enabled-button tab-3-enabled-button">
                     <i class="fa fa-file"></i>
                     <span id="load-button" class="string"></span>
                 </button>
-                <button class="header-button tab-0-enabled-button tab-2-enabled-button tab-3-enabled-button">
+                <button class="header-button tab-0-enabled-button tab-3-enabled-button">
                     <i class="fa fa-save"></i>
                     <span id="save-button" class="string"></span>
                 </button>
@@ -294,7 +294,65 @@ int new_pc = [
                 <div class="tab-content-container"></div>
             </div>
             <div id="tab-2-content" class="tab-content">
-                <div class="tab-content-container"></div>
+                <div class="tab-content-container">
+                    <div>
+                        <h2 id="instruction-set-header" class="string view-header"></h2>
+                        <div id="instruction-set-content">
+                            <table id="instruction-set-table">
+                                <tr>
+                                    <th id="instruction-set-instr" class="string"></th>
+                                    <th id="instruction-set-icode" class="string"></th>
+                                    <th id="instruction-set-ifun" class="string"></th>
+                                    <th id="instruction-set-size" class="string"></th>
+                                    <th id="instruction-set-argsize1" class="string"></th>
+                                    <th id="instruction-set-argpos1" class="string"></th>
+                                    <th id="instruction-set-argsize2" class="string"></th>
+                                    <th id="instruction-set-argpos2" class="string"></th>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" value="addl"></input></td>
+                                    <td><input type="number" value="6"></input></td>
+                                    <td><input type="number" value="0"></input></td>
+                                    <td><input type="number" value="0"></input></td>
+                                    <td><select><option>const</option><option>mem</option><option>reg</option></select></td>
+                                    <td><input type="number" value="0"></input></td>
+                                    <td><select><option>const</option><option>mem</option><option>reg</option></select></td>
+                                    <td><input type="number" value="0"></input></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" value="subl"></input></td>
+                                    <td><input type="number" value="6"></input></td>
+                                    <td><input type="number" value="1"></input></td>
+                                    <td><input type="number" value="0"></input></td>
+                                    <td><select><option>const</option><option>mem</option><option>reg</option></select></td>
+                                    <td><input type="number" value="0"></input></td>
+                                    <td><select><option>const</option><option>mem</option><option>reg</option></select></td>
+                                    <td><input type="number" value="0"></input></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" value="andl"></input></td>
+                                    <td><input type="number" value="6"></input></td>
+                                    <td><input type="number" value="2"></input></td>
+                                    <td><input type="number" value="0"></input></td>
+                                    <td><select><option>const</option><option>mem</option><option>reg</option></select></td>
+                                    <td><input type="number" value="0"></input></td>
+                                    <td><select><option>const</option><option>mem</option><option>reg</option></select></td>
+                                    <td><input type="number" value="0"></input></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" value="xorl"></input></td>
+                                    <td><input type="number" value="6"></input></td>
+                                    <td><input type="number" value="3"></input></td>
+                                    <td><input type="number" value="0"></input></td>
+                                    <td><select><option>const</option><option>mem</option><option>reg</option></select></td>
+                                    <td><input type="number" value="0"></input></td>
+                                    <td><select><option>const</option><option>mem</option><option>reg</option></select></td>
+                                    <td><input type="number" value="0"></input></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div id="tab-3-content" class="tab-content">
                 <div class="tab-content-container"></div>
@@ -540,6 +598,7 @@ int new_pc = [
     <script src="js/views/registers.js"></script>
     <script src="js/views/objcode.js"></script>
     <script src="js/views/procstate.js"></script>
+    <script src="js/views/instruction-set.js"></script>
     <script src="js/views/hcl.js"></script>
 
 
