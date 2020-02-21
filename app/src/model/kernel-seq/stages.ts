@@ -25,7 +25,7 @@ function fetch(sim : Sim) {
     }
 
     if(hcl.call("need_valC")) {
-        sim.context.valC = sim.memory.readRegister(valp)
+        sim.context.valC = sim.memory.readWord(valp)
         valp += Memory.WORD_SIZE
     } else {
         sim.context.valC = 0
