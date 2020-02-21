@@ -1,0 +1,18 @@
+FROM node:10
+
+WORKDIR /usr/src/app
+
+COPY package.json public/ src/ server.js ./
+
+RUN npm install
+RUN npm install -g typescript browserify jison
+
+# Build hcl2js
+RUN jison public/js/hcl/parser/hcl2js.jison -o public/js/hcl/hcl2js.js
+
+# Build js sources and bundle them
+RUN tsc -p src && browserify public/js/index.js -o public/js/app.js
+
+EXPOSE 8080
+
+CMD [ "node", "server.js" ]

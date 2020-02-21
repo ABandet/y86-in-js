@@ -25,10 +25,10 @@ this.cleanParser = function() {
     this.boolDefinitions = [];
     this.identifiersList = [];
 }
-};
- 
-function hcl2js(hclCode) {
+
+this.assemble = (hclCode) => {
     hcl2jsUtility.cleanParser()
-    let jsCode = hcl2jsParser.parse(hclCode);
+    let jsCode = hcl2js.parse(hclCode);
     return jsCode;
 }
+};

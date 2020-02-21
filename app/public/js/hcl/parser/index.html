@@ -19,7 +19,7 @@ bool f = icode in {valb, 3};
 </body>
 
 <!-- The generated parser -->
-<script src="../hcl2jsParser.js"></script>
+<script src="../hcl2js.js"></script>
 
 <!-- Overlayer on hcl2js parser -->
 <script src="../hcl2jsUtility.js"></script>
@@ -28,7 +28,7 @@ bool f = icode in {valb, 3};
     function onCompile() {
         try {
             let hclCode = document.getElementById("editor").value
-            let jsCode = hcl2js(hclCode)
+            let jsCode = hcl2jsUtility.assemble(hclCode)
             document.getElementById("output").value = jsCode
         } catch (error) {
             alert(error)
