@@ -1,0 +1,62 @@
+#instruction-set-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+#instruction-set-table {
+  flex: 1;
+  /*border-collapse: collapse;*/
+}
+
+#instruction-set-table th {
+  background-color: var(--instruction-set-header-row-background);
+  color: var(--instruction-set-header-row-foreground);
+  padding: 8px;
+  white-space: nowrap;
+}
+
+#instruction-set-table tr {
+  background-color: var(--instruction-set-row-background);
+}
+
+#instruction-set-table tr:nth-child(even) {
+  background-color: var(--instruction-set-alternate-row-background);
+}
+
+#instruction-set-table input,
+#instruction-set-table select {
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--instruction-set-row-foreground);
+  -moz-appearance: none;
+}
+
+#instruction-set-table td:not(:nth-child(1)) {
+  width: 20px;
+  max-width: 20px;
+}
+
+#instruction-set-table td:not(:nth-child(5)),
+#instruction-set-table td:not(:nth-child(7)) {
+}
+
+#instruction-set-table input[type="number"],
+#instruction-set-table select {
+  width: 100%;
+  text-align: center;
+}
+/*
+#instruction-set-table th:nth-child(2) > div,
+#instruction-set-table th:nth-child(3) > div {
+  text-align: left;
+  transform: translate(0px, 2px) rotate(-40deg);
+  width: 10px;
+}
+#instruction-set-table th:nth-child(2) > div > span,
+#instruction-set-table th:nth-child(3) > div > span {
+  padding: 0px;
+  background-color: #ff0000;
+}*/

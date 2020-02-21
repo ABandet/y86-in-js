@@ -39,4 +39,10 @@
   --execution-label-background: #5a5a5a;
   --execution-label-foreground: var(--pane-foreground);
   --execution-memory-address-background: #5a5a5a;
+  /* Instruction Set */
+  --instruction-set-header-row-background: var(--pane-header-background);
+  --instruction-set-header-row-foreground: var(--pane-header-foreground);
+  --instruction-set-row-background: #555555;
+  --instruction-set-alternate-row-background: #444444;
+  --instruction-set-row-foreground: var(--pane-foreground);
 }

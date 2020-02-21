@@ -24,6 +24,7 @@
   <processor-state-header>PROCESSOR STATE</processor-state-header>
   <object-code-header>OBJECT CODE</object-code-header>
   <memory-header>MEMORY</memory-header>
+  <instruction-set-header>INSTRUCTIONS TABLE</instruction-set-header>
   <hcl-code-header>HCL CODE</hcl-code-header>
   <!-- View sub-headers -->
   <pc-update-stage-subheader>PC UPDATE STAGE</pc-update-stage-subheader>
@@ -34,4 +35,13 @@
   <registers-subheader>REGISTERS</registers-subheader>
   <flags-subheader>FLAGS</flags-subheader>
   <status-subheader>STATUS</status-subheader>
+  <!-- Instruction set -->
+  <instruction-set-instr>instr</instruction-set-instr>
+  <instruction-set-icode>icode</instruction-set-icode>
+  <instruction-set-ifun>ifun</instruction-set-ifun>
+  <instruction-set-size>size</instruction-set-size>
+  <instruction-set-argsize1>argSize1</instruction-set-argsize1>
+  <instruction-set-argpos1>argPos1</instruction-set-argpos1>
+  <instruction-set-argsize2>argSize2</instruction-set-argsize2>
+  <instruction-set-argpos2>argPos2</instruction-set-argpos2>
 </resources>
