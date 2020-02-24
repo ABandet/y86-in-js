@@ -1,4 +1,5 @@
 /* FIXME: Clean up the style bellow */
+
 .execution {
     display: -webkit-flex;
     display: flex;
@@ -8,17 +9,21 @@
     flex-direction: row;
 }
 
+.inspector {
+    -webkit-flex-direction: column;
+    flex-direction: column;
+}
+
 .processorstate{
     display: -webkit-flex;
     display: flex;
     -webkit-flex-direction: column;
     flex-direction: column;
-    padding-bottom: 8px;
-    width: 37%;
+    padding-bottom: 30px;
 }
 
 .processorstate h3{
-    margin: 40px 0 6px 0;
+    margin: 20px 0 6px 0;
     padding: 2px 0 2px 0;
     border-bottom: 1px solid #ddd;
 
@@ -58,20 +63,13 @@
     flex: 1 1;
 }
 
-.inspector {
+.object .lines-wrapper {
+    border-left: 1px solid #ddd;
     display: -webkit-flex;
     display: flex;
     -webkit-flex-direction: column;
     flex-direction: column;
 
-    width: 38%;
-}
-
-.inspector .object .lines-wrapper {
-    display: -webkit-flex;
-    display: flex;
-    -webkit-flex-direction: column;
-    flex-direction: column;
 }
 
 .lines {
@@ -81,8 +79,6 @@
     padding: 4px 0;
     -webkit-flex: 1 1;
     flex: 1 1;
-
-    /*background: #f0f0f0;*/
 
     overflow-x: auto;
     overflow-y: auto;
@@ -129,7 +125,6 @@
     font-size: 14px;
 
     max-width: 450px;
-    margin: 0 auto;
 }
 
 .registers .column {
@@ -204,7 +199,7 @@
 
     font-family: 'Source Sans Pro';
     font-weight: 600;
-    font-size: 13px;
+    font-size: 16px;
     letter-spacing: 1px;
     text-transform: uppercase;
 }
@@ -214,27 +209,20 @@ h3.status_header {
 }
 
 
-/*#tab-1-content .memory {
+.memory {
+    width: fit-content;
     -webkit-flex: 0 0 auto;
     flex: 0 0 auto;
-    width: 198px;
 
     font-family: 'Inconsolata';
     font-size: 14px;
-}*/
-
-.memory > div {
-    display: -webkit-flex;
-    display: flex;
-    -webkit-flex-direction: column;
-    flex-direction: column;
+    width: 250px;
 }
 
 .memory .mem-header,
 .memory .word {
     display: -webkit-flex;
     display: flex;
-    font-family: 'Source Sans Pro';
 }
 
 .memory .mem-header {
@@ -254,6 +242,7 @@ h3.status_header {
 }
 
 .memory .mem-words {
+    margin: 2px 8px 8px 0;
     border: 2px solid #ccc;
 }
 
@@ -273,6 +262,11 @@ h3.status_header {
     margin-left: 6px;
 }
 
+.memory .mem-words .address {
+    padding-left: 4px;
+
+    background: #a4a4a4;
+}
 
 .memory .stack-pointers {
     position: relative;
@@ -337,18 +331,18 @@ h3.status_header {
   padding: 4px;
 }
 
-.processorstate {
-  flex: 2 !important;
-  width: auto !important;
-}
-
 .inspector {
   flex: 2 !important;
   width: auto !important;
 }
 
+.object {
+  flex: 2 !important;
+  width: auto !important;
+}
+
 .memory {
-  flex: 1.2 !important;
+  flex: 0.8 !important;
   width: auto !important;
 }
 .memory > div {
