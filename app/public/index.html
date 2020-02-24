@@ -15,7 +15,9 @@
 <body>
     <input type="file" id="input" style="display:none">
     <a href="" type="file" id="output" style="display:none"></a>
+
     <div id="app"></div>
+
     <script type="text/template" id="default_y86_code">
         .pos 0
 init:	irmovl Stack, %esp  	# Set up Stack pointer
@@ -367,11 +369,11 @@ int new_pc = [
 
     <script type="text/template" id="tmpl_execution">
         <div class="execution">
-            <div class="processorstate"></div>
             <div class="inspector vertical-pane">
-                <div class="object"></div>
+                <div class="processorstate"></div>
                 <div class="registers-wrapper"></div>
             </div>
+            <div class="object"></div>
             <div class="memory"></div>
         </div>
     </script>
