@@ -28,7 +28,11 @@ this.cleanParser = function() {
 
 this.assemble = (hclCode) => {
     hcl2jsUtility.cleanParser()
-    let jsCode = hcl2js.parse(hclCode);
+    let parser = new hcl2js.Parser()
+    parser.yy.parseError = (err, hash) => {
+        alert("Error : " + err + " at line " + hash.line)
+    }
+    let jsCode = parser.parse(hclCode);
     return jsCode;
 }
 };

@@ -1,22 +1,27 @@
-export { assemble }
+import { ICompiler, CompilationResult, CompilationError } from "./interfaces/ICompiler";
+import * as parser from "./yasParser";
 
-function assemble(raw : string) : YasResult {
-    let result = new YasResult()
+export class Yas implements ICompiler {
+    registersEnum : any
+    instructionSet : any
 
-    return result
-}
+    constructor(registersEnum : any, instructionSet : any) {
+        this.registersEnum = registersEnum
+        this.instructionSet = instructionSet
+    }
 
-class YasResult {
-    objectCode = ""
-    errors : YasError[] = []
-}
+    assemble(src: string): CompilationResult {
+        let result = new CompilationResult()
 
-class YasError {
-    line    : number
-    message : string
+        try {
+            result.output = parser.parse(src, {
+                registers: this.registersEnum, 
+                instructionSet: this.instructionSet,
+            })
+        } catch(error) {
+            result.errors.push(new CompilationError(0, error));
+        }
 
-    constructor(line : number, message : string) {
-        this.line = line
-        this.message = message
+        return result
     }
 }

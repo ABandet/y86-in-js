@@ -83,6 +83,8 @@
     }
 %}
 
+%parse-param data
+
 /* lexical grammar */
 %lex
 %%

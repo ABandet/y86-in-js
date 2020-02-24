@@ -71,7 +71,7 @@
     recoverable: (boolean: TRUE when the parser has a error recovery rule available for this particular error)
   }
 */
-var hcl2js = (function(){
+var hcl2jsParser = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,6],$V1=[1,7],$V2=[1,8],$V3=[1,9],$V4=[1,10],$V5=[5,9,11,13,14,17],$V6=[1,29],$V7=[1,28],$V8=[1,31],$V9=[1,32],$Va=[1,34],$Vb=[1,35],$Vc=[1,39],$Vd=[1,40],$Ve=[27,28,29],$Vf=[2,26],$Vg=[2,25],$Vh=[19,24,27,28,29,33,36,37],$Vi=[12,22,26,31,32],$Vj=[19,24,27,28],$Vk=[5,9,11,12,13,14,17,22,26,31,32],$Vl=[36,37];
 var parser = {trace: function trace () { },
 yy: {},
@@ -882,9 +882,9 @@ return new Parser;
 
 
 if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
-exports.parser = hcl2js;
-exports.Parser = hcl2js.Parser;
-exports.parse = function () { return hcl2js.parse.apply(hcl2js, arguments); };
+exports.parser = hcl2jsParser;
+exports.Parser = hcl2jsParser.Parser;
+exports.parse = function () { return hcl2jsParser.parse.apply(hcl2jsParser, arguments); };
 exports.main = function commonjsMain (args) {
     if (!args[1]) {
         console.log('Usage: '+args[0]+' FILE');

@@ -1,14 +1,13 @@
-import { Registers } from "./registers"
+import { Registers, registers_enum } from "./registers"
 import { Context } from "./context";
-import { alufct } from "./aluEnum";
 import { Memory } from "./memory";
 import * as stages from "./stages";
-import { simStatus } from "./status"
+import { simStatus } from "../status"
 import {Alu} from "./alu";
-import { HclException } from "model/exceptions/simulatorException";
 import * as hcl from "./hcl"
+import { ISimulator } from "model/interfaces/ISimulator";
 
-export class Sim {
+export class Sim implements ISimulator {
     context: Context = new Context();
     registers: Registers = new Registers();
     memory : Memory = new Memory();
@@ -17,7 +16,7 @@ export class Sim {
     errorMessage : string = ""
 
     constructor() {
-
+        this.reset()
     }
 
     step() : simStatus {
@@ -36,5 +35,40 @@ export class Sim {
         return this.status
     }
 
+    reset(): void {
+        this.context = new Context();
+        this.registers = new Registers();
+        this.memory = new Memory();
+        this.alu = new Alu();
+        this.status = simStatus.AOK
+        this.errorMessage = ""
+    }
 
+    getStageView() {
+        throw new Error("Method not implemented.");
+    }
+
+    getRegistersView() {
+        throw new Error("Method not implemented.");
+    }
+
+    getMemoryView(beginAddress: number, endAddres: number) {
+        throw new Error("Method not implemented.");
+    }
+    
+    getStatusView() {
+        throw new Error("Method not implemented.");
+    }
+
+    loadProgram(yo: string): void {
+        this.memory.loadProgram(yo)
+    }
+
+    insertHclCode(js: string): void {
+        hcl.setHclCode(js)
+    }
+
+    getErrorMessage() : string {
+        return this.errorMessage
+    }
 }
