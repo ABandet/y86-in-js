@@ -1,5 +1,5 @@
 import { Sim } from "../../../model/kernel-seq/sim"
-import { simStatus } from "../../../model/kernel-seq/status"
+import { simStatus } from "../../../model/status"
 
 const program = `
 |
