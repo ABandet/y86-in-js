@@ -7,6 +7,7 @@ import * as aluModule from "./aluEnum"
 //
 let registers = registersModule.registers_enum
 let alufct = aluModule.alufct
+let ctx = {}
 
 export { call, setHclCode, setCtx }
 
@@ -33,9 +34,6 @@ function setHclCode(code : string) {
    if(!(handler instanceof Object)) {
       throw new HclException("The given handler is not an object (type : " + typeof handler + ")")
    }
-   if(!(handler.externCtx instanceof Object)) {
-      throw new HclException("The given handler has no externCtx field or ctx is not an Object")
-   }
    hclHandler = handler
 }
 
@@ -43,17 +41,13 @@ function setHclCode(code : string) {
  * Sets the context the hcl code can use.
  * If no context is specified, the hcl code will be able to call global variables
  * only.
- * @param ctx 
+ * @param newCtx 
  */
-function setCtx(ctx : Object) {
-   hclHandler.externCtx = ctx
+function setCtx(newCtx : Object) {
+   ctx = newCtx
 }
 
 let hclHandler = eval(`new function() {
-
-   this.externCtx = {}
-   
-   let ctx = this.externCtx
    
    this.srcA = () => {
    

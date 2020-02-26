@@ -22,25 +22,6 @@ test("hcl test", () => {
     // The function 'test' must exist and return ebx
     expect(hcl.call("test")).toBe(registers_enum.ebx)
 
-    // Without the externCtx, the hcl compilation shall fail
-    expect(() => {
-        hcl.setHclCode(`new function() {
-
-            // this.externCtx = {} We remove the external context
-    
-            this.test = () => {
-            
-               // Checks if some identifiers are undefined
-               if((registers.ebx) === undefined) { throw "HCL : registers.ebx is undefined in function 'test'" }
-               // End of checks
-            
-               if(1) { return registers.ebx; } 
-            
-            }
-            
-            }`)
-    }).toThrow()
-
     // Empty code shall throw
     expect(() => {
         hcl.setHclCode(``)
@@ -48,7 +29,6 @@ test("hcl test", () => {
 
     // Use of non existent fields must not throw at compile-time....
     hcl.setHclCode(`new function() {
-        this.externCtx = {}
         this.test = () => {
 
             // Checks if some identifiers are undefined
@@ -66,7 +46,6 @@ test("hcl test", () => {
     }).toThrow()
 
     hcl.setHclCode(`new function() {
-        this.externCtx = {}
         this.test = () => {
 
             // Checks if some identifiers are undefined
