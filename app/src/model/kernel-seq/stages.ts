@@ -13,6 +13,11 @@ function fetch(sim : Sim) {
     sim.context.icode = Memory.HI4(byte)
     sim.context.ifun = Memory.LO4(byte)
 
+    hcl.setCtx({
+        icode: sim.context.icode,
+        ifun: sim.context.ifun
+    })
+
     if(hcl.call("need_regids")) {
         byte = sim.memory.readByte(valp)
         valp++

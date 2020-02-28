@@ -46,6 +46,10 @@
         return str.substring(1, str.length - 1)
     }
 
+    function sanitizeString(str) {
+        return str.replace(/"/g, "'")
+    }
+
     // Returns a intsig or boolsig value
     // using the given identifier as key.
     // If there is no sig associated to the identifier,
@@ -63,6 +67,7 @@
 
         let finalValue = cleanHclString(jsSigName)
         hcl2jsUtility.identifiersList.push(finalValue)
+
         return finalValue
     }
 
@@ -73,10 +78,10 @@
 
         jsOutput  = "   // Checks if some identifiers are undefined\n"
 
-        for(var i = 0; i < identifiersList.length; i++) {
-            jsOutput += "   if((" + identifiersList[i] + ") === undefined) { throw \"HCL : " 
-            + identifiersList[i] + " is undefined in function '" + functionName + "'\" }\n"
-        }
+        identifiersList.forEach((identifier) => {
+            jsOutput += "   try { if(" + identifier + " === undefined) { throw '' } } catch(e) { throw \"HCL : " 
+            + sanitizeString(identifier) + " is not accessible in function '" + functionName + "'\" }\n"
+        })
         jsOutput += "   // End of checks\n\n"
         
         return jsOutput

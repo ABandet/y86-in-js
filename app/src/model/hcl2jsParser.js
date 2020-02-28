@@ -459,10 +459,10 @@ parse: function parse(input) {
 
         jsOutput  = "   // Checks if some identifiers are undefined\n"
 
-        for(var i = 0; i < identifiersList.length; i++) {
-            jsOutput += "   if((" + identifiersList[i] + ") === undefined) { throw \"HCL : " 
-            + identifiersList[i] + " is undefined in function '" + functionName + "'\" }\n"
-        }
+        identifiersList.forEach((identifier) => {
+            jsOutput += "   try { " + identifier + " } catch(e) { throw \"HCL : " 
+            + identifier + " is not accessible in function '" + functionName + "'\" }\n"
+        })
         jsOutput += "   // End of checks\n\n"
         
         return jsOutput

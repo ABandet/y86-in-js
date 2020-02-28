@@ -1,3 +1,4 @@
+
 #/* $begin seq-all-hcl */
 #/* $begin seq-plus-all-hcl */
 ####################################################################
@@ -5,36 +6,27 @@
 #  Copyright (C) Randal E. Bryant, David R. O'Hallaron, 2002       #
 ####################################################################
 
-####################################################################
-#    Declarations.  Do not change/remove/delete any of these       #
-####################################################################
-
-quote 'this.externCtx = {}'
-quote 'let ctx = this.externCtx'
-
 ##### Symbolic representation of Y86 Instruction Codes #############
-intsig NOP 			'instructionSet.nop.icode'
-intsig HALT			'instructionSet.halt.icode'
-intsig RRMOVL		'instructionSet.rrmovl.icode'
-intsig IRMOVL		'instructionSet.irmovl.icode'
-intsig RMMOVL		'instructionSet.rmmovl.icode'
-intsig MRMOVL		'instructionSet.mrmovl.icode'
-intsig OPL			'instructionSet.alu.icode'
-intsig IOPL			'instructionSet.alui.icode'
-intsig JXX			'instructionSet.jxx.icode'
-intsig CALL			'instructionSet.call.icode'
-intsig RET			'instructionSet.ret.icode'
-intsig PUSHL		'instructionSet.pushl.icode'
-intsig POPL			'instructionSet.popl.icode'
-intsig JMEM			'instructionSet.jmem.icode'
-intsig JREG			'instructionSet.jreg.icode'
-intsig LEAVE		'instructionSet.leave.icode'
-intsig LOOP 		'instructionSet.loop.icode'
+intsig NOP 			'instructionSet.get("nop").icode'
+intsig HALT			'instructionSet.get("halt").icode'
+intsig RRMOVL		'instructionSet.get("rrmovl").icode'
+intsig IRMOVL		'instructionSet.get("irmovl").icode'
+intsig RMMOVL		'instructionSet.get("rmmovl").icode'
+intsig MRMOVL		'instructionSet.get("mrmovl").icode'
+intsig OPL			'instructionSet.get("addl").icode'
+intsig IOPL			'instructionSet.get("iaddl").icode'
+intsig JXX			'instructionSet.get("jmp").icode'
+intsig CALL			'instructionSet.get("call").icode'
+intsig RET			'instructionSet.get("ret").icode'
+intsig PUSHL		'instructionSet.get("pushl").icode'
+intsig POPL			'instructionSet.get("popl").icode'
+intsig JMEM			'instructionSet.get("jmem").icode'
+intsig JREG			'instructionSet.get("jreg").icode'
+intsig LEAVE		'instructionSet.get("leave").icode'
 
 ##### Symbolic representation of Y86 Registers referenced explicitly #####
 intsig RESP     	'registers.esp'    	# Stack Pointer
 intsig REBP     	'registers.ebp'    	# Frame Pointer
-intsig RECX			'registers.ecx'		# Loop condition register
 intsig RNONE    	'registers.none'   	# Special value indicating "no register"
 
 ##### ALU Functions referenced explicitly                            #####
@@ -72,70 +64,67 @@ intsig valM			'ctx.valm'			# Value read from memory
 
 # Does fetched instruction require a regid byte?
 bool need_regids =
-	icode in { RRMOVL, OPL, IOPL, PUSHL, POPL, IRMOVL, RMMOVL, MRMOVL };
+    icode in { RRMOVL, OPL, IOPL, PUSHL, POPL, IRMOVL, RMMOVL, MRMOVL };
 
 # Does fetched instruction require a constant word?
 bool need_valC =
-	icode in { IRMOVL, RMMOVL, MRMOVL, JXX, CALL, LOOP };
+    icode in { IRMOVL, RMMOVL, MRMOVL, JXX, CALL };
 
 bool instr_valid = icode in 
-	{ NOP, HALT, RRMOVL, IRMOVL, RMMOVL, MRMOVL,
-	       OPL, IOPL, JXX, CALL, RET, PUSHL, POPL, LOOP };
+    { NOP, HALT, RRMOVL, IRMOVL, RMMOVL, MRMOVL,
+            OPL, IOPL, JXX, CALL, RET, PUSHL, POPL } ;
 
 ################ Decode Stage    ###################################
 
 ## What register should be used as the A source?
 int srcA = [
-	icode in { RRMOVL, RMMOVL, OPL, PUSHL } : rA;
-	icode in { POPL, RET } : RESP;
-	1 : RNONE; # Don't need register
+    icode in { RRMOVL, RMMOVL, OPL, PUSHL } : rA;
+    icode in { POPL, RET } : RESP;
+    1 : RNONE; # Don't need register
 ];
 
 ## What register should be used as the B source?
 int srcB = [
-	icode in { OPL, IOPL, RMMOVL, MRMOVL } : rB;
-	icode in { PUSHL, POPL, CALL, RET } : RESP;
-	icode in { LOOP } : RECX;
-	1 : RNONE;  # Don't need register
+    icode in { OPL, IOPL, RMMOVL, MRMOVL } : rB;
+    icode in { PUSHL, POPL, CALL, RET } : RESP;
+    1 : RNONE;  # Don't need register
 ];
 
 ## What register should be used as the E destination?
 int dstE = [
-	icode in { RRMOVL, IRMOVL, OPL, IOPL } : rB;
-	icode in { PUSHL, POPL, CALL, RET } : RESP;
-	icode in { LOOP } : RECX;
-	1 : RNONE;  # Don't need register
+    icode in { RRMOVL, IRMOVL, OPL, IOPL } : rB;
+    icode in { PUSHL, POPL, CALL, RET } : RESP;
+    1 : RNONE;  # Don't need register
 ];
 
 ## What register should be used as the M destination?
 int dstM = [
-	icode in { MRMOVL, POPL } : rA;
-	1 : RNONE;  # Don't need register
+    icode in { MRMOVL, POPL } : rA;
+    1 : RNONE;  # Don't need register
 ];
 
 ################ Execute Stage   ###################################
 
 ## Select input A to ALU
 int aluA = [
-	icode in { RRMOVL, OPL } : valA;
-	icode in { IRMOVL, RMMOVL, MRMOVL, IOPL } : valC;
-	icode in { CALL, PUSHL } : -4;
-	icode in { RET, POPL } : 4;
-	icode in { LOOP } : -1;
-	# Other instructions don't need ALU
+    icode in { RRMOVL, OPL } : valA;
+    icode in { IRMOVL, RMMOVL, MRMOVL, IOPL } : valC;
+    icode in { CALL, PUSHL } : -4;
+    icode in { RET, POPL } : 4;
+    # Other instructions don't need ALU
 ];
 
 ## Select input B to ALU
 int aluB = [
-	icode in { RMMOVL, MRMOVL, OPL, IOPL, CALL, PUSHL, RET, POPL, LOOP } : valB;
-	icode in { RRMOVL, IRMOVL } : 0;
-	# Other instructions don't need ALU
+    icode in { RMMOVL, MRMOVL, OPL, IOPL, CALL, PUSHL, RET, POPL } : valB;
+    icode in { RRMOVL, IRMOVL } : 0;
+    # Other instructions don't need ALU
 ];
 
 ## Set the ALU function
 int alufun = [
-	icode in { OPL, IOPL } : ifun;
-	1 : ALUADD;
+    icode in { OPL, IOPL } : ifun;
+    1 : ALUADD;
 ];
 
 ## Should the condition codes be updated?
@@ -151,18 +140,18 @@ bool mem_write = icode in { RMMOVL, PUSHL, CALL };
 
 ## Select memory address
 int mem_addr = [
-	icode in { RMMOVL, PUSHL, CALL, MRMOVL } : valE;
-	icode in { POPL, RET } : valA;
-	# Other instructions don't need address
+    icode in { RMMOVL, PUSHL, CALL, MRMOVL } : valE;
+    icode in { POPL, RET } : valA;
+    # Other instructions don't need address
 ];
 
 ## Select memory input data
 int mem_data = [
-	# Value from register
-	icode in { RMMOVL, PUSHL } : valA;
-	# Return PC
-	icode == CALL : valP;
-	# Default: Don't write anything
+    # Value from register
+    icode in { RMMOVL, PUSHL } : valA;
+    # Return PC
+    icode == CALL : valP;
+    # Default: Don't write anything
 ];
 
 ################ Program Counter Update ############################
@@ -170,16 +159,15 @@ int mem_data = [
 ## What address should instruction be fetched at
 
 int new_pc = [
-	# Call.  Use instruction constant
-	icode == CALL : valC;
-	# Taken branch.  Use instruction constant
-	icode == JXX && Bch : valC;
-	# Completion of RET instruction.  Use value from stack
-	icode == RET : valM;
-	# Loop condition
-	icode == LOOP && valE != 0 : valC;
-	# Default: Use incremented PC
-	1 : valP;
+    # Call.  Use instruction constant
+    icode == CALL : valC;
+    # Taken branch.  Use instruction constant
+    icode == JXX && Bch : valC;
+    # Completion of RET instruction.  Use value from stack
+    icode == RET : valM;
+    # Default: Use incremented PC
+    1 : valP;
 ];
 #/* $end seq-plus-all-hcl */
-#/* $end seq-all-hcl */
+#/* $end seq-all-hcl */        
+    

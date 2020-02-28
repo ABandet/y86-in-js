@@ -1,4 +1,5 @@
 import { simStatus } from "../status";
+import { IInstructionSet } from "./IInstructionSet";
 
 export interface ISimulator {
     step() : simStatus
@@ -10,4 +11,5 @@ export interface ISimulator {
     loadProgram(yo : string) : void
     insertHclCode(js : string) : void
     getErrorMessage() : string
+    setInstructionSet(set : IInstructionSet) : void
 }

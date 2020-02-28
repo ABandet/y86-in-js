@@ -1,65 +1,50 @@
 import * as hcl from "../../../model/kernel-seq/hcl";
 import {registers_enum} from "../../../model/kernel-seq/registers";
+import { Default, Instruction } from "../../../model/instructionSet";
 
 test("hcl test", () => {
+    let instructionSet = new Default.InstructionSet()
+    
+    instructionSet.clear()
+
+    hcl.setInstructionSet(instructionSet)
+
     // Does this simple example compile ?
     hcl.setHclCode(`new function() {
 
-        this.externCtx = {}
-
-        this.test = () => {
-        
+        this.func = () => {
            // Checks if some identifiers are undefined
-           if((registers.ebx) === undefined) { throw "HCL : registers.ebx is undefined in function 'test'" }
+           try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'func'" }
+           try { if(instructionSet.get("instr").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('instr').icode is not accessible in function 'func'" }
            // End of checks
         
-           if(1) { return registers.ebx; } 
-        
+           return ((1) === (ctx.icode)) || ((1) === (instructionSet.get("instr").icode));
         }
         
         }`)
 
-    // The function 'test' must exist and return ebx
-    expect(hcl.call("test")).toBe(registers_enum.ebx)
+    // Check of instructionSet must fail
+    expect(() => { 
+        hcl.call("func")
+    }).toThrow()
+
+    instructionSet.addInstruction(new Instruction("instr", 12, 0, 1, []))
+
+    // Check of ctx.icode must fail
+    expect(() => { 
+        hcl.call("func")
+    }).toThrow()
+
+    hcl.setCtx({
+        icode: 1
+    })
+
+    // The function 'test' must exist and return true
+    expect(hcl.call("func")).toBe(true)
 
     // Empty code shall throw
     expect(() => {
         hcl.setHclCode(``)
-    }).toThrow()
-
-    // Use of non existent fields must not throw at compile-time....
-    hcl.setHclCode(`new function() {
-        this.test = () => {
-
-            // Checks if some identifiers are undefined
-            if((something.ebx) === undefined) { throw "HCL : something.ebx is undefined in function 'test'" }
-            // End of checks
-         
-            if(1) { return something.ebx; } 
-
-        }
-    }`)
-
-    // ......, that kind of errors are reported at run-time.
-    expect(() => {
-        hcl.call("test")
-    }).toThrow()
-
-    hcl.setHclCode(`new function() {
-        this.test = () => {
-
-            // Checks if some identifiers are undefined
-            if((registers.aaax) === undefined) { throw "HCL : registers.aaax is undefined in function 'test'" }
-            // End of checks
-         
-            if(1) { return registers.aaax; } 
-
-        }
-    }`)
-
-    // The test function must throw because of the aaax register does not exist
-    expect(() => {
-        hcl.call("test")
     }).toThrow()
 
     // The nofunc does not exist

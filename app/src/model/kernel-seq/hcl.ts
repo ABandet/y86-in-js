@@ -1,15 +1,19 @@
 import { HclException } from "../exceptions/simulatorException"
 import * as registersModule from "./registers"
 import * as aluModule from "./aluEnum"
+import { Instruction } from "../instructionSet"
+import { IInstructionSet } from '../interfaces/IInstructionSet'
+import { Context } from "./context"
 
 //
 // Alias for enum usable in HCL code
 //
 let registers = registersModule.registers_enum
 let alufct = aluModule.alufct
-let ctx = {}
+let instructionSet : Map<string, Instruction>
+let ctx : any
 
-export { call, setHclCode, setCtx }
+export { call, setHclCode, setCtx, setInstructionSet }
 
 /**
  * Calls a function from the current handler.
@@ -37,262 +41,245 @@ function setHclCode(code : string) {
    hclHandler = handler
 }
 
+function setInstructionSet(instructions : IInstructionSet) {
+   instructionSet = instructions.getHandle()
+}
+
 /**
  * Sets the context the hcl code can use.
  * If no context is specified, the hcl code will be able to call global variables
  * only.
  * @param newCtx 
  */
-function setCtx(newCtx : Object) {
+function setCtx(newCtx : any) {
    ctx = newCtx
 }
 
-let hclHandler = eval(`new function() {
-   
+const defaultHclCode = `new function() {
+
    this.srcA = () => {
    
       // Checks if some identifiers are undefined
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'srcA'" }
-      if((ctx.instructionSet.rrmovl) === undefined) { throw "HCL : ctx.instructionSet.rrmovl is undefined in function 'srcA'" }
-      if((ctx.instructionSet.rmmovl) === undefined) { throw "HCL : ctx.instructionSet.rmmovl is undefined in function 'srcA'" }
-      if((ctx.instructionSet.alu) === undefined) { throw "HCL : ctx.instructionSet.alu is undefined in function 'srcA'" }
-      if((ctx.instructionSet.pushl) === undefined) { throw "HCL : ctx.instructionSet.pushl is undefined in function 'srcA'" }
-      if((ctx.ra) === undefined) { throw "HCL : ctx.ra is undefined in function 'srcA'" }
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'srcA'" }
-      if((ctx.instructionSet.popl) === undefined) { throw "HCL : ctx.instructionSet.popl is undefined in function 'srcA'" }
-      if((ctx.instructionSet.ret) === undefined) { throw "HCL : ctx.instructionSet.ret is undefined in function 'srcA'" }
-      if((ctx.registers.esp) === undefined) { throw "HCL : ctx.registers.esp is undefined in function 'srcA'" }
-      if((ctx.registers.none) === undefined) { throw "HCL : ctx.registers.none is undefined in function 'srcA'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'srcA'" }
+      try { if(instructionSet.get("rrmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('rrmovl').icode is not accessible in function 'srcA'" }
+      try { if(instructionSet.get("rmmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('rmmovl').icode is not accessible in function 'srcA'" }
+      try { if(instructionSet.get("addl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('addl').icode is not accessible in function 'srcA'" }
+      try { if(instructionSet.get("pushl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('pushl').icode is not accessible in function 'srcA'" }
+      try { if(ctx.ra === undefined) { throw '' } } catch(e) { throw "HCL : ctx.ra is not accessible in function 'srcA'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'srcA'" }
+      try { if(instructionSet.get("popl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('popl').icode is not accessible in function 'srcA'" }
+      try { if(instructionSet.get("ret").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('ret').icode is not accessible in function 'srcA'" }
+      try { if(registers.esp === undefined) { throw '' } } catch(e) { throw "HCL : registers.esp is not accessible in function 'srcA'" }
+      try { if(registers.none === undefined) { throw '' } } catch(e) { throw "HCL : registers.none is not accessible in function 'srcA'" }
       // End of checks
    
-      if(((ctx.icode) === (ctx.instructionSet.rrmovl)) || ((ctx.icode) === (ctx.instructionSet.rmmovl)) || ((ctx.icode) === (ctx.instructionSet.alu)) || ((ctx.icode) === (ctx.instructionSet.pushl))) { return ctx.ra; } 
+      if(((ctx.icode) === (instructionSet.get("rrmovl").icode)) || ((ctx.icode) === (instructionSet.get("rmmovl").icode)) || ((ctx.icode) === (instructionSet.get("addl").icode)) || ((ctx.icode) === (instructionSet.get("pushl").icode))) { return ctx.ra; } 
    
-      if(((ctx.icode) === (ctx.instructionSet.popl)) || ((ctx.icode) === (ctx.instructionSet.ret))) { return ctx.registers.esp; } 
+      if(((ctx.icode) === (instructionSet.get("popl").icode)) || ((ctx.icode) === (instructionSet.get("ret").icode))) { return registers.esp; } 
    
-      if(1) { return ctx.registers.none; } 
+      if(1) { return registers.none; } 
    
    }
    
    this.srcB = () => {
    
       // Checks if some identifiers are undefined
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'srcB'" }
-      if((ctx.instructionSet.alu) === undefined) { throw "HCL : ctx.instructionSet.alu is undefined in function 'srcB'" }
-      if((ctx.instructionSet.alui) === undefined) { throw "HCL : ctx.instructionSet.alui is undefined in function 'srcB'" }
-      if((ctx.instructionSet.rmmovl) === undefined) { throw "HCL : ctx.instructionSet.rmmovl is undefined in function 'srcB'" }
-      if((ctx.instructionSet.mrmovl) === undefined) { throw "HCL : ctx.instructionSet.mrmovl is undefined in function 'srcB'" }
-      if((ctx.rb) === undefined) { throw "HCL : ctx.rb is undefined in function 'srcB'" }
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'srcB'" }
-      if((ctx.instructionSet.pushl) === undefined) { throw "HCL : ctx.instructionSet.pushl is undefined in function 'srcB'" }
-      if((ctx.instructionSet.popl) === undefined) { throw "HCL : ctx.instructionSet.popl is undefined in function 'srcB'" }
-      if((ctx.instructionSet.call) === undefined) { throw "HCL : ctx.instructionSet.call is undefined in function 'srcB'" }
-      if((ctx.instructionSet.ret) === undefined) { throw "HCL : ctx.instructionSet.ret is undefined in function 'srcB'" }
-      if((ctx.registers.esp) === undefined) { throw "HCL : ctx.registers.esp is undefined in function 'srcB'" }
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'srcB'" }
-      if((ctx.instructionSet.loop) === undefined) { throw "HCL : ctx.instructionSet.loop is undefined in function 'srcB'" }
-      if((ctx.registers.ecx) === undefined) { throw "HCL : ctx.registers.ecx is undefined in function 'srcB'" }
-      if((ctx.registers.none) === undefined) { throw "HCL : ctx.registers.none is undefined in function 'srcB'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'srcB'" }
+      try { if(instructionSet.get("addl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('addl').icode is not accessible in function 'srcB'" }
+      try { if(instructionSet.get("iaddl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('iaddl').icode is not accessible in function 'srcB'" }
+      try { if(instructionSet.get("rmmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('rmmovl').icode is not accessible in function 'srcB'" }
+      try { if(instructionSet.get("mrmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('mrmovl').icode is not accessible in function 'srcB'" }
+      try { if(ctx.rb === undefined) { throw '' } } catch(e) { throw "HCL : ctx.rb is not accessible in function 'srcB'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'srcB'" }
+      try { if(instructionSet.get("pushl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('pushl').icode is not accessible in function 'srcB'" }
+      try { if(instructionSet.get("popl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('popl').icode is not accessible in function 'srcB'" }
+      try { if(instructionSet.get("call").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('call').icode is not accessible in function 'srcB'" }
+      try { if(instructionSet.get("ret").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('ret').icode is not accessible in function 'srcB'" }
+      try { if(registers.esp === undefined) { throw '' } } catch(e) { throw "HCL : registers.esp is not accessible in function 'srcB'" }
+      try { if(registers.none === undefined) { throw '' } } catch(e) { throw "HCL : registers.none is not accessible in function 'srcB'" }
       // End of checks
    
-      if(((ctx.icode) === (ctx.instructionSet.alu)) || ((ctx.icode) === (ctx.instructionSet.alui)) || ((ctx.icode) === (ctx.instructionSet.rmmovl)) || ((ctx.icode) === (ctx.instructionSet.mrmovl))) { return ctx.rb; } 
+      if(((ctx.icode) === (instructionSet.get("addl").icode)) || ((ctx.icode) === (instructionSet.get("iaddl").icode)) || ((ctx.icode) === (instructionSet.get("rmmovl").icode)) || ((ctx.icode) === (instructionSet.get("mrmovl").icode))) { return ctx.rb; } 
    
-      if(((ctx.icode) === (ctx.instructionSet.pushl)) || ((ctx.icode) === (ctx.instructionSet.popl)) || ((ctx.icode) === (ctx.instructionSet.call)) || ((ctx.icode) === (ctx.instructionSet.ret))) { return ctx.registers.esp; } 
+      if(((ctx.icode) === (instructionSet.get("pushl").icode)) || ((ctx.icode) === (instructionSet.get("popl").icode)) || ((ctx.icode) === (instructionSet.get("call").icode)) || ((ctx.icode) === (instructionSet.get("ret").icode))) { return registers.esp; } 
    
-      if(((ctx.icode) === (ctx.instructionSet.loop))) { return ctx.registers.ecx; } 
-   
-      if(1) { return ctx.registers.none; } 
+      if(1) { return registers.none; } 
    
    }
    
    this.dstE = () => {
    
       // Checks if some identifiers are undefined
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'dstE'" }
-      if((ctx.instructionSet.rrmovl) === undefined) { throw "HCL : ctx.instructionSet.rrmovl is undefined in function 'dstE'" }
-      if((ctx.instructionSet.irmovl) === undefined) { throw "HCL : ctx.instructionSet.irmovl is undefined in function 'dstE'" }
-      if((ctx.instructionSet.alu) === undefined) { throw "HCL : ctx.instructionSet.alu is undefined in function 'dstE'" }
-      if((ctx.instructionSet.alui) === undefined) { throw "HCL : ctx.instructionSet.alui is undefined in function 'dstE'" }
-      if((ctx.rb) === undefined) { throw "HCL : ctx.rb is undefined in function 'dstE'" }
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'dstE'" }
-      if((ctx.instructionSet.pushl) === undefined) { throw "HCL : ctx.instructionSet.pushl is undefined in function 'dstE'" }
-      if((ctx.instructionSet.popl) === undefined) { throw "HCL : ctx.instructionSet.popl is undefined in function 'dstE'" }
-      if((ctx.instructionSet.call) === undefined) { throw "HCL : ctx.instructionSet.call is undefined in function 'dstE'" }
-      if((ctx.instructionSet.ret) === undefined) { throw "HCL : ctx.instructionSet.ret is undefined in function 'dstE'" }
-      if((ctx.registers.esp) === undefined) { throw "HCL : ctx.registers.esp is undefined in function 'dstE'" }
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'dstE'" }
-      if((ctx.instructionSet.loop) === undefined) { throw "HCL : ctx.instructionSet.loop is undefined in function 'dstE'" }
-      if((ctx.registers.ecx) === undefined) { throw "HCL : ctx.registers.ecx is undefined in function 'dstE'" }
-      if((ctx.registers.none) === undefined) { throw "HCL : ctx.registers.none is undefined in function 'dstE'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'dstE'" }
+      try { if(instructionSet.get("rrmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('rrmovl').icode is not accessible in function 'dstE'" }
+      try { if(instructionSet.get("irmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('irmovl').icode is not accessible in function 'dstE'" }
+      try { if(instructionSet.get("addl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('addl').icode is not accessible in function 'dstE'" }
+      try { if(instructionSet.get("iaddl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('iaddl').icode is not accessible in function 'dstE'" }
+      try { if(ctx.rb === undefined) { throw '' } } catch(e) { throw "HCL : ctx.rb is not accessible in function 'dstE'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'dstE'" }
+      try { if(instructionSet.get("pushl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('pushl').icode is not accessible in function 'dstE'" }
+      try { if(instructionSet.get("popl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('popl').icode is not accessible in function 'dstE'" }
+      try { if(instructionSet.get("call").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('call').icode is not accessible in function 'dstE'" }
+      try { if(instructionSet.get("ret").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('ret').icode is not accessible in function 'dstE'" }
+      try { if(registers.esp === undefined) { throw '' } } catch(e) { throw "HCL : registers.esp is not accessible in function 'dstE'" }
+      try { if(registers.none === undefined) { throw '' } } catch(e) { throw "HCL : registers.none is not accessible in function 'dstE'" }
       // End of checks
    
-      if(((ctx.icode) === (ctx.instructionSet.rrmovl)) || ((ctx.icode) === (ctx.instructionSet.irmovl)) || ((ctx.icode) === (ctx.instructionSet.alu)) || ((ctx.icode) === (ctx.instructionSet.alui))) { return ctx.rb; } 
+      if(((ctx.icode) === (instructionSet.get("rrmovl").icode)) || ((ctx.icode) === (instructionSet.get("irmovl").icode)) || ((ctx.icode) === (instructionSet.get("addl").icode)) || ((ctx.icode) === (instructionSet.get("iaddl").icode))) { return ctx.rb; } 
    
-      if(((ctx.icode) === (ctx.instructionSet.pushl)) || ((ctx.icode) === (ctx.instructionSet.popl)) || ((ctx.icode) === (ctx.instructionSet.call)) || ((ctx.icode) === (ctx.instructionSet.ret))) { return ctx.registers.esp; } 
+      if(((ctx.icode) === (instructionSet.get("pushl").icode)) || ((ctx.icode) === (instructionSet.get("popl").icode)) || ((ctx.icode) === (instructionSet.get("call").icode)) || ((ctx.icode) === (instructionSet.get("ret").icode))) { return registers.esp; } 
    
-      if(((ctx.icode) === (ctx.instructionSet.loop))) { return ctx.registers.ecx; } 
-   
-      if(1) { return ctx.registers.none; } 
+      if(1) { return registers.none; } 
    
    }
    
    this.dstM = () => {
    
       // Checks if some identifiers are undefined
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'dstM'" }
-      if((ctx.instructionSet.mrmovl) === undefined) { throw "HCL : ctx.instructionSet.mrmovl is undefined in function 'dstM'" }
-      if((ctx.instructionSet.popl) === undefined) { throw "HCL : ctx.instructionSet.popl is undefined in function 'dstM'" }
-      if((ctx.ra) === undefined) { throw "HCL : ctx.ra is undefined in function 'dstM'" }
-      if((ctx.registers.none) === undefined) { throw "HCL : ctx.registers.none is undefined in function 'dstM'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'dstM'" }
+      try { if(instructionSet.get("mrmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('mrmovl').icode is not accessible in function 'dstM'" }
+      try { if(instructionSet.get("popl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('popl').icode is not accessible in function 'dstM'" }
+      try { if(ctx.ra === undefined) { throw '' } } catch(e) { throw "HCL : ctx.ra is not accessible in function 'dstM'" }
+      try { if(registers.none === undefined) { throw '' } } catch(e) { throw "HCL : registers.none is not accessible in function 'dstM'" }
       // End of checks
    
-      if(((ctx.icode) === (ctx.instructionSet.mrmovl)) || ((ctx.icode) === (ctx.instructionSet.popl))) { return ctx.ra; } 
+      if(((ctx.icode) === (instructionSet.get("mrmovl").icode)) || ((ctx.icode) === (instructionSet.get("popl").icode))) { return ctx.ra; } 
    
-      if(1) { return ctx.registers.none; } 
+      if(1) { return registers.none; } 
    
    }
    
    this.aluA = () => {
    
       // Checks if some identifiers are undefined
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'aluA'" }
-      if((ctx.instructionSet.rrmovl) === undefined) { throw "HCL : ctx.instructionSet.rrmovl is undefined in function 'aluA'" }
-      if((ctx.instructionSet.alu) === undefined) { throw "HCL : ctx.instructionSet.alu is undefined in function 'aluA'" }
-      if((ctx.vala) === undefined) { throw "HCL : ctx.vala is undefined in function 'aluA'" }
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'aluA'" }
-      if((ctx.instructionSet.irmovl) === undefined) { throw "HCL : ctx.instructionSet.irmovl is undefined in function 'aluA'" }
-      if((ctx.instructionSet.rmmovl) === undefined) { throw "HCL : ctx.instructionSet.rmmovl is undefined in function 'aluA'" }
-      if((ctx.instructionSet.mrmovl) === undefined) { throw "HCL : ctx.instructionSet.mrmovl is undefined in function 'aluA'" }
-      if((ctx.instructionSet.alui) === undefined) { throw "HCL : ctx.instructionSet.alui is undefined in function 'aluA'" }
-      if((ctx.valc) === undefined) { throw "HCL : ctx.valc is undefined in function 'aluA'" }
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'aluA'" }
-      if((ctx.instructionSet.call) === undefined) { throw "HCL : ctx.instructionSet.call is undefined in function 'aluA'" }
-      if((ctx.instructionSet.pushl) === undefined) { throw "HCL : ctx.instructionSet.pushl is undefined in function 'aluA'" }
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'aluA'" }
-      if((ctx.instructionSet.ret) === undefined) { throw "HCL : ctx.instructionSet.ret is undefined in function 'aluA'" }
-      if((ctx.instructionSet.popl) === undefined) { throw "HCL : ctx.instructionSet.popl is undefined in function 'aluA'" }
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'aluA'" }
-      if((ctx.instructionSet.loop) === undefined) { throw "HCL : ctx.instructionSet.loop is undefined in function 'aluA'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'aluA'" }
+      try { if(instructionSet.get("rrmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('rrmovl').icode is not accessible in function 'aluA'" }
+      try { if(instructionSet.get("addl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('addl').icode is not accessible in function 'aluA'" }
+      try { if(ctx.vala === undefined) { throw '' } } catch(e) { throw "HCL : ctx.vala is not accessible in function 'aluA'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'aluA'" }
+      try { if(instructionSet.get("irmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('irmovl').icode is not accessible in function 'aluA'" }
+      try { if(instructionSet.get("rmmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('rmmovl').icode is not accessible in function 'aluA'" }
+      try { if(instructionSet.get("mrmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('mrmovl').icode is not accessible in function 'aluA'" }
+      try { if(instructionSet.get("iaddl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('iaddl').icode is not accessible in function 'aluA'" }
+      try { if(ctx.valc === undefined) { throw '' } } catch(e) { throw "HCL : ctx.valc is not accessible in function 'aluA'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'aluA'" }
+      try { if(instructionSet.get("call").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('call').icode is not accessible in function 'aluA'" }
+      try { if(instructionSet.get("pushl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('pushl').icode is not accessible in function 'aluA'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'aluA'" }
+      try { if(instructionSet.get("ret").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('ret').icode is not accessible in function 'aluA'" }
+      try { if(instructionSet.get("popl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('popl').icode is not accessible in function 'aluA'" }
       // End of checks
    
-      if(((ctx.icode) === (ctx.instructionSet.rrmovl)) || ((ctx.icode) === (ctx.instructionSet.alu))) { return ctx.vala; } 
+      if(((ctx.icode) === (instructionSet.get("rrmovl").icode)) || ((ctx.icode) === (instructionSet.get("addl").icode))) { return ctx.vala; } 
    
-      if(((ctx.icode) === (ctx.instructionSet.irmovl)) || ((ctx.icode) === (ctx.instructionSet.rmmovl)) || ((ctx.icode) === (ctx.instructionSet.mrmovl)) || ((ctx.icode) === (ctx.instructionSet.alui))) { return ctx.valc; } 
+      if(((ctx.icode) === (instructionSet.get("irmovl").icode)) || ((ctx.icode) === (instructionSet.get("rmmovl").icode)) || ((ctx.icode) === (instructionSet.get("mrmovl").icode)) || ((ctx.icode) === (instructionSet.get("iaddl").icode))) { return ctx.valc; } 
    
-      if(((ctx.icode) === (ctx.instructionSet.call)) || ((ctx.icode) === (ctx.instructionSet.pushl))) { return -4; } 
+      if(((ctx.icode) === (instructionSet.get("call").icode)) || ((ctx.icode) === (instructionSet.get("pushl").icode))) { return -4; } 
    
-      if(((ctx.icode) === (ctx.instructionSet.ret)) || ((ctx.icode) === (ctx.instructionSet.popl))) { return 4; } 
-   
-      if(((ctx.icode) === (ctx.instructionSet.loop))) { return -1; } 
+      if(((ctx.icode) === (instructionSet.get("ret").icode)) || ((ctx.icode) === (instructionSet.get("popl").icode))) { return 4; } 
    
    }
    
    this.aluB = () => {
    
       // Checks if some identifiers are undefined
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'aluB'" }
-      if((ctx.instructionSet.rmmovl) === undefined) { throw "HCL : ctx.instructionSet.rmmovl is undefined in function 'aluB'" }
-      if((ctx.instructionSet.mrmovl) === undefined) { throw "HCL : ctx.instructionSet.mrmovl is undefined in function 'aluB'" }
-      if((ctx.instructionSet.alu) === undefined) { throw "HCL : ctx.instructionSet.alu is undefined in function 'aluB'" }
-      if((ctx.instructionSet.alui) === undefined) { throw "HCL : ctx.instructionSet.alui is undefined in function 'aluB'" }
-      if((ctx.instructionSet.call) === undefined) { throw "HCL : ctx.instructionSet.call is undefined in function 'aluB'" }
-      if((ctx.instructionSet.pushl) === undefined) { throw "HCL : ctx.instructionSet.pushl is undefined in function 'aluB'" }
-      if((ctx.instructionSet.ret) === undefined) { throw "HCL : ctx.instructionSet.ret is undefined in function 'aluB'" }
-      if((ctx.instructionSet.popl) === undefined) { throw "HCL : ctx.instructionSet.popl is undefined in function 'aluB'" }
-      if((ctx.instructionSet.loop) === undefined) { throw "HCL : ctx.instructionSet.loop is undefined in function 'aluB'" }
-      if((ctx.valb) === undefined) { throw "HCL : ctx.valb is undefined in function 'aluB'" }
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'aluB'" }
-      if((ctx.instructionSet.rrmovl) === undefined) { throw "HCL : ctx.instructionSet.rrmovl is undefined in function 'aluB'" }
-      if((ctx.instructionSet.irmovl) === undefined) { throw "HCL : ctx.instructionSet.irmovl is undefined in function 'aluB'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'aluB'" }
+      try { if(instructionSet.get("rmmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('rmmovl').icode is not accessible in function 'aluB'" }
+      try { if(instructionSet.get("mrmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('mrmovl').icode is not accessible in function 'aluB'" }
+      try { if(instructionSet.get("addl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('addl').icode is not accessible in function 'aluB'" }
+      try { if(instructionSet.get("iaddl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('iaddl').icode is not accessible in function 'aluB'" }
+      try { if(instructionSet.get("call").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('call').icode is not accessible in function 'aluB'" }
+      try { if(instructionSet.get("pushl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('pushl').icode is not accessible in function 'aluB'" }
+      try { if(instructionSet.get("ret").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('ret').icode is not accessible in function 'aluB'" }
+      try { if(instructionSet.get("popl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('popl').icode is not accessible in function 'aluB'" }
+      try { if(ctx.valb === undefined) { throw '' } } catch(e) { throw "HCL : ctx.valb is not accessible in function 'aluB'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'aluB'" }
+      try { if(instructionSet.get("rrmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('rrmovl').icode is not accessible in function 'aluB'" }
+      try { if(instructionSet.get("irmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('irmovl').icode is not accessible in function 'aluB'" }
       // End of checks
    
-      if(((ctx.icode) === (ctx.instructionSet.rmmovl)) || ((ctx.icode) === (ctx.instructionSet.mrmovl)) || ((ctx.icode) === (ctx.instructionSet.alu)) || ((ctx.icode) === (ctx.instructionSet.alui)) || ((ctx.icode) === (ctx.instructionSet.call)) || ((ctx.icode) === (ctx.instructionSet.pushl)) || ((ctx.icode) === (ctx.instructionSet.ret)) || ((ctx.icode) === (ctx.instructionSet.popl)) || ((ctx.icode) === (ctx.instructionSet.loop))) { return ctx.valb; } 
+      if(((ctx.icode) === (instructionSet.get("rmmovl").icode)) || ((ctx.icode) === (instructionSet.get("mrmovl").icode)) || ((ctx.icode) === (instructionSet.get("addl").icode)) || ((ctx.icode) === (instructionSet.get("iaddl").icode)) || ((ctx.icode) === (instructionSet.get("call").icode)) || ((ctx.icode) === (instructionSet.get("pushl").icode)) || ((ctx.icode) === (instructionSet.get("ret").icode)) || ((ctx.icode) === (instructionSet.get("popl").icode))) { return ctx.valb; } 
    
-      if(((ctx.icode) === (ctx.instructionSet.rrmovl)) || ((ctx.icode) === (ctx.instructionSet.irmovl))) { return 0; } 
+      if(((ctx.icode) === (instructionSet.get("rrmovl").icode)) || ((ctx.icode) === (instructionSet.get("irmovl").icode))) { return 0; } 
    
    }
    
    this.alufun = () => {
    
       // Checks if some identifiers are undefined
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'alufun'" }
-      if((ctx.instructionSet.alu) === undefined) { throw "HCL : ctx.instructionSet.alu is undefined in function 'alufun'" }
-      if((ctx.instructionSet.alui) === undefined) { throw "HCL : ctx.instructionSet.alui is undefined in function 'alufun'" }
-      if((ctx.ifun) === undefined) { throw "HCL : ctx.ifun is undefined in function 'alufun'" }
-      if((ctx.alufct.A_ADD) === undefined) { throw "HCL : ctx.alufct.A_ADD is undefined in function 'alufun'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'alufun'" }
+      try { if(instructionSet.get("addl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('addl').icode is not accessible in function 'alufun'" }
+      try { if(instructionSet.get("iaddl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('iaddl').icode is not accessible in function 'alufun'" }
+      try { if(ctx.ifun === undefined) { throw '' } } catch(e) { throw "HCL : ctx.ifun is not accessible in function 'alufun'" }
+      try { if(alufct.A_ADD === undefined) { throw '' } } catch(e) { throw "HCL : alufct.A_ADD is not accessible in function 'alufun'" }
       // End of checks
    
-      if(((ctx.icode) === (ctx.instructionSet.alu)) || ((ctx.icode) === (ctx.instructionSet.alui))) { return ctx.ifun; } 
+      if(((ctx.icode) === (instructionSet.get("addl").icode)) || ((ctx.icode) === (instructionSet.get("iaddl").icode))) { return ctx.ifun; } 
    
-      if(1) { return ctx.alufct.A_ADD; } 
+      if(1) { return alufct.A_ADD; } 
    
    }
    
    this.mem_addr = () => {
    
       // Checks if some identifiers are undefined
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'mem_addr'" }
-      if((ctx.instructionSet.rmmovl) === undefined) { throw "HCL : ctx.instructionSet.rmmovl is undefined in function 'mem_addr'" }
-      if((ctx.instructionSet.pushl) === undefined) { throw "HCL : ctx.instructionSet.pushl is undefined in function 'mem_addr'" }
-      if((ctx.instructionSet.call) === undefined) { throw "HCL : ctx.instructionSet.call is undefined in function 'mem_addr'" }
-      if((ctx.instructionSet.mrmovl) === undefined) { throw "HCL : ctx.instructionSet.mrmovl is undefined in function 'mem_addr'" }
-      if((ctx.vale) === undefined) { throw "HCL : ctx.vale is undefined in function 'mem_addr'" }
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'mem_addr'" }
-      if((ctx.instructionSet.popl) === undefined) { throw "HCL : ctx.instructionSet.popl is undefined in function 'mem_addr'" }
-      if((ctx.instructionSet.ret) === undefined) { throw "HCL : ctx.instructionSet.ret is undefined in function 'mem_addr'" }
-      if((ctx.vala) === undefined) { throw "HCL : ctx.vala is undefined in function 'mem_addr'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'mem_addr'" }
+      try { if(instructionSet.get("rmmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('rmmovl').icode is not accessible in function 'mem_addr'" }
+      try { if(instructionSet.get("pushl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('pushl').icode is not accessible in function 'mem_addr'" }
+      try { if(instructionSet.get("call").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('call').icode is not accessible in function 'mem_addr'" }
+      try { if(instructionSet.get("mrmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('mrmovl').icode is not accessible in function 'mem_addr'" }
+      try { if(ctx.vale === undefined) { throw '' } } catch(e) { throw "HCL : ctx.vale is not accessible in function 'mem_addr'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'mem_addr'" }
+      try { if(instructionSet.get("popl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('popl').icode is not accessible in function 'mem_addr'" }
+      try { if(instructionSet.get("ret").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('ret').icode is not accessible in function 'mem_addr'" }
+      try { if(ctx.vala === undefined) { throw '' } } catch(e) { throw "HCL : ctx.vala is not accessible in function 'mem_addr'" }
       // End of checks
    
-      if(((ctx.icode) === (ctx.instructionSet.rmmovl)) || ((ctx.icode) === (ctx.instructionSet.pushl)) || ((ctx.icode) === (ctx.instructionSet.call)) || ((ctx.icode) === (ctx.instructionSet.mrmovl))) { return ctx.vale; } 
+      if(((ctx.icode) === (instructionSet.get("rmmovl").icode)) || ((ctx.icode) === (instructionSet.get("pushl").icode)) || ((ctx.icode) === (instructionSet.get("call").icode)) || ((ctx.icode) === (instructionSet.get("mrmovl").icode))) { return ctx.vale; } 
    
-      if(((ctx.icode) === (ctx.instructionSet.popl)) || ((ctx.icode) === (ctx.instructionSet.ret))) { return ctx.vala; } 
+      if(((ctx.icode) === (instructionSet.get("popl").icode)) || ((ctx.icode) === (instructionSet.get("ret").icode))) { return ctx.vala; } 
    
    }
    
    this.mem_data = () => {
    
       // Checks if some identifiers are undefined
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'mem_data'" }
-      if((ctx.instructionSet.rmmovl) === undefined) { throw "HCL : ctx.instructionSet.rmmovl is undefined in function 'mem_data'" }
-      if((ctx.instructionSet.pushl) === undefined) { throw "HCL : ctx.instructionSet.pushl is undefined in function 'mem_data'" }
-      if((ctx.vala) === undefined) { throw "HCL : ctx.vala is undefined in function 'mem_data'" }
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'mem_data'" }
-      if((ctx.instructionSet.call) === undefined) { throw "HCL : ctx.instructionSet.call is undefined in function 'mem_data'" }
-      if((ctx.valp) === undefined) { throw "HCL : ctx.valp is undefined in function 'mem_data'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'mem_data'" }
+      try { if(instructionSet.get("rmmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('rmmovl').icode is not accessible in function 'mem_data'" }
+      try { if(instructionSet.get("pushl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('pushl').icode is not accessible in function 'mem_data'" }
+      try { if(ctx.vala === undefined) { throw '' } } catch(e) { throw "HCL : ctx.vala is not accessible in function 'mem_data'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'mem_data'" }
+      try { if(instructionSet.get("call").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('call').icode is not accessible in function 'mem_data'" }
+      try { if(ctx.valp === undefined) { throw '' } } catch(e) { throw "HCL : ctx.valp is not accessible in function 'mem_data'" }
       // End of checks
    
-      if(((ctx.icode) === (ctx.instructionSet.rmmovl)) || ((ctx.icode) === (ctx.instructionSet.pushl))) { return ctx.vala; } 
+      if(((ctx.icode) === (instructionSet.get("rmmovl").icode)) || ((ctx.icode) === (instructionSet.get("pushl").icode))) { return ctx.vala; } 
    
-      if(ctx.icode == ctx.instructionSet.call) { return ctx.valp; } 
+      if(ctx.icode == instructionSet.get("call").icode) { return ctx.valp; } 
    
    }
    
    this.new_pc = () => {
    
       // Checks if some identifiers are undefined
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'new_pc'" }
-      if((ctx.instructionSet.call) === undefined) { throw "HCL : ctx.instructionSet.call is undefined in function 'new_pc'" }
-      if((ctx.valc) === undefined) { throw "HCL : ctx.valc is undefined in function 'new_pc'" }
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'new_pc'" }
-      if((ctx.instructionSet.jxx) === undefined) { throw "HCL : ctx.instructionSet.jxx is undefined in function 'new_pc'" }
-      if((ctx.bcond) === undefined) { throw "HCL : ctx.bcond is undefined in function 'new_pc'" }
-      if((ctx.valc) === undefined) { throw "HCL : ctx.valc is undefined in function 'new_pc'" }
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'new_pc'" }
-      if((ctx.instructionSet.ret) === undefined) { throw "HCL : ctx.instructionSet.ret is undefined in function 'new_pc'" }
-      if((ctx.valm) === undefined) { throw "HCL : ctx.valm is undefined in function 'new_pc'" }
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'new_pc'" }
-      if((ctx.instructionSet.loop) === undefined) { throw "HCL : ctx.instructionSet.loop is undefined in function 'new_pc'" }
-      if((ctx.vale) === undefined) { throw "HCL : ctx.vale is undefined in function 'new_pc'" }
-      if((ctx.valc) === undefined) { throw "HCL : ctx.valc is undefined in function 'new_pc'" }
-      if((ctx.valp) === undefined) { throw "HCL : ctx.valp is undefined in function 'new_pc'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'new_pc'" }
+      try { if(instructionSet.get("call").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('call').icode is not accessible in function 'new_pc'" }
+      try { if(ctx.valc === undefined) { throw '' } } catch(e) { throw "HCL : ctx.valc is not accessible in function 'new_pc'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'new_pc'" }
+      try { if(instructionSet.get("jmp").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('jmp').icode is not accessible in function 'new_pc'" }
+      try { if(ctx.bcond === undefined) { throw '' } } catch(e) { throw "HCL : ctx.bcond is not accessible in function 'new_pc'" }
+      try { if(ctx.valc === undefined) { throw '' } } catch(e) { throw "HCL : ctx.valc is not accessible in function 'new_pc'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'new_pc'" }
+      try { if(instructionSet.get("ret").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('ret').icode is not accessible in function 'new_pc'" }
+      try { if(ctx.valm === undefined) { throw '' } } catch(e) { throw "HCL : ctx.valm is not accessible in function 'new_pc'" }
+      try { if(ctx.valp === undefined) { throw '' } } catch(e) { throw "HCL : ctx.valp is not accessible in function 'new_pc'" }
       // End of checks
    
-      if(ctx.icode == ctx.instructionSet.call) { return ctx.valc; } 
+      if(ctx.icode == instructionSet.get("call").icode) { return ctx.valc; } 
    
-      if(ctx.icode == ctx.instructionSet.jxx && ctx.bcond) { return ctx.valc; } 
+      if(ctx.icode == instructionSet.get("jmp").icode && ctx.bcond) { return ctx.valc; } 
    
-      if(ctx.icode == ctx.instructionSet.ret) { return ctx.valm; } 
-   
-      if(ctx.icode == ctx.instructionSet.loop && ctx.vale != 0) { return ctx.valc; } 
+      if(ctx.icode == instructionSet.get("ret").icode) { return ctx.valm; } 
    
       if(1) { return ctx.valp; } 
    
@@ -300,86 +287,87 @@ let hclHandler = eval(`new function() {
    
    this.need_regids = () => {
       // Checks if some identifiers are undefined
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'need_regids'" }
-      if((ctx.instructionSet.rrmovl) === undefined) { throw "HCL : ctx.instructionSet.rrmovl is undefined in function 'need_regids'" }
-      if((ctx.instructionSet.alu) === undefined) { throw "HCL : ctx.instructionSet.alu is undefined in function 'need_regids'" }
-      if((ctx.instructionSet.alui) === undefined) { throw "HCL : ctx.instructionSet.alui is undefined in function 'need_regids'" }
-      if((ctx.instructionSet.pushl) === undefined) { throw "HCL : ctx.instructionSet.pushl is undefined in function 'need_regids'" }
-      if((ctx.instructionSet.popl) === undefined) { throw "HCL : ctx.instructionSet.popl is undefined in function 'need_regids'" }
-      if((ctx.instructionSet.irmovl) === undefined) { throw "HCL : ctx.instructionSet.irmovl is undefined in function 'need_regids'" }
-      if((ctx.instructionSet.rmmovl) === undefined) { throw "HCL : ctx.instructionSet.rmmovl is undefined in function 'need_regids'" }
-      if((ctx.instructionSet.mrmovl) === undefined) { throw "HCL : ctx.instructionSet.mrmovl is undefined in function 'need_regids'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'need_regids'" }
+      try { if(instructionSet.get("rrmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('rrmovl').icode is not accessible in function 'need_regids'" }
+      try { if(instructionSet.get("addl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('addl').icode is not accessible in function 'need_regids'" }
+      try { if(instructionSet.get("iaddl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('iaddl').icode is not accessible in function 'need_regids'" }
+      try { if(instructionSet.get("pushl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('pushl').icode is not accessible in function 'need_regids'" }
+      try { if(instructionSet.get("popl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('popl').icode is not accessible in function 'need_regids'" }
+      try { if(instructionSet.get("irmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('irmovl').icode is not accessible in function 'need_regids'" }
+      try { if(instructionSet.get("rmmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('rmmovl').icode is not accessible in function 'need_regids'" }
+      try { if(instructionSet.get("mrmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('mrmovl').icode is not accessible in function 'need_regids'" }
       // End of checks
    
-      return ((ctx.icode) === (ctx.instructionSet.rrmovl)) || ((ctx.icode) === (ctx.instructionSet.alu)) || ((ctx.icode) === (ctx.instructionSet.alui)) || ((ctx.icode) === (ctx.instructionSet.pushl)) || ((ctx.icode) === (ctx.instructionSet.popl)) || ((ctx.icode) === (ctx.instructionSet.irmovl)) || ((ctx.icode) === (ctx.instructionSet.rmmovl)) || ((ctx.icode) === (ctx.instructionSet.mrmovl));
+      return ((ctx.icode) === (instructionSet.get("rrmovl").icode)) || ((ctx.icode) === (instructionSet.get("addl").icode)) || ((ctx.icode) === (instructionSet.get("iaddl").icode)) || ((ctx.icode) === (instructionSet.get("pushl").icode)) || ((ctx.icode) === (instructionSet.get("popl").icode)) || ((ctx.icode) === (instructionSet.get("irmovl").icode)) || ((ctx.icode) === (instructionSet.get("rmmovl").icode)) || ((ctx.icode) === (instructionSet.get("mrmovl").icode));
    }
    
    this.need_valC = () => {
       // Checks if some identifiers are undefined
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'need_valC'" }
-      if((ctx.instructionSet.irmovl) === undefined) { throw "HCL : ctx.instructionSet.irmovl is undefined in function 'need_valC'" }
-      if((ctx.instructionSet.rmmovl) === undefined) { throw "HCL : ctx.instructionSet.rmmovl is undefined in function 'need_valC'" }
-      if((ctx.instructionSet.mrmovl) === undefined) { throw "HCL : ctx.instructionSet.mrmovl is undefined in function 'need_valC'" }
-      if((ctx.instructionSet.jxx) === undefined) { throw "HCL : ctx.instructionSet.jxx is undefined in function 'need_valC'" }
-      if((ctx.instructionSet.call) === undefined) { throw "HCL : ctx.instructionSet.call is undefined in function 'need_valC'" }
-      if((ctx.instructionSet.loop) === undefined) { throw "HCL : ctx.instructionSet.loop is undefined in function 'need_valC'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'need_valC'" }
+      try { if(instructionSet.get("irmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('irmovl').icode is not accessible in function 'need_valC'" }
+      try { if(instructionSet.get("rmmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('rmmovl').icode is not accessible in function 'need_valC'" }
+      try { if(instructionSet.get("mrmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('mrmovl').icode is not accessible in function 'need_valC'" }
+      try { if(instructionSet.get("jmp").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('jmp').icode is not accessible in function 'need_valC'" }
+      try { if(instructionSet.get("call").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('call').icode is not accessible in function 'need_valC'" }
       // End of checks
    
-      return ((ctx.icode) === (ctx.instructionSet.irmovl)) || ((ctx.icode) === (ctx.instructionSet.rmmovl)) || ((ctx.icode) === (ctx.instructionSet.mrmovl)) || ((ctx.icode) === (ctx.instructionSet.jxx)) || ((ctx.icode) === (ctx.instructionSet.call)) || ((ctx.icode) === (ctx.instructionSet.loop));
+      return ((ctx.icode) === (instructionSet.get("irmovl").icode)) || ((ctx.icode) === (instructionSet.get("rmmovl").icode)) || ((ctx.icode) === (instructionSet.get("mrmovl").icode)) || ((ctx.icode) === (instructionSet.get("jmp").icode)) || ((ctx.icode) === (instructionSet.get("call").icode));
    }
    
    this.instr_valid = () => {
       // Checks if some identifiers are undefined
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'instr_valid'" }
-      if((ctx.instructionSet.nop) === undefined) { throw "HCL : ctx.instructionSet.nop is undefined in function 'instr_valid'" }
-      if((ctx.instructionSet.halt) === undefined) { throw "HCL : ctx.instructionSet.halt is undefined in function 'instr_valid'" }
-      if((ctx.instructionSet.rrmovl) === undefined) { throw "HCL : ctx.instructionSet.rrmovl is undefined in function 'instr_valid'" }
-      if((ctx.instructionSet.irmovl) === undefined) { throw "HCL : ctx.instructionSet.irmovl is undefined in function 'instr_valid'" }
-      if((ctx.instructionSet.rmmovl) === undefined) { throw "HCL : ctx.instructionSet.rmmovl is undefined in function 'instr_valid'" }
-      if((ctx.instructionSet.mrmovl) === undefined) { throw "HCL : ctx.instructionSet.mrmovl is undefined in function 'instr_valid'" }
-      if((ctx.instructionSet.alu) === undefined) { throw "HCL : ctx.instructionSet.alu is undefined in function 'instr_valid'" }
-      if((ctx.instructionSet.alui) === undefined) { throw "HCL : ctx.instructionSet.alui is undefined in function 'instr_valid'" }
-      if((ctx.instructionSet.jxx) === undefined) { throw "HCL : ctx.instructionSet.jxx is undefined in function 'instr_valid'" }
-      if((ctx.instructionSet.call) === undefined) { throw "HCL : ctx.instructionSet.call is undefined in function 'instr_valid'" }
-      if((ctx.instructionSet.ret) === undefined) { throw "HCL : ctx.instructionSet.ret is undefined in function 'instr_valid'" }
-      if((ctx.instructionSet.pushl) === undefined) { throw "HCL : ctx.instructionSet.pushl is undefined in function 'instr_valid'" }
-      if((ctx.instructionSet.popl) === undefined) { throw "HCL : ctx.instructionSet.popl is undefined in function 'instr_valid'" }
-      if((ctx.instructionSet.loop) === undefined) { throw "HCL : ctx.instructionSet.loop is undefined in function 'instr_valid'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'instr_valid'" }
+      try { if(instructionSet.get("nop").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('nop').icode is not accessible in function 'instr_valid'" }
+      try { if(instructionSet.get("halt").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('halt').icode is not accessible in function 'instr_valid'" }
+      try { if(instructionSet.get("rrmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('rrmovl').icode is not accessible in function 'instr_valid'" }
+      try { if(instructionSet.get("irmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('irmovl').icode is not accessible in function 'instr_valid'" }
+      try { if(instructionSet.get("rmmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('rmmovl').icode is not accessible in function 'instr_valid'" }
+      try { if(instructionSet.get("mrmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('mrmovl').icode is not accessible in function 'instr_valid'" }
+      try { if(instructionSet.get("addl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('addl').icode is not accessible in function 'instr_valid'" }
+      try { if(instructionSet.get("iaddl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('iaddl').icode is not accessible in function 'instr_valid'" }
+      try { if(instructionSet.get("jmp").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('jmp').icode is not accessible in function 'instr_valid'" }
+      try { if(instructionSet.get("call").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('call').icode is not accessible in function 'instr_valid'" }
+      try { if(instructionSet.get("ret").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('ret').icode is not accessible in function 'instr_valid'" }
+      try { if(instructionSet.get("pushl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('pushl').icode is not accessible in function 'instr_valid'" }
+      try { if(instructionSet.get("popl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('popl').icode is not accessible in function 'instr_valid'" }
       // End of checks
    
-      return ((ctx.icode) === (ctx.instructionSet.nop)) || ((ctx.icode) === (ctx.instructionSet.halt)) || ((ctx.icode) === (ctx.instructionSet.rrmovl)) || ((ctx.icode) === (ctx.instructionSet.irmovl)) || ((ctx.icode) === (ctx.instructionSet.rmmovl)) || ((ctx.icode) === (ctx.instructionSet.mrmovl)) || ((ctx.icode) === (ctx.instructionSet.alu)) || ((ctx.icode) === (ctx.instructionSet.alui)) || ((ctx.icode) === (ctx.instructionSet.jxx)) || ((ctx.icode) === (ctx.instructionSet.call)) || ((ctx.icode) === (ctx.instructionSet.ret)) || ((ctx.icode) === (ctx.instructionSet.pushl)) || ((ctx.icode) === (ctx.instructionSet.popl)) || ((ctx.icode) === (ctx.instructionSet.loop));
+      return ((ctx.icode) === (instructionSet.get("nop").icode)) || ((ctx.icode) === (instructionSet.get("halt").icode)) || ((ctx.icode) === (instructionSet.get("rrmovl").icode)) || ((ctx.icode) === (instructionSet.get("irmovl").icode)) || ((ctx.icode) === (instructionSet.get("rmmovl").icode)) || ((ctx.icode) === (instructionSet.get("mrmovl").icode)) || ((ctx.icode) === (instructionSet.get("addl").icode)) || ((ctx.icode) === (instructionSet.get("iaddl").icode)) || ((ctx.icode) === (instructionSet.get("jmp").icode)) || ((ctx.icode) === (instructionSet.get("call").icode)) || ((ctx.icode) === (instructionSet.get("ret").icode)) || ((ctx.icode) === (instructionSet.get("pushl").icode)) || ((ctx.icode) === (instructionSet.get("popl").icode));
    }
    
    this.set_cc = () => {
       // Checks if some identifiers are undefined
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'set_cc'" }
-      if((ctx.instructionSet.alu) === undefined) { throw "HCL : ctx.instructionSet.alu is undefined in function 'set_cc'" }
-      if((ctx.instructionSet.alui) === undefined) { throw "HCL : ctx.instructionSet.alui is undefined in function 'set_cc'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'set_cc'" }
+      try { if(instructionSet.get("addl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('addl').icode is not accessible in function 'set_cc'" }
+      try { if(instructionSet.get("iaddl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('iaddl').icode is not accessible in function 'set_cc'" }
       // End of checks
    
-      return ((ctx.icode) === (ctx.instructionSet.alu)) || ((ctx.icode) === (ctx.instructionSet.alui));
+      return ((ctx.icode) === (instructionSet.get("addl").icode)) || ((ctx.icode) === (instructionSet.get("iaddl").icode));
    }
    
    this.mem_read = () => {
       // Checks if some identifiers are undefined
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'mem_read'" }
-      if((ctx.instructionSet.mrmovl) === undefined) { throw "HCL : ctx.instructionSet.mrmovl is undefined in function 'mem_read'" }
-      if((ctx.instructionSet.popl) === undefined) { throw "HCL : ctx.instructionSet.popl is undefined in function 'mem_read'" }
-      if((ctx.instructionSet.ret) === undefined) { throw "HCL : ctx.instructionSet.ret is undefined in function 'mem_read'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'mem_read'" }
+      try { if(instructionSet.get("mrmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('mrmovl').icode is not accessible in function 'mem_read'" }
+      try { if(instructionSet.get("popl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('popl').icode is not accessible in function 'mem_read'" }
+      try { if(instructionSet.get("ret").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('ret').icode is not accessible in function 'mem_read'" }
       // End of checks
    
-      return ((ctx.icode) === (ctx.instructionSet.mrmovl)) || ((ctx.icode) === (ctx.instructionSet.popl)) || ((ctx.icode) === (ctx.instructionSet.ret));
+      return ((ctx.icode) === (instructionSet.get("mrmovl").icode)) || ((ctx.icode) === (instructionSet.get("popl").icode)) || ((ctx.icode) === (instructionSet.get("ret").icode));
    }
    
    this.mem_write = () => {
       // Checks if some identifiers are undefined
-      if((ctx.icode) === undefined) { throw "HCL : ctx.icode is undefined in function 'mem_write'" }
-      if((ctx.instructionSet.rmmovl) === undefined) { throw "HCL : ctx.instructionSet.rmmovl is undefined in function 'mem_write'" }
-      if((ctx.instructionSet.pushl) === undefined) { throw "HCL : ctx.instructionSet.pushl is undefined in function 'mem_write'" }
-      if((ctx.instructionSet.call) === undefined) { throw "HCL : ctx.instructionSet.call is undefined in function 'mem_write'" }
+      try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'mem_write'" }
+      try { if(instructionSet.get("rmmovl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('rmmovl').icode is not accessible in function 'mem_write'" }
+      try { if(instructionSet.get("pushl").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('pushl').icode is not accessible in function 'mem_write'" }
+      try { if(instructionSet.get("call").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.get('call').icode is not accessible in function 'mem_write'" }
       // End of checks
    
-      return ((ctx.icode) === (ctx.instructionSet.rmmovl)) || ((ctx.icode) === (ctx.instructionSet.pushl)) || ((ctx.icode) === (ctx.instructionSet.call));
+      return ((ctx.icode) === (instructionSet.get("rmmovl").icode)) || ((ctx.icode) === (instructionSet.get("pushl").icode)) || ((ctx.icode) === (instructionSet.get("call").icode));
    }
    
-   }`)
+   }`
+
+let hclHandler = eval(defaultHclCode)
+   
