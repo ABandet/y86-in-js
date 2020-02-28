@@ -6,6 +6,8 @@ import { simStatus } from "../status"
 import {Alu} from "./alu";
 import * as hcl from "./hcl"
 import { ISimulator } from "model/interfaces/ISimulator";
+import { IInstructionSet } from "model/interfaces/IInstructionSet";
+import { Default } from "../instructionSet";
 
 export class Sim implements ISimulator {
     context: Context = new Context();
@@ -17,6 +19,7 @@ export class Sim implements ISimulator {
 
     constructor() {
         this.reset()
+        this.setInstructionSet(new Default.InstructionSet())
     }
 
     step() : simStatus {
@@ -70,5 +73,9 @@ export class Sim implements ISimulator {
 
     getErrorMessage() : string {
         return this.errorMessage
+    }
+
+    setInstructionSet(set : IInstructionSet) {
+        hcl.setInstructionSet(set)
     }
 }

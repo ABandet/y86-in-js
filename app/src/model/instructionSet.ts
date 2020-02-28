@@ -6,8 +6,6 @@ export enum InstructionArgType {
     CONST = 2,
 }
 
-
-
 export class InstructionArg {
     type        : InstructionArgType
     position    : number
