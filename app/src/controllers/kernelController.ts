@@ -2,24 +2,86 @@ import * as simSeq from "../model/kernel-seq/sim"
 import * as registersSeq from "../model/kernel-seq/registers"
 import * as yasDefault from "../model/yas"
 import * as hcl2jsDefault from "../model/hcl2js"
+import * as instructionSetDefault from "../model/instructionSet"
 import { ICompiler } from "../model/interfaces/ICompiler"
+import { ISimulator } from "../model/interfaces/ISimulator"
+import { IInstructionSet } from "../model/interfaces/IInstructionSet"
+import { IKernelController } from "./interfaces/IKernelController"
 
-let simulators = []
+class Toolchain {
+    simulator       : ISimulator
+    yas             : ICompiler
+    hcl2js          : ICompiler
+    instructionSet  : IInstructionSet 
 
-class Kernel {
-    sim : any // TODO : set up ISimulator interface
-    yas : ICompiler
-    hcl2js : ICompiler
-
-    constructor(sim : any, yas : ICompiler, hcl2js : ICompiler = new hcl2jsDefault.Hcl2js()) {
-        this.sim = sim
+    constructor(simulator : ISimulator, yas : ICompiler, hcl2js : ICompiler, instructionSet : IInstructionSet) {
+        this.simulator = simulator
         this.yas = yas
         this.hcl2js = hcl2js
+        this.instructionSet = instructionSet
     }
 }
 
-// Add here different kernels
-simulators["seq"] = new Kernel(
-    new simSeq.Sim(),
-    new yasDefault.Yas(registersSeq.registers_enum, {/* TODO : instruction set */})
-)
+let toolchainsGenerator : Map<string, () => Toolchain> = new Map<string, () => Toolchain>()
+
+export class KernelController implements IKernelController {
+    private static DEFAULT_TOOLCHAIN = "seq"
+    currentToolchain : Toolchain
+    
+    constructor(name : string = KernelController.DEFAULT_TOOLCHAIN) {
+        if(toolchainsGenerator.has(name)) {
+            this.currentToolchain = toolchainsGenerator.get(name)!()
+        } else {
+            throw "The toolchain for the kernel '" + name + "' does not exist.\nAvailable : " + this.getAvailableKernelNames()
+        }
+    }
+
+    useKernel(name: string): void {
+        if(toolchainsGenerator.has(name)) {
+            this.currentToolchain = toolchainsGenerator.get(name)!()
+        } else {
+            throw "The toolchain for the kernel '" + name + "' does not exist.\nAvailable : " + this.getAvailableKernelNames()
+        }
+    }    
+    
+    getAvailableKernelNames(): string[] {
+        let names : string[] = []
+
+        toolchainsGenerator.forEach((_, name) => {
+            names.push(name)
+        })
+
+        return names
+    }
+
+    getSim(): ISimulator {
+        return this.currentToolchain.simulator
+    }
+    getYas(): ICompiler {
+        return this.currentToolchain.yas
+    }
+    getHcl2js(): ICompiler {
+        return this.currentToolchain.hcl2js
+    }
+    getInstructionSet(): IInstructionSet {
+        return this.currentToolchain.instructionSet
+    }
+}
+
+/*
+ * Toolchain generation functions below
+ */
+
+toolchainsGenerator.set("seq", () => {
+    let sim = new simSeq.Sim()
+    let instructionSet = new instructionSetDefault.InstructionSet()
+    let yas = new yasDefault.Yas(registersSeq.registers_enum, instructionSet)
+    let hcl2js = new hcl2jsDefault.Hcl2js()
+
+    return new Toolchain(
+        sim,
+        yas,
+        hcl2js,
+        instructionSet
+    )
+})

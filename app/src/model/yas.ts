@@ -10,7 +10,6 @@ export namespace Default {
         constructor(registersEnum : any, instructionSet : any) {
             this.registersEnum = registersEnum
             this.instructionSet = instructionSet
-            let i = is.Default.InstructionArgType
         }
     
         assemble(src: string): CompilationResult {

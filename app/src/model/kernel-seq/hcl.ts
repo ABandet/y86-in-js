@@ -15,6 +15,10 @@ let ctx : any
 
 export { call, setHclCode, setCtx, setInstructionSet }
 
+export class Sim {
+
+}
+
 /**
  * Calls a function from the current handler.
  * If the function does not exist, an HclException is thrown.

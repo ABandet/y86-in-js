@@ -1,9 +1,9 @@
 import * as hcl from "../../../model/kernel-seq/hcl";
 import {registers_enum} from "../../../model/kernel-seq/registers";
-import { Default, Instruction } from "../../../model/instructionSet";
+import { InstructionSet, Instruction } from "../../../model/instructionSet";
 
 test("hcl test", () => {
-    let instructionSet = new Default.InstructionSet()
+    let instructionSet = new InstructionSet()
     
     instructionSet.clear()
 
