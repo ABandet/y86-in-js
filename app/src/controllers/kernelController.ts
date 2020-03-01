@@ -73,9 +73,13 @@ export class KernelController implements IKernelController {
  */
 
 toolchainsGenerator.set("seq", () => {
-    let sim = new simSeq.Sim()
     let instructionSet = new instructionSetDefault.InstructionSet()
+
+    let sim = new simSeq.Sim()
+    sim.setInstructionSet(instructionSet)
+    
     let yas = new yasDefault.Yas(registersSeq.registers_enum, instructionSet)
+
     let hcl2js = new hcl2jsDefault.Hcl2js()
 
     return new Toolchain(
