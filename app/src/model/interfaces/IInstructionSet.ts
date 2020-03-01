@@ -3,9 +3,11 @@ import { Instruction } from '../instructionSet'
 export interface IInstructionSet {
     getHandle() : Map<string, Instruction>;
 
-    setInstructions(instructions : Instruction[]) : void;
+    addInstructions(instructions : Instruction[]) : void;
 
     addInstruction(instruction : Instruction) : void;
+
+    getDefaultInstructions() : Instruction[];
 
     clear() : void
 }
