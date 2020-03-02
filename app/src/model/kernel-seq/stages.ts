@@ -47,6 +47,12 @@ function fetch(sim : Sim) {
  * @param sim
  */
 function decode(sim : Sim) {
+    hcl.setCtx({
+        icode: sim.context.icode,
+        ifun: sim.context.ifun,
+        ra: sim.context.ra,
+        rb: sim.context.rb
+    });
     sim.context.srcA = hcl.call("srcA");
     if (sim.context.srcA != registers_enum.none) {
         sim.context.valA = sim.registers.read(sim.context.srcA);
