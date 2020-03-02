@@ -15,5 +15,5 @@ Init:
 .pos 0xaabb
 Stack:
 `
-    console.log(yas.assemble(ys))
+    //console.log(yas.assemble(ys))
 })

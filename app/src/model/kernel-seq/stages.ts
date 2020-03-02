@@ -6,32 +6,32 @@ import { Memory } from "./memory"
 import * as hcl from "./hcl"
 
 function fetch(sim : Sim) {
-    let valp = sim.context.pc
-    let byte = sim.memory.readByte(valp)
-    valp++
+    sim.context.valP = sim.context.pc;
+    let byte = sim.memory.readByte(sim.context.valP);
+    sim.context.valP++;
     
-    sim.context.icode = Memory.HI4(byte)
-    sim.context.ifun = Memory.LO4(byte)
+    sim.context.icode = Memory.HI4(byte);
+    sim.context.ifun = Memory.LO4(byte);
 
     hcl.setCtx({
         icode: sim.context.icode,
         ifun: sim.context.ifun
-    })
+    });
 
     if(hcl.call("need_regids")) {
-        byte = sim.memory.readByte(valp)
-        valp++
+        byte = sim.memory.readByte(sim.context.valP);
+        sim.context.valP++;
 
-        sim.context.ra = Memory.HI4(byte)
+        sim.context.ra = Memory.HI4(byte);
         sim.context.rb = Memory.LO4(byte)
     } else {
-        sim.context.ra = registers_enum.none
+        sim.context.ra = registers_enum.none;
         sim.context.rb = registers_enum.none
     }
 
     if(hcl.call("need_valC")) {
-        sim.context.valC = sim.memory.readWord(valp)
-        valp += Memory.WORD_SIZE
+        sim.context.valC = sim.memory.readWord(sim.context.valP);
+        sim.context.valP += Memory.WORD_SIZE
     } else {
         sim.context.valC = 0
     }

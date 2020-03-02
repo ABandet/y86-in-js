@@ -1,16 +1,17 @@
 /**
  * Enum wich contains all the registers plus the special register "none".
+ * Should be identical with yas compiler
  */
 enum registers_enum {
     eax,
-    ebx,
     ecx,
     edx,
+    ebx,
     esp,
-    esi,
     ebp,
+    esi,
     edi,
-    none,
+    none = 0xf,
 }
 
 /**
