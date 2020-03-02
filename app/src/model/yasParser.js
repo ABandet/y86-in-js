@@ -72,127 +72,73 @@
   }
 */
 var yasParser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,8,9,11,13,14],$V1=[1,16],$V2=[1,17],$V3=[1,18],$V4=[5,17];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,3],$V1=[1,7],$V2=[1,8],$V3=[1,9],$V4=[1,10],$V5=[1,19],$V6=[1,20],$V7=[1,21],$V8=[6,18];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"expression":3,"label":4,"NEW_LINE":5,"directive":6,"instruction":7,"EOF":8,"IDENTIFIER":9,"COLON":10,"D_POS":11,"NUMBER":12,"D_ALIGN":13,"D_LONG":14,"arg_list":15,"arg":16,"COMMA":17,"REGISTER":18,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"NEW_LINE",8:"EOF",9:"IDENTIFIER",10:"COLON",11:"D_POS",12:"NUMBER",13:"D_ALIGN",14:"D_LONG",17:"COMMA",18:"REGISTER"},
-productions_: [0,[3,3],[3,3],[3,3],[3,2],[4,2],[6,3],[6,2],[6,2],[7,2],[15,1],[15,3],[16,1],[16,1],[16,1]],
-performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
+symbols_: {"error":2,"final_expression":3,"tmp_expression":4,"EOF":5,"NEW_LINE":6,"label":7,"directive":8,"instruction":9,"IDENTIFIER":10,"COLON":11,"D_POS":12,"NUMBER":13,"D_ALIGN":14,"D_LONG":15,"arg_list":16,"arg":17,"COMMA":18,"REGISTER":19,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"EOF",6:"NEW_LINE",10:"IDENTIFIER",11:"COLON",12:"D_POS",13:"NUMBER",14:"D_ALIGN",15:"D_LONG",18:"COMMA",19:"REGISTER"},
+productions_: [0,[3,2],[3,2],[4,2],[4,2],[4,2],[4,3],[4,3],[4,3],[7,2],[8,2],[8,2],[8,2],[9,2],[16,1],[16,3],[17,1],[17,1],[17,1]],
+performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */, data) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 4:
-
-            // Here we post evaluate things
-            const list = yasUtility.list
-            let output = ""
-
-            list.forEach((item) => {
-                output += item.addr + ": " + item.postEvaluatedValue() + " | " + item.line + "\n"
-            })
-
-            this.$ = output
-            return output
-        
-break;
-case 5:
-
-            const address = yasUtility.virtualAddress
-            const name = $$[$0-1]
-            yasUtility.labelsMap[name] = address
-            pushInList(() => { return "" }, $$[$0-1]  + $$[$0])
-        
-break;
-case 6:
- 
-            pushInList(() => { return "" }, $$[$0-2] + " " + $$[$0-1])
-
-            yasUtility.virtualAddress = parseInt($$[$0-1])
-        
-break;
-case 7:
-
-            pushInList(() => { return "" }, $$[$0-1] + " " + $$[$0])
-
-            let vaddr = yasUtility.virtualAddress
-            const align = $$[$0]
-
-            while(vaddr % align != 0) {
-                const oldVaddr = vaddr
-                vaddr += 1
-                if(vaddr < oldVaddr) { // Overflow
-                    throw "yas : Error on line " + yasUtility.lineNumber
-                }
-                vaddr = va
-            }
-            yasUtility.virtualAddress = vaddr
-        
-break;
-case 8:
-
-            const value = parseInt($$[$0]).toString(16)
-            pushInList(() => { return value },
-                       $$[$0-1] + " " + $$[$0])
-
-            yasUtility.virtualAddress += 4
-        
-break;
 case 9:
 
-            const instruction = $$[$0-1]
-            const argList = $$[$0]
+            console.log("label ===> " + $$[$0-1])
+            data.out.push(new data.Label($$[$0-1], $$[$0-1].last_line))
+        
+break;
+case 10:
+ 
+            console.log(".pos ===> " + $$[$0])
+            data.out.push(new data.Directive(data.DirectiveType.POS, $$[$0], $$[$0-1].last_line))
+        
+break;
+case 11:
 
-            if(!yasUtility.instructionSet.hasOwnProperty(instruction)) {
-                throw "yas : line " + lineNumber + " : the instruction " + instruction + " does not exist"
-            }
-
-            argList.forEach((item) => {
-                if(item.type === "constant") {
-                    
-                }
-            })
-            pushInList(() => {
-                () => { }
-            },
-            $$[$0-1] + " " + $$[$0]);
-
-            yasUtility.virtualAddress += 6 // TODO
+            console.log(".align ===> " + $$[$0])
+            data.out.push(new data.Directive(data.DirectiveType.ALIGN, $$[$0], $$[$0-1].last_line))
         
 break;
 case 12:
- 
-            const name = $$[$0]
-            this.$ = []
-            this.$.push({
-                type = "label",
-                value = () => { return yasUtility.labelsMap[name] },
-            })
+
+            console.log(".long ===> " + $$[$0])
+            data.out.push(new data.Directive(data.DirectiveType.LONG, $$[$0], $$[$0-1].last_line))
         
 break;
 case 13:
- 
-            this.$ = []
-            this.$.push({
-                type = "constant",
-                value = parseInt($$[$0]).toString(16),
-            })
+
+            console.log("instr ===> " + $$[$0-1])
+            data.out.push(new data.InstructionLine($$[$0-1], $$[$0], $$[$0-1].last_line))
         
 break;
 case 14:
- 
+
             this.$ = []
-            this.$.push({
-                type = "register",
-                value = yasUtility.registers[$$[$0]],
-            })
+            this.$.push($$[$0])
+        
+break;
+case 15:
+
+            this.$ = $$[$0-2]
+            this.$.push($$[$0])
+        
+break;
+case 16: case 17:
+ 
+            this.$ = $$[$0]
+        
+break;
+case 18:
+ 
+            this.$ = $$[$0].substring(1, $$[$0].length)
         
 break;
 }
 },
-table: [{3:1},{1:[3],4:2,6:3,7:4,8:[1,5],9:[1,6],11:[1,7],13:[1,8],14:[1,9]},{5:[1,10]},{5:[1,11]},{5:[1,12]},o($V0,[2,4]),{9:$V1,10:[1,13],12:$V2,15:14,16:15,18:$V3},{12:[1,19]},{12:[1,20]},{12:[1,21]},o($V0,[2,1]),o($V0,[2,2]),o($V0,[2,3]),{5:[2,5]},{5:[2,9],17:[1,22]},o($V4,[2,10]),o($V4,[2,12]),o($V4,[2,13]),o($V4,[2,14]),{5:[1,23]},{5:[2,7]},{5:[2,8]},{9:$V1,12:$V2,16:24,18:$V3},{5:[2,6]},o($V4,[2,11])],
-defaultActions: {13:[2,5],20:[2,7],21:[2,8],23:[2,6]},
+table: [{3:1,4:2,6:$V0,7:4,8:5,9:6,10:$V1,12:$V2,14:$V3,15:$V4},{1:[3]},{5:[1,11]},{3:12,4:2,6:$V0,7:4,8:5,9:6,10:$V1,12:$V2,14:$V3,15:$V4},{6:[1,13]},{6:[1,14]},{6:[1,15]},{10:$V5,11:[1,16],13:$V6,16:17,17:18,19:$V7},{13:[1,22]},{13:[1,23]},{13:[1,24]},{1:[2,1]},{1:[2,2]},{4:25,5:[2,3],7:4,8:5,9:6,10:$V1,12:$V2,14:$V3,15:$V4},{4:26,5:[2,4],7:4,8:5,9:6,10:$V1,12:$V2,14:$V3,15:$V4},{4:27,5:[2,5],7:4,8:5,9:6,10:$V1,12:$V2,14:$V3,15:$V4},{6:[2,9]},{6:[2,13],18:[1,28]},o($V8,[2,14]),o($V8,[2,16]),o($V8,[2,17]),o($V8,[2,18]),{6:[2,10]},{6:[2,11]},{6:[2,12]},{5:[2,6]},{5:[2,7]},{5:[2,8]},{10:$V5,13:$V6,17:29,19:$V7},o($V8,[2,15])],
+defaultActions: {11:[2,1],12:[2,2],16:[2,9],22:[2,10],23:[2,11],24:[2,12],25:[2,6],26:[2,7],27:[2,8]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -339,16 +285,6 @@ parse: function parse(input) {
     }
     return true;
 }};
-
-    const ADDR_INSTR_SIZE = 23
-
-    function pushInList(postEvaluatedValue, line) {
-        yasUtility.list.push({
-            addr = yasUtility.virtualAddress,
-            postEvaluatedValue = postEvaluatedValue,
-            line = line
-        }) 
-    }
 /* generated by jison-lex 0.3.4 */
 var lexer = (function(){
 var lexer = ({
@@ -677,35 +613,35 @@ options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:/* skip whitespace */
+case 0:return 6;
 break;
-case 1: yasUtility.lineNumber += 1 
+case 1:/* ignore whitespace other than newlines */
 break;
 case 2:/* skip comments   */
 break;
-case 3:return 10
+case 3:return 11
 break;
-case 4:return 12
+case 4:return 13
 break;
-case 5:return 11
+case 5:return 12
 break;
-case 6:return 13
+case 6:return 14
 break;
-case 7:return 14
+case 7:return 15
 break;
-case 8:return 18
+case 8:return 19
 break;
-case 9:return 17
+case 9:return 18
 break;
-case 10:return 9
+case 10:return 5
 break;
-case 11:return 8
+case 11:return 10
 break;
-case 12:return "INVALID"
+case 12:return 'INVALID'
 break;
 }
 },
-rules: [/^(?:\s+)/,/^(?:[ \r\t\f][\n])/,/^(?:.*\n)/,/^(?::)/,/^(?:(0x[0-9a-fA-F]+)|(-?[0-9]+))/,/^(?:\.pos\b)/,/^(?:\.align\b)/,/^(?:\.long\b)/,/^(?:%[a-b]+)/,/^(?:,)/,/^(?:[^\ ,:]+)/,/^(?:$)/,/^(?:.)/],
+rules: [/^(?:\n\s*)/,/^(?:[^\S\n]+)/,/^(?:[ \r\t\f]#.*\n)/,/^(?::)/,/^(?:(0x[0-9a-fA-F]+)|(-?[0-9]+))/,/^(?:\.pos\b)/,/^(?:\.align\b)/,/^(?:\.long\b)/,/^(?:%([a-z]+))/,/^(?:,)/,/^(?:$)/,/^(?:[^\ ,:\n]+)/,/^(?:.)/],
 conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12],"inclusive":true}}
 });
 return lexer;

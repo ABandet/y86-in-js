@@ -1,4 +1,5 @@
 import { MemoryException } from "../exceptions/simulatorException"
+import { numberToByteArray } from "../integers"
 
 class Memory {
     /**
@@ -79,18 +80,6 @@ class Memory {
         return value
     }
 
-    static numberToByteArray(value : number) : number[] {
-        let bytes : number[] = []
-
-        while(value != 0) {
-            const byte = value & 0xff
-            bytes.push(byte)
-            value = (value - byte) / 256
-        }
-
-        return bytes
-    }
-
     static isByte(value : number) : boolean {
         return value >= -128 && value <= 255
     }
@@ -151,7 +140,7 @@ class Memory {
                     let instruction = Number("0x" + instructionsWithAddressSplitted[1].trim())
         
                     if(!Number.isNaN(firstAddress) && !Number.isNaN(instruction)) {
-                        const bytes = Memory.numberToByteArray(instruction)
+                        const bytes = numberToByteArray(instruction)
 
                         for(let i = 0; i < bytes.length; i++) {
                             const address = firstAddress + bytes.length - i - 1

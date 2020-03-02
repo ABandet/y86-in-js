@@ -1,157 +1,102 @@
-/* Code used when parsing. Grammar is below. */
-%{
-    const ADDR_INSTR_SIZE = 23
-
-    function pushInList(postEvaluatedValue, line) {
-        yasUtility.list.push({
-            addr = yasUtility.virtualAddress,
-            postEvaluatedValue = postEvaluatedValue,
-            line = line
-        }) 
-    }
-%}
+%parse-param data
 
 /* lexical grammar */
 %lex
 %%
 
-\s+                         /* skip whitespace */
+\n\s*                       return 'NEW_LINE';
+[^\S\n]+                    /* ignore whitespace other than newlines */
 [ \r\t\f]               
-[\n]                        { yasUtility.lineNumber += 1 }
-#.*\n                       /* skip comments   */
+\#.*\n                       /* skip comments   */
 ":"                         return 'COLON'
 (0x[0-9a-fA-F]+)|(\-?[0-9]+) return 'NUMBER'
-\.pos                       return 'D_POS'
+\.pos                      return 'D_POS'
 \.align                     return 'D_ALIGN'
 \.long                      return 'D_LONG'
-\%[a-b]+                    return 'REGISTER'
-\,                          return 'COMMA'
-[^\ ,:]+                    return 'IDENTIFIER'
+\%([a-z]+)                 return 'REGISTER'
+","                          return 'COMMA'
 <<EOF>>                     return 'EOF'
-.                           return "INVALID"
+[^\ ,:\n]+                  return 'IDENTIFIER'
+.                           return 'INVALID'
 
 /lex
 
-%start expression
+%start final_expression
 
 %% /* language grammar */
 
-expression
-    : expression label NEW_LINE
-    | expression directive NEW_LINE
-    | expression instruction NEW_LINE
-    | expression EOF
-        {
-            // Here we post evaluate things
-            const list = yasUtility.list
-            let output = ""
+final_expression
+    : tmp_expression EOF
+    | NEW_LINE final_expression
+    ;
 
-            list.forEach((item) => {
-                output += item.addr + ": " + item.postEvaluatedValue() + " | " + item.line + "\n"
-            })
-
-            $$ = output
-            return output
-        }
+tmp_expression
+    : label NEW_LINE
+    | directive NEW_LINE
+    | instruction NEW_LINE
+    | label NEW_LINE tmp_expression
+    | directive NEW_LINE tmp_expression
+    | instruction NEW_LINE tmp_expression
     ;
 
 label
     : IDENTIFIER COLON
         {
-            const address = yasUtility.virtualAddress
-            const name = $1
-            yasUtility.labelsMap[name] = address
-            pushInList(() => { return "" }, $1  + $2)
+            console.log("label ===> " + $1)
+            data.out.push(new data.Label($1, $1.last_line))
         }
     ;
 
 directive
-    : D_POS NUMBER NEW_LINE
+    : D_POS NUMBER
         { 
-            pushInList(() => { return "" }, $1 + " " + $2)
-
-            yasUtility.virtualAddress = parseInt($2)
+            console.log(".pos ===> " + $2)
+            data.out.push(new data.Directive(data.DirectiveType.POS, $2, $1.last_line))
         }
     | D_ALIGN NUMBER
         {
-            pushInList(() => { return "" }, $1 + " " + $2)
-
-            let vaddr = yasUtility.virtualAddress
-            const align = $2
-
-            while(vaddr % align != 0) {
-                const oldVaddr = vaddr
-                vaddr += 1
-                if(vaddr < oldVaddr) { // Overflow
-                    throw "yas : Error on line " + yasUtility.lineNumber
-                }
-                vaddr = va
-            }
-            yasUtility.virtualAddress = vaddr
+            console.log(".align ===> " + $2)
+            data.out.push(new data.Directive(data.DirectiveType.ALIGN, $2, $1.last_line))
         }
     | D_LONG NUMBER
         {
-            const value = parseInt($2).toString(16)
-            pushInList(() => { return value },
-                       $1 + " " + $2)
-
-            yasUtility.virtualAddress += 4
+            console.log(".long ===> " + $2)
+            data.out.push(new data.Directive(data.DirectiveType.LONG, $2, $1.last_line))
         }
     ;
 
 instruction
     : IDENTIFIER arg_list
         {
-            const instruction = $1
-            const argList = $2
-
-            if(!yasUtility.instructionSet.hasOwnProperty(instruction)) {
-                throw "yas : line " + lineNumber + " : the instruction " + instruction + " does not exist"
-            }
-
-            argList.forEach((item) => {
-                if(item.type === "constant") {
-                    
-                }
-            })
-            pushInList(() => {
-                () => { }
-            },
-            $1 + " " + $2);
-
-            yasUtility.virtualAddress += 6 // TODO
+            console.log("instr ===> " + $1)
+            data.out.push(new data.InstructionLine($1, $2, $1.last_line))
         }
     ;
 
 arg_list
     : arg
+        {
+            $$ = []
+            $$.push($1)
+        }
     | arg_list COMMA arg
+        {
+            $$ = $1
+            $$.push($3)
+        }
     ;
 
 arg
     : IDENTIFIER
         { 
-            const name = $1
-            $$ = []
-            $$.push({
-                type = "label",
-                value = () => { return yasUtility.labelsMap[name] },
-            })
+            $$ = $1
         }
     | NUMBER
         { 
-            $$ = []
-            $$.push({
-                type = "constant",
-                value = parseInt($1).toString(16),
-            })
+            $$ = $1
         }
     | REGISTER
         { 
-            $$ = []
-            $$.push({
-                type = "register",
-                value = yasUtility.registers[$1],
-            })
+            $$ = $1.substring(1, $1.length)
         }
     ;

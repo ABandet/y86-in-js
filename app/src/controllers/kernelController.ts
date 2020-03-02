@@ -78,7 +78,7 @@ toolchainsGenerator.set("seq", () => {
     let sim = new simSeq.Sim()
     sim.setInstructionSet(instructionSet)
     
-    let yas = new yasDefault.Yas(registersSeq.registers_enum, instructionSet)
+    let yas = new yasDefault.Yas(registersSeq.registers_enum, instructionSet, 4)
 
     let hcl2js = new hcl2jsDefault.Hcl2js()
 
