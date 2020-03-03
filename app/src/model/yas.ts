@@ -23,6 +23,7 @@ export class Yas implements ICompiler {
         try {
             yasParser.parse(src, {
                 out: this.parserOutput,
+                line: 0,
                 CompilationError: CompilationError,
                 InstructionLine: InstructionLine,
                 DirectiveType: DirectiveType,
@@ -59,15 +60,17 @@ export class Yas implements ICompiler {
                 this._compileLabel(item)
             } else if(item instanceof CompilationToken) {
                 throw new CompilationError(item.line, "Failed to parse this line. Not recognized as instruction, directive or label")
-            } else {
-                throw "An unexpected type was given to yas"
+            } else if(item === undefined) {
+                this._compilationOutputGenerators.push(() => {
+                    return createEmptyObjectLine()
+                })
             }
         })
 
-        let output = ""
+        let output = "\n"
 
         this._compilationOutputGenerators.forEach((generator) => {
-            output += generator()
+            output += generator() + "\n"
         })
 
         return output
@@ -106,61 +109,74 @@ export class Yas implements ICompiler {
                 throw "Two arguments share the same position but are not registers"
             })
 
-            const argsValues = orderedIndexes.map((argIndex) : () => string => {
-                const argTemplate = instruction.args[argIndex]
-                const userArg = instructionLine.args[argIndex]
-            
-                switch(argTemplate.type) {
-                    case InstructionArgType.CONST: {
-                        return () => { 
-                            // TODO : add checks
-                            const value = this._labels.has(userArg) ? this._labels.get(userArg) as number : stringToNumber(userArg)
-                            const bytes = numberToByteArray(value, argTemplate.length, true).reverse()
-                            return padString(byteArrayToString(bytes), this.wordSize * 2) 
-                        }
-                        break;
-                    }
-                    case InstructionArgType.LABEL: {
-                        return () => {
-                            if(!this._labels.has(userArg)) {
-                                throw "The label '" + userArg + "' does not exist"
-                            }
-                            const bytes = numberToByteArray(this._labels.get(userArg) as number, argTemplate.length, true).reverse()
-                            return padString(byteArrayToString(bytes), this.wordSize * 2)
-                        }
-                        break;
-                    }
-                    case InstructionArgType.MEM: {
-                        const value = stringToNumber(userArg)
-                        if(value < 0) {
-                            throw "A memory address must be positive"
-                        }
-                        const bytes = numberToByteArray(value).reverse()
-                        return () => { return padString(byteArrayToString(bytes), this.wordSize * 2) }
-                        break;
-                    }
-                    case InstructionArgType.REG: {
-                        if(!this.registersEnum.hasOwnProperty(userArg)) {
-                            throw "Register '" + userArg + "' does not exist"
-                        }
-                        const value = this.registersEnum[userArg] as number
-                        return () => { return value.toString(16) }
-                        break;
-                    }
-                    default:
-                        throw "Unknown argument type"
-                }
-            })
-            
             const currentVaddr = this._vaddr
-            this._compilationOutputGenerators.push(() : string => {
-                let output = currentVaddr.toString(16) + ": "
-                argsValues.forEach((fct) => {
-                    output += fct()
-                })
-                return output + " |\n"
-            })
             this._vaddr += instruction.length
+
+            this._compilationOutputGenerators.push(() : string => {
+                let instructionBytes = new Array<number>(2) // Hold icode/ifun and ra/rb by default
+                instructionBytes[0] = instruction.icode << 4
+                instructionBytes[0] |= instruction.ifun
+                instructionBytes[1] = 0xff
+
+                orderedIndexes.forEach((argIndex) => {
+                    const argTemplate = instruction.args[argIndex]
+                    const userArg = instructionLine.args[argIndex]
+                
+                    switch(argTemplate.type) {
+                        case InstructionArgType.CONST: {
+                            let value = 0
+                            if(Number.isNaN(Number(userArg))) {
+                                if(!this._labels.has(userArg)) {
+                                    new CompilationError(instructionLine.line, "The label '" + userArg + "' does not exist")
+                                }
+                                value = this._labels.get(userArg) as number
+                            } else {
+                                value = stringToNumber(userArg)
+                            }
+                            const bytes = numberToByteArray(value, argTemplate.length, true)
+                            instructionBytes = instructionBytes.concat(bytes)
+                            break;
+                        }
+                        case InstructionArgType.LABEL: {
+                            if(!this._labels.has(userArg)) {
+                                throw new CompilationError(instructionLine.line,"The label '" + userArg + "' does not exist")
+                            }
+                            const bytes = numberToByteArray(this._labels.get(userArg) as number, argTemplate.length, true)
+                            instructionBytes = instructionBytes.concat(bytes)
+                            break;
+                        }
+                        case InstructionArgType.MEM: {
+                            const value = stringToNumber(userArg)
+                            if(value < 0) {
+                                throw new CompilationError(instructionLine.line,"A memory address must be positive")
+                            }
+                            const bytes = numberToByteArray(value, argTemplate.length, true)
+                            instructionBytes = instructionBytes.concat(bytes)
+                            break;
+                        }
+                        case InstructionArgType.REG: {
+                            if(!this.registersEnum.hasOwnProperty(userArg)) {
+                                throw new CompilationError(instructionLine.line,"Register '" + userArg + "' does not exist")
+                            }
+                            let value = this.registersEnum[userArg] as number 
+                            
+                            if(argTemplate.length == 1) {
+                                value <<= 4
+                                value |= 0xf
+                            } else {
+                                value |= 0xf0
+                            }
+
+                            instructionBytes[argTemplate.position] &= value
+                            break;
+                        }
+                        default:
+                            throw new CompilationError(instructionLine.line,"Unknown argument type")
+                    }
+                })
+
+                return createObjectLine(currentVaddr, instructionBytes, " --- ")
+            })
 
         } catch(error) {
             if(error instanceof CompilationError) {
@@ -180,7 +196,7 @@ export class Yas implements ICompiler {
             switch(directive.type) {
                 case DirectiveType.ALIGN: {
                     this._compilationOutputGenerators.push(() => {
-                        return currentVaddr.toString(16) + ": |\n"
+                        return createObjectLine(currentVaddr, [], '.align ' + directive.value)
                     })
                     while(this._vaddr % value != 0) {
                         this._vaddr++
@@ -188,16 +204,11 @@ export class Yas implements ICompiler {
                     break;
                 }
                 case DirectiveType.LONG: {
-                    const bytes = numberToByteArray(stringToNumber(directive.value), this.wordSize, true).reverse()
+                    const bytes = numberToByteArray(stringToNumber(directive.value), this.wordSize, true)
                     this._vaddr += bytes.length
     
                     this._compilationOutputGenerators.push(() => {
-                        let str = currentVaddr + ": "
-                        bytes.forEach((byte) => {
-                            str += byte.toString(16)
-                        })
-                        str += " |\n"
-                        return str
+                        return createObjectLine(currentVaddr, bytes, ".long " + directive.value)
                     })
                     break;
                 }
@@ -207,7 +218,7 @@ export class Yas implements ICompiler {
                     }
                     this._vaddr = value
                     this._compilationOutputGenerators.push(() => {
-                        return currentVaddr + ": |\n"
+                        return createObjectLine(currentVaddr, [], ".pos " + directive.value)
                     })
                     break;
                 }
@@ -228,7 +239,7 @@ export class Yas implements ICompiler {
         this._labels.set(label.name, currentVaddr)
 
         this._compilationOutputGenerators.push(() => {
-            return currentVaddr.toString(16) + ": |\n"
+            return createObjectLine(currentVaddr, [], label.name + ':')
         })
     }
 }
@@ -243,7 +254,7 @@ function byteArrayToString(bytes : number[], radix : number = 16) : string {
     return result
 }
 
-function padString(value : string, digits : number, pad : string = '0') {
+function padStringNumber(value : string, digits : number, pad : string = '0') {
     if(pad.length === 0) {
         throw new Error("Can not pad with an empty character")
     }
@@ -255,6 +266,43 @@ function padString(value : string, digits : number, pad : string = '0') {
     }
 
     return newValue + value
+}
+
+const ADDRESS_PADDING = 2
+const YS_PADDING = 24
+
+function createObjectLine(address : number, bytes : number[], ys : string) : string {
+    let output = ''
+
+    for(let i = 0; i < ADDRESS_PADDING; i++) {
+        output += ' '
+    }
+
+    output += '0x' + padStringNumber(address.toString(16), 4, '0') + ': '
+    
+    bytes.forEach((byte) => {
+        output += padStringNumber(byte.toString(16), 2, '0')
+    })
+
+    while(output.length < YS_PADDING) {
+        output += ' '
+    }
+
+    output += '| ' + ys
+
+    return output
+}
+
+function createEmptyObjectLine() : string {
+    let output = ''
+
+    for(let i = 0; i < YS_PADDING; i++) {
+        output += ' '
+    }
+
+    output += '| '
+
+    return output
 }
 
 class InstructionLine extends CompilationToken {

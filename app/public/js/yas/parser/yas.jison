@@ -4,8 +4,13 @@
 %lex
 %%
 
-\n\s*                       return 'NEW_LINE';
+/**
+ * https://stackoverflow.com/questions/37550567/how-to-detect-new-line-in-jison
+ * Used to make the new line tokens work.
+ */
+\n                          return 'NEW_LINE'
 [^\S\n]+                    /* ignore whitespace other than newlines */
+
 [ \r\t\f]               
 \#.*\n                       /* skip comments   */
 ":"                         return 'COLON'
@@ -26,51 +31,53 @@
 %% /* language grammar */
 
 final_expression
-    : tmp_expression EOF
-    | NEW_LINE final_expression
+    : expression_list EOF
     ;
 
-tmp_expression
-    : label NEW_LINE
-    | directive NEW_LINE
-    | instruction NEW_LINE
-    | label NEW_LINE tmp_expression
-    | directive NEW_LINE tmp_expression
-    | instruction NEW_LINE tmp_expression
+expression_list
+    : expression
+    | expression expression_list
+    ;
+
+expression
+    : statement NEW_LINE
+        { 
+            data.line++ 
+            data.out.push($1)
+        }
+    | NEW_LINE
+        { 
+            data.line++ 
+            data.out.push(undefined)
+        }
+    ;
+
+statement
+    : label
+        { $$ = $1 }
+    | directive
+        { $$ = $1 }
+    | instruction
+        { $$ = $1 }
     ;
 
 label
     : IDENTIFIER COLON
-        {
-            console.log("label ===> " + $1)
-            data.out.push(new data.Label($1, $1.last_line))
-        }
+        { $$ = new data.Label($1, $1.last_line) }
     ;
 
 directive
     : D_POS NUMBER
-        { 
-            console.log(".pos ===> " + $2)
-            data.out.push(new data.Directive(data.DirectiveType.POS, $2, $1.last_line))
-        }
+        { $$ = new data.Directive(data.DirectiveType.POS, $2, data.line) }
     | D_ALIGN NUMBER
-        {
-            console.log(".align ===> " + $2)
-            data.out.push(new data.Directive(data.DirectiveType.ALIGN, $2, $1.last_line))
-        }
+        { $$ = new data.Directive(data.DirectiveType.ALIGN, $2, data.line) }
     | D_LONG NUMBER
-        {
-            console.log(".long ===> " + $2)
-            data.out.push(new data.Directive(data.DirectiveType.LONG, $2, $1.last_line))
-        }
+        { $$ = new data.Directive(data.DirectiveType.LONG, $2, data.line) }
     ;
 
 instruction
     : IDENTIFIER arg_list
-        {
-            console.log("instr ===> " + $1)
-            data.out.push(new data.InstructionLine($1, $2, $1.last_line))
-        }
+        { $$ = new data.InstructionLine($1, $2, data.line) }
     ;
 
 arg_list

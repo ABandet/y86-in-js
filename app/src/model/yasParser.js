@@ -72,46 +72,46 @@
   }
 */
 var yasParser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,3],$V1=[1,7],$V2=[1,8],$V3=[1,9],$V4=[1,10],$V5=[1,19],$V6=[1,20],$V7=[1,21],$V8=[6,18];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,5],$V1=[1,9],$V2=[1,10],$V3=[1,11],$V4=[1,12],$V5=[5,8,12,14,16,17],$V6=[1,19],$V7=[1,20],$V8=[1,21],$V9=[8,20];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"final_expression":3,"tmp_expression":4,"EOF":5,"NEW_LINE":6,"label":7,"directive":8,"instruction":9,"IDENTIFIER":10,"COLON":11,"D_POS":12,"NUMBER":13,"D_ALIGN":14,"D_LONG":15,"arg_list":16,"arg":17,"COMMA":18,"REGISTER":19,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",6:"NEW_LINE",10:"IDENTIFIER",11:"COLON",12:"D_POS",13:"NUMBER",14:"D_ALIGN",15:"D_LONG",18:"COMMA",19:"REGISTER"},
-productions_: [0,[3,2],[3,2],[4,2],[4,2],[4,2],[4,3],[4,3],[4,3],[7,2],[8,2],[8,2],[8,2],[9,2],[16,1],[16,3],[17,1],[17,1],[17,1]],
+symbols_: {"error":2,"final_expression":3,"expression_list":4,"EOF":5,"expression":6,"statement":7,"NEW_LINE":8,"label":9,"directive":10,"instruction":11,"IDENTIFIER":12,"COLON":13,"D_POS":14,"NUMBER":15,"D_ALIGN":16,"D_LONG":17,"arg_list":18,"arg":19,"COMMA":20,"REGISTER":21,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"EOF",8:"NEW_LINE",12:"IDENTIFIER",13:"COLON",14:"D_POS",15:"NUMBER",16:"D_ALIGN",17:"D_LONG",20:"COMMA",21:"REGISTER"},
+productions_: [0,[3,2],[4,1],[4,2],[6,2],[6,1],[7,1],[7,1],[7,1],[9,2],[10,2],[10,2],[10,2],[11,2],[18,1],[18,3],[19,1],[19,1],[19,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */, data) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 9:
-
-            console.log("label ===> " + $$[$0-1])
-            data.out.push(new data.Label($$[$0-1], $$[$0-1].last_line))
+case 4:
+ 
+            data.line++ 
+            data.out.push($$[$0-1])
         
+break;
+case 5:
+ 
+            data.line++ 
+            data.out.push(undefined)
+        
+break;
+case 6: case 7: case 8:
+ this.$ = $$[$0] 
+break;
+case 9:
+ this.$ = new data.Label($$[$0-1], $$[$0-1].last_line) 
 break;
 case 10:
- 
-            console.log(".pos ===> " + $$[$0])
-            data.out.push(new data.Directive(data.DirectiveType.POS, $$[$0], $$[$0-1].last_line))
-        
+ this.$ = new data.Directive(data.DirectiveType.POS, $$[$0], data.line) 
 break;
 case 11:
-
-            console.log(".align ===> " + $$[$0])
-            data.out.push(new data.Directive(data.DirectiveType.ALIGN, $$[$0], $$[$0-1].last_line))
-        
+ this.$ = new data.Directive(data.DirectiveType.ALIGN, $$[$0], data.line) 
 break;
 case 12:
-
-            console.log(".long ===> " + $$[$0])
-            data.out.push(new data.Directive(data.DirectiveType.LONG, $$[$0], $$[$0-1].last_line))
-        
+ this.$ = new data.Directive(data.DirectiveType.LONG, $$[$0], data.line) 
 break;
 case 13:
-
-            console.log("instr ===> " + $$[$0-1])
-            data.out.push(new data.InstructionLine($$[$0-1], $$[$0], $$[$0-1].last_line))
-        
+ this.$ = new data.InstructionLine($$[$0-1], $$[$0], data.line) 
 break;
 case 14:
 
@@ -137,8 +137,8 @@ case 18:
 break;
 }
 },
-table: [{3:1,4:2,6:$V0,7:4,8:5,9:6,10:$V1,12:$V2,14:$V3,15:$V4},{1:[3]},{5:[1,11]},{3:12,4:2,6:$V0,7:4,8:5,9:6,10:$V1,12:$V2,14:$V3,15:$V4},{6:[1,13]},{6:[1,14]},{6:[1,15]},{10:$V5,11:[1,16],13:$V6,16:17,17:18,19:$V7},{13:[1,22]},{13:[1,23]},{13:[1,24]},{1:[2,1]},{1:[2,2]},{4:25,5:[2,3],7:4,8:5,9:6,10:$V1,12:$V2,14:$V3,15:$V4},{4:26,5:[2,4],7:4,8:5,9:6,10:$V1,12:$V2,14:$V3,15:$V4},{4:27,5:[2,5],7:4,8:5,9:6,10:$V1,12:$V2,14:$V3,15:$V4},{6:[2,9]},{6:[2,13],18:[1,28]},o($V8,[2,14]),o($V8,[2,16]),o($V8,[2,17]),o($V8,[2,18]),{6:[2,10]},{6:[2,11]},{6:[2,12]},{5:[2,6]},{5:[2,7]},{5:[2,8]},{10:$V5,13:$V6,17:29,19:$V7},o($V8,[2,15])],
-defaultActions: {11:[2,1],12:[2,2],16:[2,9],22:[2,10],23:[2,11],24:[2,12],25:[2,6],26:[2,7],27:[2,8]},
+table: [{3:1,4:2,6:3,7:4,8:$V0,9:6,10:7,11:8,12:$V1,14:$V2,16:$V3,17:$V4},{1:[3]},{5:[1,13]},{4:14,5:[2,2],6:3,7:4,8:$V0,9:6,10:7,11:8,12:$V1,14:$V2,16:$V3,17:$V4},{8:[1,15]},o($V5,[2,5]),{8:[2,6]},{8:[2,7]},{8:[2,8]},{12:$V6,13:[1,16],15:$V7,18:17,19:18,21:$V8},{15:[1,22]},{15:[1,23]},{15:[1,24]},{1:[2,1]},{5:[2,3]},o($V5,[2,4]),{8:[2,9]},{8:[2,13],20:[1,25]},o($V9,[2,14]),o($V9,[2,16]),o($V9,[2,17]),o($V9,[2,18]),{8:[2,10]},{8:[2,11]},{8:[2,12]},{12:$V6,15:$V7,19:26,21:$V8},o($V9,[2,15])],
+defaultActions: {6:[2,6],7:[2,7],8:[2,8],13:[2,1],14:[2,3],16:[2,9],22:[2,10],23:[2,11],24:[2,12]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -613,35 +613,35 @@ options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:return 6;
+case 0:return 8
 break;
 case 1:/* ignore whitespace other than newlines */
 break;
 case 2:/* skip comments   */
 break;
-case 3:return 11
+case 3:return 13
 break;
-case 4:return 13
+case 4:return 15
 break;
-case 5:return 12
+case 5:return 14
 break;
-case 6:return 14
+case 6:return 16
 break;
-case 7:return 15
+case 7:return 17
 break;
-case 8:return 19
+case 8:return 21
 break;
-case 9:return 18
+case 9:return 20
 break;
 case 10:return 5
 break;
-case 11:return 10
+case 11:return 12
 break;
 case 12:return 'INVALID'
 break;
 }
 },
-rules: [/^(?:\n\s*)/,/^(?:[^\S\n]+)/,/^(?:[ \r\t\f]#.*\n)/,/^(?::)/,/^(?:(0x[0-9a-fA-F]+)|(-?[0-9]+))/,/^(?:\.pos\b)/,/^(?:\.align\b)/,/^(?:\.long\b)/,/^(?:%([a-z]+))/,/^(?:,)/,/^(?:$)/,/^(?:[^\ ,:\n]+)/,/^(?:.)/],
+rules: [/^(?:\n)/,/^(?:[^\S\n]+)/,/^(?:[ \r\t\f]#.*\n)/,/^(?::)/,/^(?:(0x[0-9a-fA-F]+)|(-?[0-9]+))/,/^(?:\.pos\b)/,/^(?:\.align\b)/,/^(?:\.long\b)/,/^(?:%([a-z]+))/,/^(?:,)/,/^(?:$)/,/^(?:[^\ ,:\n]+)/,/^(?:.)/],
 conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12],"inclusive":true}}
 });
 return lexer;

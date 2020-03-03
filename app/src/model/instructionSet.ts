@@ -36,7 +36,7 @@ export class InstructionArg {
 
     constructor(type: InstructionArgType, position: number, length: number) {
         this._checkType(type)
-        this._checkPosition(position)
+        this._checkPosition(position, type)
         this._checkLength(length, type)
 
         this.type = type
@@ -53,9 +53,12 @@ export class InstructionArg {
         throw "The given arg type does not exist"
     }
 
-    private _checkPosition(position: number) {
+    private _checkPosition(position: number, type : InstructionArgType) {
         if (position < 1) {
             throw "An instruction argument position must be in [1;2]"
+        }
+        if(type === InstructionArgType.REG && position != 1) {
+            throw "A register argument must be at position 1"
         }
     }
 
@@ -322,7 +325,7 @@ const defaultInstructions: Instruction[] = [
     new Instruction("sarl", 6, 5, 2,
         [ InstructionArg.newReg(1), InstructionArg.newReg(0)]),
     new Instruction("jmp", 7, 0, 5,
-        [ InstructionArg.newConst(1)]),
+        [ InstructionArg.newLabel(1)]),
     new Instruction("jle", 7, 1, 5,
         [ InstructionArg.newConst(1)]),
     new Instruction("jl", 7, 2, 5,
