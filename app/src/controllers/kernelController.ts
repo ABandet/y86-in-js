@@ -1,6 +1,6 @@
 import * as simSeq from "../model/kernel-seq/sim"
 import * as registersSeq from "../model/kernel-seq/registers"
-import * as yasDefault from "../model/yas"
+import * as yasDefault from "../model/yas/yas"
 import * as hcl2jsDefault from "../model/hcl2js"
 import * as instructionSetDefault from "../model/instructionSet"
 import { ICompiler } from "../model/interfaces/ICompiler"

@@ -31,55 +31,58 @@
 %% /* language grammar */
 
 final_expression
-    : expression_list EOF
+    : statement_list EOF
     ;
 
-expression_list
-    : expression
-    | expression expression_list
+statement_list
+    : statement
+    | statement statement_list
     ;
 
-expression
-    : statement NEW_LINE
+statement
+    : expression NEW_LINE
         { 
-            data.line++ 
+            data.out.push($1)
+        }
+    | expression COMMENT NEW_LINE
+        { 
+            $1.comment = $2
             data.out.push($1)
         }
     | NEW_LINE
         { 
-            data.line++ 
             data.out.push(undefined)
         }
+    | COMMENT NEW_LINE
+        { $$ = new data.Comment($1, @1.first_line) }
     ;
 
-statement
+expression
     : label 
         { $$ = $1 }
     | directive
         { $$ = $1 }
     | instruction
         { $$ = $1 }
-    | COMMENT
-        { $$ = new data.Comment($1, data.line) }
     ;
 
 label
     : IDENTIFIER COLON
-        { $$ = new data.Label($1, $1.last_line) }
+        { $$ = new data.Label($1, @1.first_line) }
     ;
 
 directive
     : D_POS NUMBER
-        { $$ = new data.Directive(data.DirectiveType.POS, $2, data.line) }
+        { $$ = new data.Directive(data.DirectiveType.POS, $2, @1.first_line) }
     | D_ALIGN NUMBER
-        { $$ = new data.Directive(data.DirectiveType.ALIGN, $2, data.line) }
+        { $$ = new data.Directive(data.DirectiveType.ALIGN, $2, @1.first_line) }
     | D_LONG NUMBER
-        { $$ = new data.Directive(data.DirectiveType.LONG, $2, data.line) }
+        { $$ = new data.Directive(data.DirectiveType.LONG, $2, @1.first_line) }
     ;
 
 instruction
     : IDENTIFIER arg_list
-        { $$ = new data.InstructionLine($1, $2, data.line) }
+        { $$ = new data.InstructionLine($1, $2, @1.first_line) }
     ;
 
 arg_list
@@ -93,6 +96,7 @@ arg_list
             $$ = $1
             $$.push($3)
         }
+    | { $$ = [] }
     ;
 
 arg

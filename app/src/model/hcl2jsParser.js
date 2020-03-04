@@ -72,12 +72,12 @@
   }
 */
 var hcl2jsParser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,6],$V1=[1,7],$V2=[1,8],$V3=[1,9],$V4=[1,10],$V5=[5,9,11,13,14,17],$V6=[1,29],$V7=[1,28],$V8=[1,31],$V9=[1,32],$Va=[1,34],$Vb=[1,35],$Vc=[1,39],$Vd=[1,40],$Ve=[27,28,29],$Vf=[2,26],$Vg=[2,25],$Vh=[19,24,27,28,29,33,36,37],$Vi=[12,22,26,31,32],$Vj=[19,24,27,28],$Vk=[5,9,11,12,13,14,17,22,26,31,32],$Vl=[36,37];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,6],$V1=[1,7],$V2=[1,8],$V3=[1,9],$V4=[1,10],$V5=[1,11],$V6=[1,12],$V7=[1,13],$V8=[1,14],$V9=[5,13,23,28,29,30,31,35,36],$Va=[2,8],$Vb=[2,9],$Vc=[5,9,10,11,12,13,14,16,17,18,21,23,28,29,30,31,35,36],$Vd=[1,35],$Ve=[1,34],$Vf=[1,41],$Vg=[1,42],$Vh=[29,30,31],$Vi=[9,10,11,12,14,16,17,18,21,26],$Vj=[23,28,29,30],$Vk=[5,9,10,11,12,13,14,16,17,18,21,23,26,28,29,30,31,35,36],$Vl=[35,36];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"final_expression":3,"tmp_expression":4,"EOF":5,"quote":6,"declaration":7,"definition":8,"QUOTE":9,"STRING":10,"INTSIG":11,"IDENTIFIER":12,"BOOLSIG":13,"INT":14,"ASSIGN":15,"instruction_list":16,"BOOL":17,"bool_expression":18,"SEMI":19,"LBRACK":20,"instruction_list_rec":21,"RBRACK":22,"instruction":23,"COLON":24,"expression":25,"P_INTEGER":26,"BOOL_OP":27,"COMP":28,"IN":29,"list":30,"N_INTEGER":31,"LPAREN":32,"RPAREN":33,"LBRACE":34,"tuple":35,"RBRACE":36,"COMMA":37,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",9:"QUOTE",10:"STRING",11:"INTSIG",12:"IDENTIFIER",13:"BOOLSIG",14:"INT",15:"ASSIGN",17:"BOOL",19:"SEMI",20:"LBRACK",22:"RBRACK",24:"COLON",26:"P_INTEGER",27:"BOOL_OP",28:"COMP",29:"IN",31:"N_INTEGER",32:"LPAREN",33:"RPAREN",34:"LBRACE",36:"RBRACE",37:"COMMA"},
-productions_: [0,[3,2],[4,2],[4,2],[4,2],[4,1],[4,1],[4,1],[6,2],[7,3],[7,3],[8,4],[8,5],[16,4],[16,1],[21,1],[21,2],[23,4],[23,4],[23,4],[18,3],[18,3],[18,3],[18,3],[18,3],[25,1],[25,1],[25,1],[25,3],[30,3],[35,1],[35,3]],
+symbols_: {"error":2,"final_expression":3,"expression":4,"EOF":5,"quote":6,"declaration":7,"definition":8,"IDENTIFIER":9,"P_INTEGER":10,"N_INTEGER":11,"LPAREN":12,"RPAREN":13,"QUOTE":14,"STRING":15,"INTSIG":16,"BOOLSIG":17,"INT":18,"ASSIGN":19,"instruction_list":20,"BOOL":21,"bool_expression":22,"SEMI":23,"LBRACK":24,"instruction_list_rec":25,"RBRACK":26,"instruction":27,"COLON":28,"BOOL_OP":29,"COMP":30,"IN":31,"list":32,"LBRACE":33,"tuple":34,"RBRACE":35,"COMMA":36,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"EOF",9:"IDENTIFIER",10:"P_INTEGER",11:"N_INTEGER",12:"LPAREN",13:"RPAREN",14:"QUOTE",15:"STRING",16:"INTSIG",17:"BOOLSIG",18:"INT",19:"ASSIGN",21:"BOOL",23:"SEMI",24:"LBRACK",26:"RBRACK",28:"COLON",29:"BOOL_OP",30:"COMP",31:"IN",33:"LBRACE",35:"RBRACE",36:"COMMA"},
+productions_: [0,[3,2],[4,2],[4,2],[4,2],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,3],[6,2],[7,3],[7,3],[8,4],[8,5],[20,4],[20,1],[25,1],[25,2],[27,4],[27,4],[27,4],[22,3],[22,3],[22,3],[22,3],[22,3],[32,3],[34,1],[34,3]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */, data) {
 /* this == yyval */
 
@@ -90,15 +90,16 @@ case 1:
             */
 
             let jsOutput = "new function() {\n\n"
+
             // Render user's quotes --- step 1
-            hcl2jsUtility.quoteList.forEach(function (item) {
+            data.quoteList.forEach(function (item) {
                 jsOutput += item + "\n\n"
             })
 
             // Render int definitions --- step 2
-            for(let name in hcl2jsUtility.intDefinitions) {
-                const instrList = hcl2jsUtility.intDefinitions[name].definition
-                const identifiersList = hcl2jsUtility.intDefinitions[name].identifiersList
+            for(let name in data.intDefinitions) {
+                const instrList = data.intDefinitions[name].definition
+                const identifiersList = data.intDefinitions[name].identifiersList
 
                 jsOutput += "this." + name + " = () => {\n\n"
 
@@ -112,9 +113,9 @@ case 1:
             }
 
             // Render bool defintions --- step 3
-            for(let name in hcl2jsUtility.boolDefinitions) {
-                const instr = hcl2jsUtility.boolDefinitions[name].definition
-                const identifiersList = hcl2jsUtility.boolDefinitions[name].identifiersList
+            for(let name in data.boolDefinitions) {
+                const instr = data.boolDefinitions[name].definition
+                const identifiersList = data.boolDefinitions[name].identifiersList
 
                 jsOutput += "this." + name + " = () => {\n"
                 jsOutput += generateIdentifiersVerificationJs(identifiersList, name)
@@ -127,78 +128,87 @@ case 1:
         
 break;
 case 8:
- hcl2jsUtility.quoteList.push(cleanHclString($$[$0])) 
+ this.$ = getSigValue($$[$0], data, _$[$0].first_line) 
 break;
-case 9:
- 
-            checkSigUnicity($$[$0-1])
-            hcl2jsUtility.intsigs[$$[$0-1]] = $$[$0]
-        
-break;
-case 10:
- 
-            checkSigUnicity($$[$0-1])
-            hcl2jsUtility.boolsigs[$$[$0-1]] = $$[$0]
-        
+case 9: case 10:
+ this.$ = $$[$0] 
 break;
 case 11:
-
-            checkDefinitionUnicity($$[$0-2])
-            var content = {
-                definition: $$[$0],
-                identifiersList: hcl2jsUtility.identifiersList,
-            }
-            hcl2jsUtility.intDefinitions[$$[$0-2]] = content
-
-            hcl2jsUtility.identifiersList = []
-        
+ this.$ = "(" + $$[$0-1] + ")" 
 break;
 case 12:
-
-            checkDefinitionUnicity($$[$0-3])
-            var content = {
-                definition: $$[$0-1],
-                identifiersList: hcl2jsUtility.identifiersList,
-            }
-            hcl2jsUtility.boolDefinitions[$$[$0-3]] = content
-
-            hcl2jsUtility.identifiersList = []
-        
+ data.quoteList.push(cleanHclString($$[$0])) 
 break;
 case 13:
+ 
+            checkSigUnicity($$[$0-1], data, _$[$0-1].first_line)
+            data.intsigs[$$[$0-1]] = $$[$0]
+        
+break;
+case 14:
+ 
+            checkSigUnicity($$[$0-1], data, _$[$0-1].first_line)
+            data.boolsigs[$$[$0-1]] = $$[$0]
+        
+break;
+case 15:
+
+            checkDefinitionUnicity($$[$0-2], data, _$[$0-2].first_line)
+            var content = {
+                definition: $$[$0],
+                identifiersList: data.identifiersList,
+            }
+            data.intDefinitions[$$[$0-2]] = content
+
+            data.identifiersList = []
+        
+break;
+case 16:
+
+            checkDefinitionUnicity($$[$0-3], data, _$[$0-3].first_line)
+            var content = {
+                definition: $$[$0-1],
+                identifiersList: data.identifiersList,
+            }
+            data.boolDefinitions[$$[$0-3]] = content
+
+            data.identifiersList = []
+        
+break;
+case 17:
  this.$ = $$[$0-2] 
 break;
-case 14: case 15: case 30:
+case 18: case 19: case 30:
  
             this.$ = []
             this.$.push($$[$0])
         
 break;
-case 16:
+case 20:
 
             this.$ = $$[$0-1]
             this.$.push($$[$0])
         
 break;
-case 17:
+case 21:
    
             this.$ = "if(" + $$[$0-3] + ") { return " + $$[$0-1] + "; } \n"
         
 break;
-case 18:
+case 22:
    
             this.$ = "if(" + $$[$0-3] + ") { return " + $$[$0-1] + "; } \n" 
         
 break;
-case 19:
+case 23:
  
-            this.$ = "if(" + getSigValue($$[$0-3]) + ") { return " + $$[$0-1] + "; } \n" 
+            this.$ = "if(" + getSigValue($$[$0-3], data, _$[$0-3].first_line) + ") { return " + $$[$0-1] + "; } \n" 
         
 break;
-case 20: case 21: case 23: case 24:
+case 24: case 25: case 27: case 28:
  this.$ = $$[$0-2] + " " + $$[$0-1] + " " + $$[$0] 
 break;
-case 22:
+case 26:
  
             let exp = "(" + $$[$0-2] + ")"
             let list = $$[$0]
@@ -215,15 +225,6 @@ case 22:
             this.$ = condition
         
 break;
-case 25:
- this.$ = getSigValue($$[$0]) 
-break;
-case 26: case 27:
- this.$ = $$[$0] 
-break;
-case 28:
- this.$ = "(" + $$[$0-1] + ")" 
-break;
 case 29:
  
             this.$ = $$[$0-1]
@@ -237,8 +238,8 @@ case 31:
 break;
 }
 },
-table: [{3:1,4:2,6:3,7:4,8:5,9:$V0,11:$V1,13:$V2,14:$V3,17:$V4},{1:[3]},{5:[1,11]},{4:12,5:[2,5],6:3,7:4,8:5,9:$V0,11:$V1,13:$V2,14:$V3,17:$V4},{4:13,5:[2,6],6:3,7:4,8:5,9:$V0,11:$V1,13:$V2,14:$V3,17:$V4},{4:14,5:[2,7],6:3,7:4,8:5,9:$V0,11:$V1,13:$V2,14:$V3,17:$V4},{10:[1,15]},{12:[1,16]},{12:[1,17]},{12:[1,18]},{12:[1,19]},{1:[2,1]},{5:[2,2]},{5:[2,3]},{5:[2,4]},o($V5,[2,8]),{10:[1,20]},{10:[1,21]},{15:[1,22]},{15:[1,23]},o($V5,[2,9]),o($V5,[2,10]),{12:$V6,16:24,18:27,20:[1,25],23:26,25:30,26:$V7,31:$V8,32:$V9},{12:$Va,18:33,25:30,26:$Vb,31:$V8,32:$V9},o($V5,[2,11]),{12:$V6,18:27,21:36,23:37,25:30,26:$V7,31:$V8,32:$V9},o($V5,[2,14]),{24:[1,38],27:$Vc,28:$Vd},o($Ve,$Vf,{24:[1,41]}),o($Ve,$Vg,{24:[1,42]}),{27:[1,44],28:[1,45],29:[1,43]},o($Vh,[2,27]),{12:$Va,25:46,26:$Vb,31:$V8,32:$V9},{19:[1,47],27:$Vc,28:$Vd},o($Vh,$Vg),o($Vh,$Vf),{12:$V6,18:27,22:[1,48],23:49,25:30,26:$V7,31:$V8,32:$V9},o($Vi,[2,15]),{12:$Va,25:50,26:$Vb,31:$V8,32:$V9},{12:$Va,25:51,26:$Vb,31:$V8,32:$V9},{12:$Va,25:52,26:$Vb,31:$V8,32:$V9},{12:$Va,25:53,26:$Vb,31:$V8,32:$V9},{12:$Va,25:54,26:$Vb,31:$V8,32:$V9},{30:55,34:[1,56]},{12:$Va,25:57,26:$Vb,31:$V8,32:$V9},{12:$Va,25:58,26:$Vb,31:$V8,32:$V9},{33:[1,59]},o($V5,[2,12]),{19:[1,60]},o($Vi,[2,16]),{19:[1,61]},o($Vj,[2,20]),o($Vj,[2,21]),{19:[1,62]},{19:[1,63]},o($Vj,[2,22]),{12:$Va,25:65,26:$Vb,31:$V8,32:$V9,35:64},o($Vj,[2,23]),o($Vj,[2,24]),o($Vh,[2,28]),o($V5,[2,13]),o($Vk,[2,17]),o($Vk,[2,18]),o($Vk,[2,19]),{36:[1,66],37:[1,67]},o($Vl,[2,30]),o($Vj,[2,29]),{12:$Va,25:68,26:$Vb,31:$V8,32:$V9},o($Vl,[2,31])],
-defaultActions: {11:[2,1],12:[2,2],13:[2,3],14:[2,4]},
+table: [{3:1,4:2,6:3,7:4,8:5,9:$V0,10:$V1,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6,18:$V7,21:$V8},{1:[3]},{5:[1,15]},o($V9,[2,5],{6:3,7:4,8:5,4:16,9:$V0,10:$V1,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6,18:$V7,21:$V8}),o($V9,[2,6],{6:3,7:4,8:5,4:17,9:$V0,10:$V1,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6,18:$V7,21:$V8}),o($V9,[2,7],{6:3,7:4,8:5,4:18,9:$V0,10:$V1,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6,18:$V7,21:$V8}),o($V9,$Va),o($V9,$Vb),o($V9,[2,10]),{4:19,6:3,7:4,8:5,9:$V0,10:$V1,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6,18:$V7,21:$V8},{15:[1,20]},{9:[1,21]},{9:[1,22]},{9:[1,23]},{9:[1,24]},{1:[2,1]},o($V9,[2,2]),o($V9,[2,3]),o($V9,[2,4]),{13:[1,25]},o($Vc,[2,12]),{15:[1,26]},{15:[1,27]},{19:[1,28]},{19:[1,29]},o($V9,[2,11]),o($Vc,[2,13]),o($Vc,[2,14]),{4:36,6:3,7:4,8:5,9:$Vd,10:$Ve,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6,18:$V7,20:30,21:$V8,22:33,24:[1,31],27:32},{4:36,6:3,7:4,8:5,9:$V0,10:$V1,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6,18:$V7,21:$V8,22:37},o($Vc,[2,15]),{4:36,6:3,7:4,8:5,9:$Vd,10:$Ve,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6,18:$V7,21:$V8,22:33,25:38,27:39},o($Vc,[2,18]),{28:[1,40],29:$Vf,30:$Vg},o($Vh,$Vb,{28:[1,43]}),o($Vh,$Va,{28:[1,44]}),{29:[1,46],30:[1,47],31:[1,45]},{23:[1,48],29:$Vf,30:$Vg},{4:36,6:3,7:4,8:5,9:$Vd,10:$Ve,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6,18:$V7,21:$V8,22:33,26:[1,49],27:50},o($Vi,[2,19]),{4:51,6:3,7:4,8:5,9:$V0,10:$V1,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6,18:$V7,21:$V8},{4:52,6:3,7:4,8:5,9:$V0,10:$V1,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6,18:$V7,21:$V8},{4:53,6:3,7:4,8:5,9:$V0,10:$V1,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6,18:$V7,21:$V8},{4:54,6:3,7:4,8:5,9:$V0,10:$V1,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6,18:$V7,21:$V8},{4:55,6:3,7:4,8:5,9:$V0,10:$V1,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6,18:$V7,21:$V8},{32:56,33:[1,57]},{4:58,6:3,7:4,8:5,9:$V0,10:$V1,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6,18:$V7,21:$V8},{4:59,6:3,7:4,8:5,9:$V0,10:$V1,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6,18:$V7,21:$V8},o($Vc,[2,16]),{23:[1,60]},o($Vi,[2,20]),{23:[1,61]},o($Vj,[2,24]),o($Vj,[2,25]),{23:[1,62]},{23:[1,63]},o($Vj,[2,26]),{4:65,6:3,7:4,8:5,9:$V0,10:$V1,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6,18:$V7,21:$V8,34:64},o($Vj,[2,27]),o($Vj,[2,28]),o($Vc,[2,17]),o($Vk,[2,21]),o($Vk,[2,22]),o($Vk,[2,23]),{35:[1,66],36:[1,67]},o($Vl,[2,30]),o($Vj,[2,29]),{4:68,6:3,7:4,8:5,9:$V0,10:$V1,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6,18:$V7,21:$V8},o($Vl,[2,31])],
+defaultActions: {15:[2,1]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -405,23 +406,23 @@ parse: function parse(input) {
 
     // Checks if both intsig and boolsig have not any
     // value associated to the given identifier
-    function checkSigUnicity(identifier) {
-        if(hcl2jsUtility.intsigs[identifier]) {
-            throw identifier + " is already declared as an intsig"
+    function checkSigUnicity(identifier, data, line) {
+        if(data.intsigs[identifier]) {
+            throw new data.CompilationError(line, identifier + " is already declared as an intsig")
         }
-        if(hcl2jsUtility.boolsigs[identifier]) {
-            throw identifier + " is already declared as a boolsig"
+        if(data.boolsigs[identifier]) {
+            throw new data.CompilationError(line, identifier + " is already declared as a boolsig")
         }
     }
 
     // Checks if both int definitions and bool definitions have not any
     // value associated to the given identifier
-    function checkDefinitionUnicity(identifier) {
-        if(hcl2jsUtility.intDefinitions[identifier]) {
-            throw identifier + " is already defined as an int defintion"
+    function checkDefinitionUnicity(identifier, data, line) {
+        if(data.intDefinitions[identifier]) {
+            throw new data.CompilationError(line, identifier + " is already defined as an int defintion")
         }
-        if(hcl2jsUtility.boolDefinitions[identifier]) {
-            throw identifier + " is already defined as an bool defintion"
+        if(data.boolDefinitions[identifier]) {
+            throw new data.CompilationError(line, identifier + " is already defined as an bool defintion")
         }
     }
 
@@ -432,23 +433,28 @@ parse: function parse(input) {
         return str.substring(1, str.length - 1)
     }
 
+    function sanitizeString(str) {
+        return str.replace(/"/g, "'")
+    }
+
     // Returns a intsig or boolsig value
     // using the given identifier as key.
     // If there is no sig associated to the identifier,
     // an exception is thrown.
-    function getSigValue(identifier) {
+    function getSigValue(identifier, data, line) {
         let jsSigName
 
-        if(hcl2jsUtility.intsigs[identifier]) {
-            jsSigName = hcl2jsUtility.intsigs[identifier]
-        } else if(hcl2jsUtility.boolsigs[identifier]) {
-            jsSigName = hcl2jsUtility.boolsigs[identifier]
+        if(data.intsigs[identifier]) {
+            jsSigName = data.intsigs[identifier]
+        } else if(data.boolsigs[identifier]) {
+            jsSigName = data.boolsigs[identifier]
         } else {
-            throw identifier + " is not declared"
+            throw new data.CompilationError(line, identifier + " is not declared")
         }
 
         let finalValue = cleanHclString(jsSigName)
-        hcl2jsUtility.identifiersList.push(finalValue)
+        data.identifiersList.push(finalValue)
+
         return finalValue
     }
 
@@ -460,8 +466,8 @@ parse: function parse(input) {
         jsOutput  = "   // Checks if some identifiers are undefined\n"
 
         identifiersList.forEach((identifier) => {
-            jsOutput += "   try { " + identifier + " } catch(e) { throw \"HCL : " 
-            + identifier + " is not accessible in function '" + functionName + "'\" }\n"
+            jsOutput += "   try { if(" + identifier + " === undefined) { throw '' } } catch(e) { throw \"HCL : " 
+            + sanitizeString(identifier) + " is not accessible in function '" + functionName + "'\" }\n"
         })
         jsOutput += "   // End of checks\n\n"
         
@@ -795,80 +801,82 @@ options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:/* skip whitespace */
+case 0:/* ignore */
 break;
-case 1:/* skip new lines  */
+case 1:/* ignore whitespace other than newlines */
 break;
-case 2:/* skip comments   */
+case 2:/* ignore */              
 break;
-case 3:return 9
+case 3:/* skip comments   */
 break;
-case 4:return 13
+case 4:return 14
 break;
 case 5:return 17
 break;
-case 6:return 11
+case 6:return 21
 break;
-case 7:return 14
+case 7:return 16
 break;
-case 8:return 29
+case 8:return 18
 break;
-case 9:return 10
+case 9:return 31
 break;
-case 10:return 12
+case 10:return 15
 break;
-case 11:return 26
+case 11:return 9
 break;
-case 12:return 31
+case 12:return 10
 break;
-case 13:return 19
+case 13:return 11
 break;
-case 14:return 24
+case 14:return 23
 break;
-case 15:return 37
+case 15:return 28
 break;
-case 16:return 32
+case 16:return 36
 break;
-case 17:return 33
+case 17:return 12
 break;
-case 18:return 34
+case 18:return 13
 break;
-case 19:return 36
+case 19:return 33
 break;
-case 20:return 20
+case 20:return 35
 break;
-case 21:return 22
+case 21:return 24
 break;
-case 22:return 27
+case 22:return 26
 break;
-case 23:return 27
+case 23:return 29
 break;
-case 24:return 27
+case 24:return 29
 break;
-case 25:return 28
+case 25:return 29
 break;
-case 26:return 28
+case 26:return 30
 break;
-case 27:return 28
+case 27:return 30
 break;
-case 28:return 28
+case 28:return 30
 break;
-case 29:return 28
+case 29:return 30
 break;
-case 30:return 28
+case 30:return 30
 break;
-case 31:return 'NOT'
+case 31:return 30
 break;
-case 32:return 15
+case 32:return 'NOT'
 break;
-case 33:return 5
+case 33:return 19
 break;
-case 34:return 'INVALID'
+case 34:return 5
+break;
+case 35:return 'INVALID'
 break;
 }
 },
-rules: [/^(?:\s+)/,/^(?:[ \r\t\f][\n])/,/^(?:#.*\n)/,/^(?:quote\b)/,/^(?:boolsig\b)/,/^(?:bool\b)/,/^(?:intsig\b)/,/^(?:int\b)/,/^(?:in\b)/,/^(?:'.+?(?=')')/,/^(?:[a-zA-Z][a-zA-Z0-9_]*)/,/^(?:[0-9][0-9]*)/,/^(?:-[0-9][0-9]*)/,/^(?:;)/,/^(?::)/,/^(?:,)/,/^(?:\()/,/^(?:\))/,/^(?:\{)/,/^(?:\})/,/^(?:\[)/,/^(?:\])/,/^(?:&&)/,/^(?:\^\^)/,/^(?:\|\|)/,/^(?:!=)/,/^(?:==)/,/^(?:<)/,/^(?:<=)/,/^(?:>)/,/^(?:>=)/,/^(?:!)/,/^(?:=)/,/^(?:$)/,/^(?:.)/],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34],"inclusive":true}}
+rules: [/^(?:\n)/,/^(?:[^\S\n]+)/,/^(?:[ \r\t\f])/,/^(?:#[^\n]+)/,/^(?:quote\b)/,/^(?:boolsig\b)/,/^(?:bool\b)/,/^(?:intsig\b)/,/^(?:int\b)/,/^(?:in\b)/,/^(?:'.+?(?=')')/,/^(?:[a-zA-Z][a-zA-Z0-9_]*)/,/^(?:[0-9][0-9]*)/,/^(?:-[0-9][0-9]*)/,/^(?:;)/,/^(?::)/,/^(?:,)/,/^(?:\()/,/^(?:\))/,/^(?:\{)/,/^(?:\})/,/^(?:\[)/,/^(?:\])/,/^(?:&&)/,/^(?:\^\^)/,/^(?:\|\|)/,/^(?:!=)/,/^(?:==)/,/^(?:<)/,/^(?:<=)/,/^(?:>)/,/^(?:>=)/,/^(?:!)/,/^(?:=)/,/^(?:$)/,/^(?:.)/],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35],"inclusive":true}}
 });
 return lexer;
 })();

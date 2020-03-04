@@ -72,12 +72,12 @@
   }
 */
 var yasParser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,5],$V1=[1,9],$V2=[1,10],$V3=[1,11],$V4=[1,12],$V5=[1,13],$V6=[5,8,12,13,15,17,18],$V7=[1,20],$V8=[1,21],$V9=[1,22],$Va=[8,21];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,5],$V1=[1,6],$V2=[1,10],$V3=[1,11],$V4=[1,12],$V5=[1,13],$V6=[5,8,9,13,15,17,18],$V7=[8,9],$V8=[8,9,21],$V9=[1,22],$Va=[1,23],$Vb=[1,24];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"final_expression":3,"expression_list":4,"EOF":5,"expression":6,"statement":7,"NEW_LINE":8,"label":9,"directive":10,"instruction":11,"COMMENT":12,"IDENTIFIER":13,"COLON":14,"D_POS":15,"NUMBER":16,"D_ALIGN":17,"D_LONG":18,"arg_list":19,"arg":20,"COMMA":21,"REGISTER":22,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",8:"NEW_LINE",12:"COMMENT",13:"IDENTIFIER",14:"COLON",15:"D_POS",16:"NUMBER",17:"D_ALIGN",18:"D_LONG",21:"COMMA",22:"REGISTER"},
-productions_: [0,[3,2],[4,1],[4,2],[6,2],[6,1],[7,1],[7,1],[7,1],[7,1],[9,2],[10,2],[10,2],[10,2],[11,2],[19,1],[19,3],[20,1],[20,1],[20,1]],
+symbols_: {"error":2,"final_expression":3,"statement_list":4,"EOF":5,"statement":6,"expression":7,"NEW_LINE":8,"COMMENT":9,"label":10,"directive":11,"instruction":12,"IDENTIFIER":13,"COLON":14,"D_POS":15,"NUMBER":16,"D_ALIGN":17,"D_LONG":18,"arg_list":19,"arg":20,"COMMA":21,"REGISTER":22,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"EOF",8:"NEW_LINE",9:"COMMENT",13:"IDENTIFIER",14:"COLON",15:"D_POS",16:"NUMBER",17:"D_ALIGN",18:"D_LONG",21:"COMMA",22:"REGISTER"},
+productions_: [0,[3,2],[4,1],[4,2],[6,2],[6,3],[6,1],[6,2],[7,1],[7,1],[7,1],[10,2],[11,2],[11,2],[11,2],[12,2],[19,1],[19,3],[19,0],[20,1],[20,1],[20,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */, data) {
 /* this == yyval */
 
@@ -85,63 +85,70 @@ var $0 = $$.length - 1;
 switch (yystate) {
 case 4:
  
-            data.line++ 
             data.out.push($$[$0-1])
         
 break;
 case 5:
  
-            data.line++ 
+            $$[$0-2].comment = $$[$0-1]
+            data.out.push($$[$0-2])
+        
+break;
+case 6:
+ 
             data.out.push(undefined)
         
 break;
-case 6: case 7: case 8:
+case 7:
+ this.$ = new data.Comment($$[$0-1], _$[$0-1].first_line) 
+break;
+case 8: case 9: case 10:
  this.$ = $$[$0] 
 break;
-case 9:
- this.$ = new data.Comment($$[$0], data.line) 
-break;
-case 10:
- this.$ = new data.Label($$[$0-1], $$[$0-1].last_line) 
-break;
 case 11:
- this.$ = new data.Directive(data.DirectiveType.POS, $$[$0], data.line) 
+ this.$ = new data.Label($$[$0-1], _$[$0-1].first_line) 
 break;
 case 12:
- this.$ = new data.Directive(data.DirectiveType.ALIGN, $$[$0], data.line) 
+ this.$ = new data.Directive(data.DirectiveType.POS, $$[$0], _$[$0-1].first_line) 
 break;
 case 13:
- this.$ = new data.Directive(data.DirectiveType.LONG, $$[$0], data.line) 
+ this.$ = new data.Directive(data.DirectiveType.ALIGN, $$[$0], _$[$0-1].first_line) 
 break;
 case 14:
- this.$ = new data.InstructionLine($$[$0-1], $$[$0], data.line) 
+ this.$ = new data.Directive(data.DirectiveType.LONG, $$[$0], _$[$0-1].first_line) 
 break;
 case 15:
+ this.$ = new data.InstructionLine($$[$0-1], $$[$0], _$[$0-1].first_line) 
+break;
+case 16:
 
             this.$ = []
             this.$.push($$[$0])
         
 break;
-case 16:
+case 17:
 
             this.$ = $$[$0-2]
             this.$.push($$[$0])
         
 break;
-case 17: case 18:
+case 18:
+ this.$ = [] 
+break;
+case 19: case 20:
  
             this.$ = $$[$0]
         
 break;
-case 19:
+case 21:
  
             this.$ = $$[$0].substring(1, $$[$0].length)
         
 break;
 }
 },
-table: [{3:1,4:2,6:3,7:4,8:$V0,9:6,10:7,11:8,12:$V1,13:$V2,15:$V3,17:$V4,18:$V5},{1:[3]},{5:[1,14]},{4:15,5:[2,2],6:3,7:4,8:$V0,9:6,10:7,11:8,12:$V1,13:$V2,15:$V3,17:$V4,18:$V5},{8:[1,16]},o($V6,[2,5]),{8:[2,6]},{8:[2,7]},{8:[2,8]},{8:[2,9]},{13:$V7,14:[1,17],16:$V8,19:18,20:19,22:$V9},{16:[1,23]},{16:[1,24]},{16:[1,25]},{1:[2,1]},{5:[2,3]},o($V6,[2,4]),{8:[2,10]},{8:[2,14],21:[1,26]},o($Va,[2,15]),o($Va,[2,17]),o($Va,[2,18]),o($Va,[2,19]),{8:[2,11]},{8:[2,12]},{8:[2,13]},{13:$V7,16:$V8,20:27,22:$V9},o($Va,[2,16])],
-defaultActions: {6:[2,6],7:[2,7],8:[2,8],9:[2,9],14:[2,1],15:[2,3],17:[2,10],23:[2,11],24:[2,12],25:[2,13]},
+table: [{3:1,4:2,6:3,7:4,8:$V0,9:$V1,10:7,11:8,12:9,13:$V2,15:$V3,17:$V4,18:$V5},{1:[3]},{5:[1,14]},{4:15,5:[2,2],6:3,7:4,8:$V0,9:$V1,10:7,11:8,12:9,13:$V2,15:$V3,17:$V4,18:$V5},{8:[1,16],9:[1,17]},o($V6,[2,6]),{8:[1,18]},o($V7,[2,8]),o($V7,[2,9]),o($V7,[2,10]),o($V8,[2,18],{19:20,20:21,13:$V9,14:[1,19],16:$Va,22:$Vb}),{16:[1,25]},{16:[1,26]},{16:[1,27]},{1:[2,1]},{5:[2,3]},o($V6,[2,4]),{8:[1,28]},o($V6,[2,7]),o($V7,[2,11]),o($V7,[2,15],{21:[1,29]}),o($V8,[2,16]),o($V8,[2,19]),o($V8,[2,20]),o($V8,[2,21]),o($V7,[2,12]),o($V7,[2,13]),o($V7,[2,14]),o($V6,[2,5]),{13:$V9,16:$Va,20:30,22:$Vb},o($V8,[2,17])],
+defaultActions: {14:[2,1],15:[2,3]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -622,7 +629,7 @@ case 1:/* ignore whitespace other than newlines */
 break;
 case 2:/* ignore */
 break;
-case 3:return 12
+case 3:return 9
 break;
 case 4:return 14
 break;

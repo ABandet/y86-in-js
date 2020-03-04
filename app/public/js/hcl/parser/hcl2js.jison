@@ -1,3 +1,5 @@
+%parse-param data
+
 /* Code used when parsing. Grammar is below. */
 %{
     /*
@@ -19,23 +21,23 @@
 
     // Checks if both intsig and boolsig have not any
     // value associated to the given identifier
-    function checkSigUnicity(identifier) {
-        if(hcl2jsUtility.intsigs[identifier]) {
-            throw identifier + " is already declared as an intsig"
+    function checkSigUnicity(identifier, data, line) {
+        if(data.intsigs[identifier]) {
+            throw new data.CompilationError(line, identifier + " is already declared as an intsig")
         }
-        if(hcl2jsUtility.boolsigs[identifier]) {
-            throw identifier + " is already declared as a boolsig"
+        if(data.boolsigs[identifier]) {
+            throw new data.CompilationError(line, identifier + " is already declared as a boolsig")
         }
     }
 
     // Checks if both int definitions and bool definitions have not any
     // value associated to the given identifier
-    function checkDefinitionUnicity(identifier) {
-        if(hcl2jsUtility.intDefinitions[identifier]) {
-            throw identifier + " is already defined as an int defintion"
+    function checkDefinitionUnicity(identifier, data, line) {
+        if(data.intDefinitions[identifier]) {
+            throw new data.CompilationError(line, identifier + " is already defined as an int defintion")
         }
-        if(hcl2jsUtility.boolDefinitions[identifier]) {
-            throw identifier + " is already defined as an bool defintion"
+        if(data.boolDefinitions[identifier]) {
+            throw new data.CompilationError(line, identifier + " is already defined as an bool defintion")
         }
     }
 
@@ -54,19 +56,19 @@
     // using the given identifier as key.
     // If there is no sig associated to the identifier,
     // an exception is thrown.
-    function getSigValue(identifier) {
+    function getSigValue(identifier, data, line) {
         let jsSigName
 
-        if(hcl2jsUtility.intsigs[identifier]) {
-            jsSigName = hcl2jsUtility.intsigs[identifier]
-        } else if(hcl2jsUtility.boolsigs[identifier]) {
-            jsSigName = hcl2jsUtility.boolsigs[identifier]
+        if(data.intsigs[identifier]) {
+            jsSigName = data.intsigs[identifier]
+        } else if(data.boolsigs[identifier]) {
+            jsSigName = data.boolsigs[identifier]
         } else {
-            throw identifier + " is not declared"
+            throw new data.CompilationError(line, identifier + " is not declared")
         }
 
         let finalValue = cleanHclString(jsSigName)
-        hcl2jsUtility.identifiersList.push(finalValue)
+        data.identifiersList.push(finalValue)
 
         return finalValue
     }
@@ -88,16 +90,15 @@
     }
 %}
 
-%parse-param data
-
 /* lexical grammar */
 %lex
 %%
 
-\s+                     /* skip whitespace */
-[ \r\t\f]               
-[\n]                    /* skip new lines  */
-"#".*\n                 /* skip comments   */
+\n                      /* ignore */
+[^\S\n]+                /* ignore whitespace other than newlines */
+
+[ \r\t\f]               /* ignore */              
+\#[^\n]+                /* skip comments   */
 quote                   return 'QUOTE'
 boolsig                 return 'BOOLSIG'
 bool                    return 'BOOL'
@@ -138,22 +139,23 @@ in                      return 'IN'
 %% /* language grammar */
 
 final_expression
-    : tmp_expression EOF 
+    : expression EOF 
         {
             /*
             * The js file is generated here in 3 steps.
             */
 
             let jsOutput = "new function() {\n\n"
+
             // Render user's quotes --- step 1
-            hcl2jsUtility.quoteList.forEach(function (item) {
+            data.quoteList.forEach(function (item) {
                 jsOutput += item + "\n\n"
             })
 
             // Render int definitions --- step 2
-            for(let name in hcl2jsUtility.intDefinitions) {
-                const instrList = hcl2jsUtility.intDefinitions[name].definition
-                const identifiersList = hcl2jsUtility.intDefinitions[name].identifiersList
+            for(let name in data.intDefinitions) {
+                const instrList = data.intDefinitions[name].definition
+                const identifiersList = data.intDefinitions[name].identifiersList
 
                 jsOutput += "this." + name + " = () => {\n\n"
 
@@ -167,9 +169,9 @@ final_expression
             }
 
             // Render bool defintions --- step 3
-            for(let name in hcl2jsUtility.boolDefinitions) {
-                const instr = hcl2jsUtility.boolDefinitions[name].definition
-                const identifiersList = hcl2jsUtility.boolDefinitions[name].identifiersList
+            for(let name in data.boolDefinitions) {
+                const instr = data.boolDefinitions[name].definition
+                const identifiersList = data.boolDefinitions[name].identifiersList
 
                 jsOutput += "this." + name + " = () => {\n"
                 jsOutput += generateIdentifiersVerificationJs(identifiersList, name)
@@ -182,10 +184,10 @@ final_expression
         }
     ;
 
-tmp_expression
-    : quote tmp_expression
-    | declaration tmp_expression
-    | definition tmp_expression
+expression
+    : quote expression
+    | declaration expression
+    | definition expression
     | quote
     | declaration
     | definition
@@ -193,44 +195,44 @@ tmp_expression
 
 quote
     : QUOTE STRING 
-        { hcl2jsUtility.quoteList.push(cleanHclString($2)) }
+        { data.quoteList.push(cleanHclString($2)) }
     ;
 
 declaration
     : INTSIG IDENTIFIER STRING 
         { 
-            checkSigUnicity($2)
-            hcl2jsUtility.intsigs[$2] = $3
+            checkSigUnicity($2, data, @2.first_line)
+            data.intsigs[$2] = $3
         }
     | BOOLSIG IDENTIFIER STRING
         { 
-            checkSigUnicity($2)
-            hcl2jsUtility.boolsigs[$2] = $3
+            checkSigUnicity($2, data, @2.first_line)
+            data.boolsigs[$2] = $3
         }
     ;
 
 definition
     : INT IDENTIFIER ASSIGN instruction_list
         {
-            checkDefinitionUnicity($2)
+            checkDefinitionUnicity($2, data, @2.first_line)
             var content = {
                 definition: $4,
-                identifiersList: hcl2jsUtility.identifiersList,
+                identifiersList: data.identifiersList,
             }
-            hcl2jsUtility.intDefinitions[$2] = content
+            data.intDefinitions[$2] = content
 
-            hcl2jsUtility.identifiersList = []
+            data.identifiersList = []
         }
     | BOOL IDENTIFIER ASSIGN bool_expression SEMI
         {
-            checkDefinitionUnicity($2)
+            checkDefinitionUnicity($2, data, @2.first_line)
             var content = {
                 definition: $4,
-                identifiersList: hcl2jsUtility.identifiersList,
+                identifiersList: data.identifiersList,
             }
-            hcl2jsUtility.boolDefinitions[$2] = content
+            data.boolDefinitions[$2] = content
 
-            hcl2jsUtility.identifiersList = []
+            data.identifiersList = []
         }
     ;
 
@@ -268,7 +270,7 @@ instruction
         }
     | IDENTIFIER COLON expression SEMI
         { 
-            $$ = "if(" + getSigValue($1) + ") { return " + $3 + "; } \n" 
+            $$ = "if(" + getSigValue($1, data, @1.first_line) + ") { return " + $3 + "; } \n" 
         }
     ;
 
@@ -301,7 +303,7 @@ bool_expression
 
 expression
     : IDENTIFIER
-        { $$ = getSigValue($1) }
+        { $$ = getSigValue($1, data, @1.first_line) }
     | P_INTEGER
         { $$ = $1 }
     | N_INTEGER
