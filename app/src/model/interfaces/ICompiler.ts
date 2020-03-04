@@ -35,6 +35,23 @@ class CompilationResult {
 }
 
 /**
+ * Represents a node created when parsing the grammar.
+ */
+interface ICompilationNode {
+    /**
+     * Transforms the node into targeted code.
+     * The output is encapsulated in a function in order to perform operations
+     * later in time, after all nodes' 'toCode' functions have been called.
+     * @param ctx The context given by the compiler
+     */
+    toCode(ctx : any) : () => string;
+}
+
+function isCompilationNode(obj : any) : obj is ICompilationNode {
+    return obj.constructor.prototype.hasOwnProperty('toCode')
+}
+
+/**
  * Represents an error which occured at compile-time.
  */
 class CompilationError {
@@ -64,4 +81,4 @@ class CompilationToken {
     }
 }
 
-export { ICompiler, CompilationError, CompilationResult, CompilationToken }
+export { ICompiler, CompilationError, CompilationResult, ICompilationNode, CompilationToken, isCompilationNode }

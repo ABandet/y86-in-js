@@ -1,4 +1,4 @@
-import { ICompiler, CompilationResult, CompilationError, CompilationToken } from "./interfaces/ICompiler";
+import { ICompiler, CompilationResult, CompilationError, CompilationToken, ICompilationNode, isCompilationNode } from "./interfaces/ICompiler";
 import * as yasParser from "./yasParser";
 import { IInstructionSet } from "./interfaces/IInstructionSet";
 import { stringToNumber, numberToByteArray, changeEndianess } from "./integers"
@@ -28,7 +28,8 @@ export class Yas implements ICompiler {
                 InstructionLine: InstructionLine,
                 DirectiveType: DirectiveType,
                 Directive: Directive,
-                Label: Label
+                Label: Label,
+                Comment: Comment,
             })
             result.output = this._compile()
         } catch (error) {
@@ -43,204 +44,37 @@ export class Yas implements ICompiler {
         return result
     }
 
-    private _vaddr : number = 0
-    private _labels : Map<string, number> = new Map()
-    private _compilationOutputGenerators : Array<() => string> = []
-
     private _compile() : string {
-        this._vaddr = 0
-        this._labels = new Map()
+        let compilationOutputGenerators : Array<() => string> = []
+        
+        let ctx = {
+            vaddr : 0,
+            labels: new Map(),
+            compilationOutputGenerators: compilationOutputGenerators,
+            registersEnum: this.registersEnum,
+            instructionSet: this.instructionSet,
+            wordSize: this.wordSize,
+        }
 
         this.parserOutput.forEach((item) => {
-            if(item instanceof InstructionLine) {
-                this._compileInstruction(item)
-            } else if(item instanceof Directive) {
-                this._compileDirective(item)
-            } else if(item instanceof Label) {
-                this._compileLabel(item)
-            } else if(item instanceof CompilationToken) {
-                throw new CompilationError(item.line, "Failed to parse this line. Not recognized as instruction, directive or label")
-            } else if(item === undefined) {
-                this._compilationOutputGenerators.push(() => {
+            if(item === undefined) {
+                compilationOutputGenerators.push(() => {
                     return createEmptyObjectLine()
                 })
+            } else if(isCompilationNode(item)) {
+                compilationOutputGenerators.push(item.toCode(ctx))
+            } else {
+                throw new Error("An unknown type has been returned by the yas parser")
             }
         })
 
         let output = "\n"
 
-        this._compilationOutputGenerators.forEach((generator) => {
+        compilationOutputGenerators.forEach((generator) => {
             output += generator() + "\n"
         })
 
         return output
-    }
-
-    private _compileInstruction(instructionLine : InstructionLine) {
-        try{
-            if(!this.instructionSet.getHandle().has(instructionLine.name)) {
-                throw "The instruction '" + instructionLine.name + "' does not exist"
-            }
-            const instruction = this.instructionSet.getHandle().get(instructionLine.name) as Instruction
-    
-            if(instruction.args.length != instructionLine.args.length) {
-                throw "The instruction expects " + instruction.args.length + " arguments"
-            }
-            
-            let orderedIndexes = new Array<number>()
-            instruction.args.forEach((_, index) => {
-                orderedIndexes.push(index) // Fill the array
-            })
-            orderedIndexes.sort((left : number, right : number) : number => {
-                let leftArg = instruction.args[left]
-                let rightArg = instruction.args[right]
-
-                if(leftArg.position < rightArg.position) {
-                    return left
-                } else if(leftArg.position === rightArg.position &&
-                          leftArg.type === rightArg.type && leftArg.type === InstructionArgType.REG) {
-                    if(leftArg.length === rightArg.length) {
-                        throw "InstructionSet : Both registers have the same inner position (" + leftArg.length + ")"
-                    }
-                    return leftArg.length < rightArg.length ? left : right
-                } else if (leftArg.position > rightArg.position) {
-                    return right
-                }
-                throw "Two arguments share the same position but are not registers"
-            })
-
-            const currentVaddr = this._vaddr
-            this._vaddr += instruction.length
-
-            this._compilationOutputGenerators.push(() : string => {
-                let instructionBytes = new Array<number>(2) // Hold icode/ifun and ra/rb by default
-                instructionBytes[0] = instruction.icode << 4
-                instructionBytes[0] |= instruction.ifun
-                instructionBytes[1] = 0xff
-
-                orderedIndexes.forEach((argIndex) => {
-                    const argTemplate = instruction.args[argIndex]
-                    const userArg = instructionLine.args[argIndex]
-                
-                    switch(argTemplate.type) {
-                        case InstructionArgType.CONST: {
-                            let value = 0
-                            if(Number.isNaN(Number(userArg))) {
-                                if(!this._labels.has(userArg)) {
-                                    new CompilationError(instructionLine.line, "The label '" + userArg + "' does not exist")
-                                }
-                                value = this._labels.get(userArg) as number
-                            } else {
-                                value = stringToNumber(userArg)
-                            }
-                            const bytes = numberToByteArray(value, argTemplate.length, true)
-                            instructionBytes = instructionBytes.concat(bytes)
-                            break;
-                        }
-                        case InstructionArgType.LABEL: {
-                            if(!this._labels.has(userArg)) {
-                                throw new CompilationError(instructionLine.line,"The label '" + userArg + "' does not exist")
-                            }
-                            const bytes = numberToByteArray(this._labels.get(userArg) as number, argTemplate.length, true)
-                            instructionBytes = instructionBytes.concat(bytes)
-                            break;
-                        }
-                        case InstructionArgType.MEM: {
-                            const value = stringToNumber(userArg)
-                            if(value < 0) {
-                                throw new CompilationError(instructionLine.line,"A memory address must be positive")
-                            }
-                            const bytes = numberToByteArray(value, argTemplate.length, true)
-                            instructionBytes = instructionBytes.concat(bytes)
-                            break;
-                        }
-                        case InstructionArgType.REG: {
-                            if(!this.registersEnum.hasOwnProperty(userArg)) {
-                                throw new CompilationError(instructionLine.line,"Register '" + userArg + "' does not exist")
-                            }
-                            let value = this.registersEnum[userArg] as number 
-                            
-                            if(argTemplate.length == 1) {
-                                value <<= 4
-                                value |= 0xf
-                            } else {
-                                value |= 0xf0
-                            }
-
-                            instructionBytes[argTemplate.position] &= value
-                            break;
-                        }
-                        default:
-                            throw new CompilationError(instructionLine.line,"Unknown argument type")
-                    }
-                })
-
-                return createObjectLine(currentVaddr, instructionBytes, " --- ")
-            })
-
-        } catch(error) {
-            if(error instanceof CompilationError) {
-                throw error
-            } else {
-                throw new CompilationError(instructionLine.line, error)
-            }
-        }
-    }
-
-    private _compileDirective(directive : Directive) {
-        const currentVaddr = this._vaddr
-
-        try {
-            let value = stringToNumber(directive.value)
-
-            switch(directive.type) {
-                case DirectiveType.ALIGN: {
-                    this._compilationOutputGenerators.push(() => {
-                        return createObjectLine(currentVaddr, [], '.align ' + directive.value)
-                    })
-                    while(this._vaddr % value != 0) {
-                        this._vaddr++
-                    }
-                    break;
-                }
-                case DirectiveType.LONG: {
-                    const bytes = numberToByteArray(stringToNumber(directive.value), this.wordSize, true)
-                    this._vaddr += bytes.length
-    
-                    this._compilationOutputGenerators.push(() => {
-                        return createObjectLine(currentVaddr, bytes, ".long " + directive.value)
-                    })
-                    break;
-                }
-                case DirectiveType.POS: {
-                    if(value < 0) {
-                        throw directive.line, "An address is expected to be positive"
-                    }
-                    this._vaddr = value
-                    this._compilationOutputGenerators.push(() => {
-                        return createObjectLine(currentVaddr, [], ".pos " + directive.value)
-                    })
-                    break;
-                }
-                default:
-                    throw "The given directive does not exist"
-            }
-        } catch (error) {
-            if(error instanceof CompilationError) {
-                throw error
-            } else {
-                throw new CompilationError(directive.line, error)
-            }
-        }
-    }
-
-    private _compileLabel(label : Label) {
-        const currentVaddr = this._vaddr
-        this._labels.set(label.name, currentVaddr)
-
-        this._compilationOutputGenerators.push(() => {
-            return createObjectLine(currentVaddr, [], label.name + ':')
-        })
     }
 }
 
@@ -268,13 +102,14 @@ function padStringNumber(value : string, digits : number, pad : string = '0') {
     return newValue + value
 }
 
-const ADDRESS_PADDING = 2
-const YS_PADDING = 24
+const ADDRESS_PADDING_SIZE = 2
+const MIDDLE_PADDING_SIZE = 25
+const YS_PADDING_SIZE = 5
 
 function createObjectLine(address : number, bytes : number[], ys : string) : string {
     let output = ''
 
-    for(let i = 0; i < ADDRESS_PADDING; i++) {
+    for(let i = 0; i < ADDRESS_PADDING_SIZE; i++) {
         output += ' '
     }
 
@@ -284,28 +119,40 @@ function createObjectLine(address : number, bytes : number[], ys : string) : str
         output += padStringNumber(byte.toString(16), 2, '0')
     })
 
-    while(output.length < YS_PADDING) {
+    while(output.length < MIDDLE_PADDING_SIZE) {
         output += ' '
     }
 
-    output += '| ' + ys
+    output += '|'
+
+    for(let i = 0; i < YS_PADDING_SIZE; i++) {
+        output += ' '
+    }
+
+    output += ys
 
     return output
 }
 
-function createEmptyObjectLine() : string {
+function createEmptyObjectLine(ys = '') : string {
     let output = ''
 
-    for(let i = 0; i < YS_PADDING; i++) {
+    for(let i = 0; i < MIDDLE_PADDING_SIZE; i++) {
         output += ' '
     }
 
-    output += '| '
+    output += '|'
+
+    for(let i = 0; i < YS_PADDING_SIZE; i++) {
+        output += ' '
+    }
+
+    output += ys
 
     return output
 }
 
-class InstructionLine extends CompilationToken {
+class InstructionLine extends CompilationToken implements ICompilationNode {
     name : string
     args : string[]
 
@@ -313,6 +160,136 @@ class InstructionLine extends CompilationToken {
         super(line)
         this.name = name
         this.args = args
+    }
+
+    toCode(ctx : any) : () => string {
+        try{
+            if(!ctx.instructionSet.getHandle().has(this.name)) {
+                throw "The instruction '" + this.name + "' does not exist"
+            }
+            const instruction = ctx.instructionSet.getHandle().get(this.name) as Instruction
+    
+            if(instruction.args.length != this.args.length) {
+                throw "The instruction expects " + instruction.args.length + " arguments"
+            }
+            
+            let orderedIndexes = this._getSortedArgsIndexes(instruction)
+
+            const currentVaddr = ctx.vaddr
+            ctx.vaddr += instruction.length
+
+            return () : string => {
+                let instructionBytes = new Array<number>(instruction.length) // Hold icode/ifun by default
+                instructionBytes[0] = instruction.icode << 4
+                instructionBytes[0] |= instruction.ifun
+                let isRegisterAlreadyWritten = false
+
+                orderedIndexes.forEach((argIndex) => {
+                    const argTemplate = instruction.args[argIndex]
+                    const userArg = this.args[argIndex]
+                    
+                    switch(argTemplate.type) {
+                        case InstructionArgType.CONST: {
+                            let value = 0
+                            if(Number.isNaN(Number(userArg))) {
+                                if(!ctx.labels.has(userArg)) {
+                                    new CompilationError(this.line, "The label '" + userArg + "' does not exist")
+                                }
+                                value = ctx.labels.get(userArg) as number
+                            } else {
+                                value = stringToNumber(userArg)
+                            }
+                            const bytes = numberToByteArray(value, argTemplate.length, true)
+                            instructionBytes = instructionBytes.concat(bytes)
+                            break;
+                        }
+                        case InstructionArgType.LABEL: {
+                            if(!ctx.labels.has(userArg)) {
+                                throw new CompilationError(this.line,"The label '" + userArg + "' does not exist")
+                            }
+                            const bytes = numberToByteArray(ctx.labels.get(userArg) as number, argTemplate.length, true)
+                            instructionBytes = instructionBytes.concat(bytes)
+                            break;
+                        }
+                        case InstructionArgType.MEM: {
+                            const value = stringToNumber(userArg)
+                            if(value < 0) {
+                                throw new CompilationError(this.line,"A memory address must be positive")
+                            }
+                            const bytes = numberToByteArray(value, argTemplate.length, true)
+                            instructionBytes = instructionBytes.concat(bytes)
+                            break;
+                        }
+                        case InstructionArgType.REG: {
+                            if(!ctx.registersEnum.hasOwnProperty(userArg)) {
+                                throw new CompilationError(this.line,"Register '" + userArg + "' does not exist")
+                            }
+                            let value = ctx.registersEnum[userArg] as number 
+
+                            if(!isRegisterAlreadyWritten) {
+                                instructionBytes.push(0xff)
+                                isRegisterAlreadyWritten = true
+                            }
+                            
+                            if(argTemplate.length == 1) {
+                                value <<= 4
+                                value |= 0xf
+                            } else {
+                                value |= 0xf0
+                            }
+
+                            instructionBytes[instructionBytes.length - 1] &= value
+                            break;
+                        }
+                        default:
+                            throw new CompilationError(this.line,"Unknown argument type")
+                    }
+                })
+
+                return createObjectLine(currentVaddr, instructionBytes, this._getRepresentation(instruction))
+            }
+
+        } catch(error) {
+            if(error instanceof CompilationError) {
+                throw error
+            } else {
+                throw new CompilationError(this.line, error)
+            }
+        }
+    }
+
+    private _getSortedArgsIndexes(instruction : Instruction) : Array<number> {
+        let orderedIndexes = new Array<number>()
+        
+        instruction.args.forEach((_, index) => {
+            orderedIndexes.push(index) // Fill the array
+        })
+
+        orderedIndexes.sort((left : number, right : number) : number => {
+            let leftArg = instruction.args[left]
+            let rightArg = instruction.args[right]
+
+            return leftArg.position - rightArg.position
+        })
+
+        return orderedIndexes
+    }
+
+    private _getRepresentation(instruction : Instruction) {
+        let output = '    ' + this.name + ' '
+
+        this.args.forEach((arg, index) => {
+            const argTemplate = instruction.args[index]
+
+            if(argTemplate.type === InstructionArgType.REG) {
+                output += '%'
+            }
+
+            output += arg + ', '
+        })
+
+        const offset = this.args.length === 0 ? 0 : 2
+        return output.substr(0, output.length - offset)
     }
 }
 
@@ -322,7 +299,7 @@ enum DirectiveType {
     LONG,
 }
 
-class Directive extends CompilationToken {
+class Directive extends CompilationToken implements ICompilationNode {
     type : DirectiveType
     value : string
 
@@ -331,13 +308,82 @@ class Directive extends CompilationToken {
         this.type = type
         this.value = value
     }
+
+    toCode(ctx : any) : () => string {
+        const currentVaddr = ctx.vaddr
+
+        try {
+            let value = stringToNumber(this.value)
+
+            switch(this.type) {
+                case DirectiveType.ALIGN: {
+                    while(ctx.vaddr % value != 0) {
+                        ctx.vaddr++
+                    }
+                    return() => {
+                        return createObjectLine(currentVaddr, [], '.align ' + this.value)
+                    }
+                    break;
+                }
+                case DirectiveType.LONG: {
+                    const bytes = numberToByteArray(stringToNumber(this.value), ctx.wordSize, true)
+                    ctx.vaddr += bytes.length
+    
+                    return () => {
+                        return createObjectLine(currentVaddr, bytes, ".long " + this.value)
+                    }
+                    break;
+                }
+                case DirectiveType.POS: {
+                    if(value < 0) {
+                        throw this.line, "An address is expected to be positive"
+                    }
+                    ctx.vaddr = value
+                    return () => {
+                        return createObjectLine(currentVaddr, [], ".pos " + this.value)
+                    }
+                    break;
+                }
+                default:
+                    throw "The given directive does not exist"
+            }
+        } catch (error) {
+            if(error instanceof CompilationError) {
+                throw error
+            } else {
+                throw new CompilationError(this.line, error)
+            }
+        }
+    }
 }
 
-class Label extends CompilationToken {
+class Label extends CompilationToken implements ICompilationNode {
     name : string 
 
     constructor(name : string, line : number) {
         super(line)
         this.name = name
+    }
+
+    toCode(ctx : any) : () => string {
+        const currentVaddr = ctx.vaddr
+        ctx.labels.set(this.name, currentVaddr)
+
+        return () => {
+            return createObjectLine(currentVaddr, [], this.name + ':')
+        }
+    }
+}
+
+class Comment extends CompilationToken implements ICompilationNode {
+    comment : string
+
+    constructor(comment : string, line : number) {
+        super(line)
+        this.comment = comment
+    }
+
+    toCode(ctx : any) : () => string {
+        return () => { return createEmptyObjectLine(this.comment) }
     }
 }

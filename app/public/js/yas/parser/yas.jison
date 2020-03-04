@@ -11,8 +11,8 @@
 \n                          return 'NEW_LINE'
 [^\S\n]+                    /* ignore whitespace other than newlines */
 
-[ \r\t\f]               
-\#.*\n                       /* skip comments   */
+[ \r\t\f]                   /* ignore */
+\#[^\n]+                     return 'COMMENT'
 ":"                         return 'COLON'
 (0x[0-9a-fA-F]+)|(\-?[0-9]+) return 'NUMBER'
 \.pos                      return 'D_POS'
@@ -21,7 +21,7 @@
 \%([a-z]+)                 return 'REGISTER'
 ","                          return 'COMMA'
 <<EOF>>                     return 'EOF'
-[^\ ,:\n]+                  return 'IDENTIFIER'
+[^\ ,:\n#]+                  return 'IDENTIFIER'
 .                           return 'INVALID'
 
 /lex
@@ -53,12 +53,14 @@ expression
     ;
 
 statement
-    : label
+    : label 
         { $$ = $1 }
     | directive
         { $$ = $1 }
     | instruction
         { $$ = $1 }
+    | COMMENT
+        { $$ = new data.Comment($1, data.line) }
     ;
 
 label
