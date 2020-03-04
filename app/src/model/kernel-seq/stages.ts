@@ -23,7 +23,7 @@ function fetch(sim : Sim) {
         sim.context.valP++;
 
         sim.context.ra = Memory.HI4(byte);
-        sim.context.rb = Memory.LO4(byte)
+        sim.context.rb = Memory.LO4(byte);
     } else {
         sim.context.ra = registers_enum.none;
         sim.context.rb = registers_enum.none
@@ -53,6 +53,7 @@ function decode(sim : Sim) {
         ra: sim.context.ra,
         rb: sim.context.rb
     });
+
     sim.context.srcA = hcl.call("srcA");
     if (sim.context.srcA != registers_enum.none) {
         sim.context.valA = sim.registers.read(sim.context.srcA);
@@ -78,6 +79,13 @@ function decode(sim : Sim) {
  * @param sim
  */
 function execute(sim : Sim) {
+    hcl.setCtx({
+        icode: sim.context.icode,
+        ifun: sim.context.ifun,
+        vala: sim.context.valA,
+        valb: sim.context.valB,
+        valc: sim.context.valC
+    });
     sim.context.aluA = hcl.call("aluA");
     sim.context.aluB = hcl.call("aluB");
     let alu_fun = hcl.call("alufun");
@@ -104,6 +112,14 @@ function execute(sim : Sim) {
  * @param sim
  */
 function memory(sim : Sim) {
+    hcl.setCtx({
+        icode: sim.context.icode,
+        ifun: sim.context.ifun,
+        vale: sim.context.valE,
+        vala: sim.context.valA,
+        valp: sim.context.valP
+    });
+
     let mem_addr = hcl.call("mem_addr");
     let mem_data = hcl.call("mem_data");
 
@@ -148,6 +164,14 @@ function writeBack(sim : Sim) {
 }
 
 function updatePC(sim : Sim) {
+    hcl.setCtx({
+        icode: sim.context.icode,
+        ifun: sim.context.ifun,
+        valc: sim.context.valC,
+        valm: sim.context.valM,
+        valp: sim.context.valP,
+        bcond: sim.context.bcond
+    });
     sim.context.pc = hcl.call("new_pc");
 }
 

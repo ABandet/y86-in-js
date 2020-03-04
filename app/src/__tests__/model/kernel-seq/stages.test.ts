@@ -1,12 +1,15 @@
 import {Sim} from "../../../model/kernel-seq/sim";
-import {decode, fetch} from "../../../model/kernel-seq/stages";
+import {decode, execute, fetch, memory, updatePC, writeBack} from "../../../model/kernel-seq/stages";
 import {registers_enum} from "../../../model/kernel-seq/registers";
 
 /**
- * Test all stages with all instruction.
+ * Test all stages with instruction.
  * To work, the sim.memory.loadProgram should be functional.
  */
 
+/**
+ * Instruction to test
+ */
 let irmovl_prog : string =
     "  0x0000: 30f500010000 | irmovl 0x100, %ebp\n" +
     "                       | \n";
@@ -16,15 +19,27 @@ let rrmovl_prog : string =
     "                       | \n";
 
 let rmmovl_prog : string =
-    "  0x0000: 402f00010000 | rmmovl %eax, 0x100\n" +
-    "                       | \n"
+    "  0x0000: 402f00010000 | rmmovl %edx, 0x100\n" +
+    "                       | \n";
 
 /**
- * Fetch tests
+ * Some macro
  */
-test("Fetch test with irmovl", () => {
+function load_sim(program : string){
     let sim = new Sim();
-    sim.memory.loadProgram(irmovl_prog);
+    sim.memory.loadProgram(program);
+    return sim;
+}
+
+
+/**
+ * tests
+ */
+test("Test with irmovl", () => {
+    let sim = load_sim(irmovl_prog);
+
+    // pre context verification
+    expect(sim.registers.read(registers_enum.ebp)).toBe(0);
 
     fetch(sim);
     expect(sim.context.icode).toBe(3);
@@ -33,12 +48,33 @@ test("Fetch test with irmovl", () => {
     expect(sim.context.ra).toBe(registers_enum.none);
     expect(sim.context.valC).toBe(0x100);
     expect(sim.context.valP).toBe(sim.context.pc + 6);
+
+    decode(sim);
+    expect(sim.context.valA).toBe(0);
+    expect(sim.context.valB).toBe(0);
+
+    execute(sim);
+    expect(sim.context.valE).toBe(0x100);
+
+    memory(sim);
+
+    writeBack(sim);
+    expect(sim.registers.read(registers_enum.ebp)).toBe(0x100);
+
+    updatePC(sim);
+    expect(sim.context.valP).toBe(6);
+
 });
 
-test("Fetch test with rrmovl", () => {
-    let sim = new Sim();
-    sim.reset();
-    sim.memory.loadProgram(rrmovl_prog);
+test("Test with rrmovl", () => {
+    // rrmovl %eax, %ecx
+
+    let sim = load_sim(rrmovl_prog);
+
+    // pre context
+    sim.registers.write(registers_enum.eax, 0x10);
+    expect(sim.registers.read(registers_enum.eax)).toBe(0x10);
+    expect(sim.registers.read(registers_enum.ecx)).toBe(0x0);
 
     fetch(sim);
     expect(sim.context.icode).toBe(2);
@@ -47,12 +83,28 @@ test("Fetch test with rrmovl", () => {
     expect(sim.context.ra).toBe(registers_enum.eax);
     expect(sim.context.valC).toBe(0);
     expect(sim.context.valP).toBe(sim.context.pc + 2);
+
+    decode(sim);
+    expect(sim.context.valA).toBe(0x10);
+    expect(sim.context.valB).toBe(0);
+
+    execute(sim);
+    expect(sim.context.valE).toBe(0x10);
+
+    memory(sim);
+
+    writeBack(sim);
+    expect(sim.registers.read(registers_enum.ecx)).toBe(0x10);
+
+    updatePC(sim);
+    expect(sim.context.valP).toBe(2);
 });
 
-test("Fetch test with rmmovl", () => {
-    let sim = new Sim();
-    sim.reset();
-    sim.memory.loadProgram(rmmovl_prog);
+test("Test with rmmovl", () => {
+    let sim = load_sim(rmmovl_prog);
+
+    // pre context
+    sim.registers.write(registers_enum.edx, 0x200);
 
     fetch(sim);
     expect(sim.context.icode).toBe(4);
@@ -61,16 +113,20 @@ test("Fetch test with rmmovl", () => {
     expect(sim.context.ra).toBe(registers_enum.edx);
     expect(sim.context.valC).toBe(0x100);
     expect(sim.context.valP).toBe(sim.context.pc + 6);
-});
 
-test("Decode test with rrmovl", () => {
-    let sim = new Sim();
-    sim.reset();
-    sim.memory.loadProgram(rrmovl_prog);
-
-    sim.registers.write(registers_enum.eax, 10);
-
-    fetch(sim);
     decode(sim);
-    expect(sim.context.valA).toBe(10);
+    expect(sim.context.valA).toBe(0x200);
+    expect(sim.context.valB).toBe(0);
+
+    execute(sim);
+    expect(sim.context.valE).toBe(0x100);
+
+    memory(sim);
+    expect(sim.memory.readWord(0x100)).toBe(0x200);
+
+    writeBack(sim);
+
+    updatePC(sim);
+    expect(sim.context.valP).toBe(6);
+
 });
