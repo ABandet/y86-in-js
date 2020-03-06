@@ -1,13 +1,13 @@
-import { Registers, registers_enum } from "./registers"
-import { Context } from "./context";
-import { Memory } from "./memory";
+import {Registers, registers_enum} from "./registers"
+import {Context} from "./context";
+import {Memory} from "./memory";
 import * as stages from "./stages";
-import { simStatus } from "../status"
+import {simStatus} from "../status"
 import {Alu} from "./alu";
 import * as hcl from "./hcl"
-import { ISimulator } from "model/interfaces/ISimulator";
-import { IInstructionSet } from "model/interfaces/IInstructionSet";
-import { InstructionSet } from "../instructionSet";
+import {ISimulator} from "model/interfaces/ISimulator";
+import {IInstructionSet} from "model/interfaces/IInstructionSet";
+import {InstructionSet} from "../instructionSet";
 
 export class Sim implements ISimulator {
     context: Context = new Context();
@@ -52,7 +52,16 @@ export class Sim implements ISimulator {
     }
 
     getRegistersView() {
-        throw new Error("Method not implemented.");
+        return {
+            "eax" : this.registers.read(registers_enum.eax),
+            "ebx" : this.registers.read(registers_enum.ebx),
+            "ecx" : this.registers.read(registers_enum.ecx),
+            "edx" : this.registers.read(registers_enum.edx),
+            "esi" : this.registers.read(registers_enum.esi),
+            "edi" : this.registers.read(registers_enum.edi),
+            "esp" : this.registers.read(registers_enum.esp),
+            "ebp" : this.registers.read(registers_enum.ebp),
+        }
     }
 
     getMemoryView(beginAddress: number, endAddres: number) {
@@ -60,7 +69,9 @@ export class Sim implements ISimulator {
     }
     
     getStatusView() {
-        throw new Error("Method not implemented.");
+        return {
+            "status" : this.status
+        }
     }
 
     loadProgram(yo: string): void {
