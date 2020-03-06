@@ -463,7 +463,7 @@ parse: function parse(input) {
             return ""
         }
 
-        jsOutput  = "   // Checks if some identifiers are undefined\n"
+        let jsOutput  = "   // Checks if some identifiers are undefined\n"
 
         identifiersList.forEach((identifier) => {
             jsOutput += "   try { if(" + identifier + " === undefined) { throw '' } } catch(e) { throw \"HCL : " 
