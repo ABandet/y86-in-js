@@ -32,11 +32,14 @@ class Context {
     valE    : number = 0;
 
     // Condition flag
-    cc      : CC = CC.NONE
+    cc      : CC = CC.NONE;
     bcond   : boolean = false;
 
     // Memory output
     valM    : number = 0;
+
+    // update pc output
+    newPC   : number = 0;
 
     instructionSet = {}
 }

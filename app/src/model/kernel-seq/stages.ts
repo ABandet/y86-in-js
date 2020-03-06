@@ -6,6 +6,7 @@ import { Memory } from "./memory"
 import * as hcl from "./hcl"
 
 function fetch(sim : Sim) {
+    sim.context.pc = sim.context.newPC;
     sim.context.valP = sim.context.pc;
     let byte = sim.memory.readByte(sim.context.valP);
     sim.context.valP++;
@@ -172,7 +173,7 @@ function updatePC(sim : Sim) {
         valp: sim.context.valP,
         bcond: sim.context.bcond
     });
-    sim.context.pc = hcl.call("new_pc");
+    sim.context.newPC = hcl.call("new_pc");
 }
 
 export { decode, fetch, execute, memory, writeBack, updatePC }

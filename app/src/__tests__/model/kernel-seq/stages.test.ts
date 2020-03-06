@@ -63,6 +63,7 @@ test("Test with irmovl", () => {
 
     updatePC(sim);
     expect(sim.context.valP).toBe(6);
+    expect(sim.context.newPC).toBe(sim.context.pc + 6);
 
 });
 
@@ -98,6 +99,7 @@ test("Test with rrmovl", () => {
 
     updatePC(sim);
     expect(sim.context.valP).toBe(2);
+    expect(sim.context.newPC).toBe(sim.context.pc + 2);
 });
 
 test("Test with rmmovl", () => {
@@ -128,5 +130,6 @@ test("Test with rmmovl", () => {
 
     updatePC(sim);
     expect(sim.context.valP).toBe(6);
+    expect(sim.context.newPC).toBe(sim.context.pc + 6);
 
 });
