@@ -14,28 +14,28 @@ export class Sim implements ISimulator {
     registers: Registers = new Registers();
     memory : Memory = new Memory();
     alu : Alu = new Alu();
-    status : simStatus = simStatus.AOK
-    errorMessage : string = ""
+    status : simStatus = simStatus.AOK;
+    errorMessage : string = "";
 
     constructor() {
-        this.reset()
-        this.setInstructionSet(new InstructionSet())
+        this.reset();
+        this.setInstructionSet(new InstructionSet());
     }
 
     step() : simStatus {
         try {
-            hcl.setCtx(this.context)
-            stages.decode(this)
-            stages.fetch(this)
-            stages.execute(this)
-            stages.memory(this)
-            stages.writeBack(this)
+            hcl.setCtx(this.context);
+            stages.decode(this);
+            stages.fetch(this);
+            stages.execute(this);
+            stages.memory(this);
+            stages.writeBack(this);
         } catch(error) {
-            this.status = simStatus.HALT
-            this.errorMessage = error
+            this.status = simStatus.HALT;
+            this.errorMessage = error;
         }
 
-        return this.status
+        return this.status;
     }
 
     reset(): void {
@@ -43,12 +43,43 @@ export class Sim implements ISimulator {
         this.registers = new Registers();
         this.memory = new Memory();
         this.alu = new Alu();
-        this.status = simStatus.AOK
+        this.status = simStatus.AOK;
         this.errorMessage = ""
     }
 
     getStageView() {
-        throw new Error("Method not implemented.");
+        return {
+            "fetch" : {
+                "icode" : this.context.icode,
+                "ifun" : this.context.ifun,
+                "PC" : this.context.pc
+            },
+            "decode" : {
+                "ra" : this.registers.getRegisterName(this.context.ra),
+                "rb" : this.registers.getRegisterName(this.context.rb),
+            },
+            "execute" : {
+                "valC" : this.context.valC,
+                "valA" : this.context.valA,
+                "valB" : this.context.valB
+            },
+            "memory" : {
+                "valP" : this.context.valP,
+                "valA" : this.context.valA,
+                "valE" : this.context.valE
+            },
+            "writeback" : {
+                "valE" : this.context.valE,
+                "valM" : this.context.valM,
+                "srcA" : this.context.srcA,
+                "srcB" : this.context.srcB,
+                "dstM" : this.context.dstM,
+                "dstE" : this.context.dstE,
+            },
+            "updatePC" : {
+                "valP" : this.context.valP
+            }
+        };
     }
 
     getRegistersView() {
@@ -61,7 +92,7 @@ export class Sim implements ISimulator {
             "edi" : this.registers.read(registers_enum.edi),
             "esp" : this.registers.read(registers_enum.esp),
             "ebp" : this.registers.read(registers_enum.ebp),
-        }
+        };
     }
 
     getMemoryView(beginAddress: number, endAddres: number) {
@@ -71,22 +102,22 @@ export class Sim implements ISimulator {
     getStatusView() {
         return {
             "status" : this.status
-        }
+        };
     }
 
     loadProgram(yo: string): void {
-        this.memory.loadProgram(yo)
+        this.memory.loadProgram(yo);
     }
 
     insertHclCode(js: string): void {
-        hcl.setHclCode(js)
+        hcl.setHclCode(js);
     }
 
     getErrorMessage() : string {
-        return this.errorMessage
+        return this.errorMessage;
     }
 
     setInstructionSet(set : IInstructionSet) {
-        hcl.setInstructionSet(set)
+        hcl.setInstructionSet(set);
     }
 }

@@ -24,6 +24,7 @@ class Registers {
      * Array for all registers. Size based on the size of "registers" enumerate.
      */
     content: Uint32Array = new Uint32Array(Object.keys(registers_enum).length);
+    registersNames: Array<string> = [];
 
     /**
      * Set all registers to the default value 0.
@@ -32,6 +33,7 @@ class Registers {
         for (let key in registers_enum) {
             this.content[key] = 0;
         }
+        this.setRegistersNames();
     }
 
     /**
@@ -59,6 +61,24 @@ class Registers {
      */
     read(register: registers_enum) {
         return this.content[register];
+    }
+
+    /**
+     * Set all the registers name in an array of string
+     */
+    setRegistersNames() {
+        let i: number = 0;
+        for (let enumMember in registers_enum) {
+            let isValueProperty = parseInt(enumMember, 10) >= 0;
+            if (isValueProperty) {
+                this.registersNames[i] = registers_enum[enumMember];
+                i++;
+            }
+        }
+    }
+
+    getRegisterName(index : number) {
+        return this.registersNames[index];
     }
 }
 
