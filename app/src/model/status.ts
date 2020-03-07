@@ -1,9 +1,8 @@
 // The differents states the processor can be in.
 export enum simStatus {
-    BUBBLE,
+    NONE,
     AOK,
     HALT,
     ADDR,
     INSTR,
-    PIPE
 }

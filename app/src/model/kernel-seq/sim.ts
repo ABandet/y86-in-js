@@ -30,9 +30,20 @@ export class Sim implements ISimulator {
             stages.execute(this);
             stages.memory(this);
             stages.writeBack(this);
+            stages.updatePC(this);
         } catch(error) {
             this.status = simStatus.HALT;
             this.errorMessage = error;
+        }
+
+        return this.status;
+    }
+
+    continue() : simStatus {
+        let i = 0;
+        while(this.status == simStatus.AOK && i < 10) {
+            i++;
+            this.step();
         }
 
         return this.status;

@@ -1,46 +1,79 @@
-import { Sim } from "./sim"
-import { registers_enum } from "./registers"
-import { Memory } from "./memory"
-
+import {Sim} from "./sim"
+import {registers_enum} from "./registers"
+import {Memory} from "./memory"
 // Used at compile-time and for unit tests
 import * as hcl from "./hcl"
+import {simStatus} from "../status";
 
 function fetch(sim : Sim) {
+    if (sim.status != simStatus.AOK) {
+        return;
+    }
+
     sim.context.pc = sim.context.newPC;
     sim.context.valP = sim.context.pc;
-    let byte = sim.memory.readByte(sim.context.valP);
-    sim.context.valP++;
-    
-    sim.context.icode = Memory.HI4(byte);
-    sim.context.ifun = Memory.LO4(byte);
+    try {
+        let byte = sim.memory.readByte(sim.context.valP);
+        sim.context.valP++;
+
+        sim.context.icode = Memory.HI4(byte);
+        sim.context.ifun = Memory.LO4(byte);
+    }
+    catch (e) {
+        sim.errorMessage = e;
+        sim.status = simStatus.ADDR;
+        return;
+    }
 
     hcl.setCtx({
         icode: sim.context.icode,
         ifun: sim.context.ifun
     });
 
-    if(hcl.call("need_regids")) {
-        byte = sim.memory.readByte(sim.context.valP);
-        sim.context.valP++;
+    if(!hcl.call( "instr_valid")) {
+        sim.status = simStatus.INSTR;
+        sim.errorMessage = "Invalid Instruction encountered";
+        return;
+    }
 
-        sim.context.ra = Memory.HI4(byte);
-        sim.context.rb = Memory.LO4(byte);
+    if (sim.context.icode == 0 || sim.context.icode == 1){
+        sim.status = simStatus.HALT;
+        return;
+    }
+
+    if(hcl.call("need_regids")) {
+        try {
+            let byte = sim.memory.readByte(sim.context.valP);
+            byte = sim.memory.readByte(sim.context.valP);
+            sim.context.valP++;
+
+            sim.context.ra = Memory.HI4(byte);
+            sim.context.rb = Memory.LO4(byte);
+        }
+        catch (e) {
+            sim.errorMessage = e;
+            sim.status = simStatus.ADDR;
+            return;
+        }
     } else {
         sim.context.ra = registers_enum.none;
         sim.context.rb = registers_enum.none
     }
 
     if(hcl.call("need_valC")) {
-        sim.context.valC = sim.memory.readWord(sim.context.valP);
-        sim.context.valP += Memory.WORD_SIZE
+        try {
+            sim.context.valC = sim.memory.readWord(sim.context.valP);
+            sim.context.valP += Memory.WORD_SIZE;
+        }
+        catch (e) {
+            sim.errorMessage = e;
+            sim.status = simStatus.ADDR;
+            return;
+        }
     } else {
         sim.context.valC = 0
     }
 
-    // TODO : status (AOK, STOP, etc...)
-    // TODO : Manage exceptions (errors can happen while accessing memory)
-    // TODO : Edit hcl2js to generate a TS file instead of a JS one. If not,
-    //        we'll not be able to perform any call to HCL functions from here.
 }
 
 /**
@@ -48,6 +81,10 @@ function fetch(sim : Sim) {
  * @param sim
  */
 function decode(sim : Sim) {
+    if (sim.status != simStatus.AOK) {
+        return;
+    }
+
     hcl.setCtx({
         icode: sim.context.icode,
         ifun: sim.context.ifun,
@@ -80,6 +117,10 @@ function decode(sim : Sim) {
  * @param sim
  */
 function execute(sim : Sim) {
+    if (sim.status != simStatus.AOK) {
+        return;
+    }
+
     hcl.setCtx({
         icode: sim.context.icode,
         ifun: sim.context.ifun,
@@ -96,7 +137,8 @@ function execute(sim : Sim) {
         sim.context.valE = sim.alu.compute_alu(sim.context.aluA, sim.context.aluB, alu_fun);
     }
     catch (e) {
-        console.log("Cannot compute in alu : " + e);
+        sim.status = simStatus.HALT;
+        sim.errorMessage = e;
     }
 
     // Set flags
@@ -113,6 +155,10 @@ function execute(sim : Sim) {
  * @param sim
  */
 function memory(sim : Sim) {
+    if (sim.status != simStatus.AOK) {
+        return;
+    }
+
     hcl.setCtx({
         icode: sim.context.icode,
         ifun: sim.context.ifun,
@@ -129,7 +175,9 @@ function memory(sim : Sim) {
             sim.context.valM = sim.memory.readWord(mem_addr);
         }
         catch (e) {
-            console.log("error in stage memory: " + e);
+            sim.status = simStatus.ADDR;
+            sim.errorMessage = e;
+            return;
         }
     }
 
@@ -138,11 +186,11 @@ function memory(sim : Sim) {
             sim.memory.writeWord(mem_addr, mem_data);
         }
         catch (e) {
-            console.log("error in stage memory: " + e);
+            sim.status = simStatus.ADDR;
+            sim.errorMessage = e;
+            return;
         }
     }
-
-    //TODO : Status gestion
 }
 
 /**
@@ -153,6 +201,10 @@ function memory(sim : Sim) {
  * @param sim
  */
 function writeBack(sim : Sim) {
+    if (sim.status != simStatus.AOK) {
+        return;
+    }
+
     if (sim.context.dstE != registers_enum.none) {
         let valE = sim.context.valE;
         sim.registers.write(sim.context.dstE, valE);
@@ -165,6 +217,10 @@ function writeBack(sim : Sim) {
 }
 
 function updatePC(sim : Sim) {
+    if (sim.status != simStatus.AOK) {
+        return;
+    }
+
     hcl.setCtx({
         icode: sim.context.icode,
         ifun: sim.context.ifun,
