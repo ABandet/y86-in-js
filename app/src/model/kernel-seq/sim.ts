@@ -25,8 +25,8 @@ export class Sim implements ISimulator {
     step() : simStatus {
         try {
             hcl.setCtx(this.context);
-            stages.decode(this);
             stages.fetch(this);
+            stages.decode(this);
             stages.execute(this);
             stages.memory(this);
             stages.writeBack(this);

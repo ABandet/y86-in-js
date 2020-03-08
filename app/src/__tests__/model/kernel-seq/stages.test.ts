@@ -52,6 +52,7 @@ test("Test with irmovl", () => {
     decode(sim);
     expect(sim.context.valA).toBe(0);
     expect(sim.context.valB).toBe(0);
+    expect(sim.context.dstE).toBe(registers_enum.ebp);
 
     execute(sim);
     expect(sim.context.valE).toBe(0x100);

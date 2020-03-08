@@ -1,20 +1,26 @@
-import { Sim } from "../../../model/kernel-seq/sim"
-import { simStatus } from "../../../model/status"
+import {Sim} from "../../../model/kernel-seq/sim"
+import {simStatus} from "../../../model/status"
+import {registers_enum} from "../../../model/kernel-seq/registers";
 
 const program = "                       | \n" +
     "  0x0000:              | Init:\n" +
-    "  0x0000: 30f02a000000 |     irmovl 42, %eax\n" +
-    "  0x0006: 400f12000000 |     rmmovl %eax, 0x12\n" +
-    "  0x000c: 503f12000000 |     mrmovl 0x12, %ebx\n" +
+    "  0x0000: 30f02a000000 |     irmovl 0x100, %eax\n" +
+    "  0x0006: 400f13000000 |     rmmovl %eax, 0x13\n" +
+    "  0x000c: 503f13000000 |     mrmovl 0x13, %ebx\n" +
     "  0x0012: 00           | halt\n" +
-    "                       | "
+    "                       | ";
 
 test("simulation test", () => {
     let sim = new Sim();
 
     sim.memory.loadProgram(program);
     sim.context.instructionSet = {};
-    
+
     expect(sim.step()).toBe(simStatus.AOK);
+    expect(sim.registers.read(registers_enum.eax)).toBe(0x2a);
+    sim.reset();
+    sim.memory.loadProgram(program);
     expect(sim.continue()).toBe(simStatus.HALT);
-}) 
+    expect(sim.registers.read(registers_enum.eax)).toBe(0x2a);
+    expect(sim.registers.read(registers_enum.ebx)).toBe(0x2a);
+});
