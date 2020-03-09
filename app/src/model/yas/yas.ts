@@ -1,9 +1,10 @@
-import { ICompiler, CompilationResult, CompilationError, CompilationToken, ICompilationNode, isCompilationNode } from "../interfaces/ICompiler";
+import { ICompiler, CompilationResult, CompilationError, isCompilationNode } from "../interfaces/ICompiler";
 import * as yasParser from "../yasParser";
 import { IInstructionSet } from "../interfaces/IInstructionSet";
 import { InstructionLine } from "./nodes/instruction";
 import { DirectiveType, Directive } from "./nodes/directive";
 import { Label } from "./nodes/label";
+import { Comment } from './nodes/comment'
 
 export class Yas implements ICompiler {
     registersEnum: any
