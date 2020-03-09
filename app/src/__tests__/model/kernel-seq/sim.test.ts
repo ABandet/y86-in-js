@@ -12,15 +12,23 @@ const program = "                       | \n" +
 
 test("simulation test", () => {
     let sim = new Sim();
-
     sim.memory.loadProgram(program);
-    sim.context.instructionSet = {};
 
     expect(sim.step()).toBe(simStatus.AOK);
     expect(sim.registers.read(registers_enum.eax)).toBe(0x2a);
+
     sim.reset();
     sim.memory.loadProgram(program);
-    expect(sim.continue()).toBe(simStatus.HALT);
+    expect(sim.continue([])).toBe(simStatus.HALT);
     expect(sim.registers.read(registers_enum.eax)).toBe(0x2a);
     expect(sim.registers.read(registers_enum.ebx)).toBe(0x2a);
+});
+
+test("Breakpoints tests", () => {
+    let sim = new Sim();
+    sim.memory.loadProgram(program);
+
+    expect(sim.continue([0xc])).toBe(simStatus.AOK);
+    expect(sim.registers.read(registers_enum.eax)).toBe(0x2a);
+    expect(sim.registers.read(registers_enum.ebx)).toBe(0);
 });

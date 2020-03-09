@@ -39,11 +39,15 @@ export class Sim implements ISimulator {
         return this.status;
     }
 
-    continue() : simStatus {
-        let i = 0;
-        while(this.status == simStatus.AOK && i < 10) {
-            i++;
+    continue(breakpoints : Array<number>) : simStatus {
+        while(this.status == simStatus.AOK) {
             this.step();
+            // breakpoints stop
+            for(let brk of breakpoints){
+                if (this.context.newPC == brk) {
+                    return this.status;
+                }
+            }
         }
 
         return this.status;
