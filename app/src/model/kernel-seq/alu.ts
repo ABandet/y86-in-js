@@ -1,5 +1,21 @@
 import {alufct} from "./aluEnum";
-import {CC} from "./cc";
+
+enum JMP_enum {
+    J_YES,
+    J_LE,
+    J_L,
+    J_E,
+    J_NE,
+    J_GE,
+    J_G
+}
+
+enum CC {
+    NONE = 0,
+    ZF = 1,
+    SF = 2,
+    OF = 3,
+}
 
 class Alu {
     flags : boolean[] = [];
@@ -69,6 +85,21 @@ class Alu {
         else {
             this.flags[CC.OF] = false;
         }
+    }
+
+    compute_bch(ifun: number) {
+        if (ifun == JMP_enum.J_YES) return true;
+        if (ifun == JMP_enum.J_LE) return this._boolean_xor(this.flags[CC.SF], this.flags[CC.OF]) || this.flags[CC.ZF];
+        if (ifun == JMP_enum.J_L) return this._boolean_xor(this.flags[CC.SF], this.flags[CC.OF]);
+        if (ifun == JMP_enum.J_E) return this.flags[CC.ZF];
+        if (ifun == JMP_enum.J_NE) return !this.flags[CC.ZF];
+        if (ifun == JMP_enum.J_GE) return this._boolean_xor(this._boolean_xor(this.flags[CC.SF], this.flags[CC.OF]), true);
+        if (ifun == JMP_enum.J_G) return this._boolean_xor(this._boolean_xor(this.flags[CC.SF], this.flags[CC.OF]), true) && this._boolean_xor(this.flags[CC.ZF], true);
+        return false;
+    }
+
+    _boolean_xor(boolA :boolean, boolB :boolean){
+        return (boolA && !boolB) || (!boolA && boolB);
     }
 }
 

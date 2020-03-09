@@ -4,7 +4,7 @@ import {registers_enum} from "../../../model/kernel-seq/registers";
 
 const program = "                       | \n" +
     "  0x0000:              | Init:\n" +
-    "  0x0000: 30f02a000000 |     irmovl 0x100, %eax\n" +
+    "  0x0000: 30f02a000000 |     irmovl 42, %eax\n" +
     "  0x0006: 400f13000000 |     rmmovl %eax, 0x13\n" +
     "  0x000c: 503f13000000 |     mrmovl 0x13, %ebx\n" +
     "  0x0012: 00           | halt\n" +

@@ -339,6 +339,15 @@ const defaultHclCode = `new function() {
       return ((ctx.icode) === (instructionSet.get("nop").icode)) || ((ctx.icode) === (instructionSet.get("halt").icode)) || ((ctx.icode) === (instructionSet.get("rrmovl").icode)) || ((ctx.icode) === (instructionSet.get("irmovl").icode)) || ((ctx.icode) === (instructionSet.get("rmmovl").icode)) || ((ctx.icode) === (instructionSet.get("mrmovl").icode)) || ((ctx.icode) === (instructionSet.get("addl").icode)) || ((ctx.icode) === (instructionSet.get("iaddl").icode)) || ((ctx.icode) === (instructionSet.get("jmp").icode)) || ((ctx.icode) === (instructionSet.get("call").icode)) || ((ctx.icode) === (instructionSet.get("ret").icode)) || ((ctx.icode) === (instructionSet.get("pushl").icode)) || ((ctx.icode) === (instructionSet.get("popl").icode));
    }
    
+    this.is_bch = () => {
+         // Checks if some identifiers are undefined
+         try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'is_bch'" }
+         try { if(instructionSet.get("jmp").icode === undefined) { throw '' } } catch(e) { throw "HCL : instructionSet.jmp.icode is not accessible in function 'is_bch'" }
+         // End of checks
+
+         return ((ctx.icode) === (instructionSet.get("jmp").icode));
+      }
+   
    this.set_cc = () => {
       // Checks if some identifiers are undefined
       try { if(ctx.icode === undefined) { throw '' } } catch(e) { throw "HCL : ctx.icode is not accessible in function 'set_cc'" }

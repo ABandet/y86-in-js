@@ -146,7 +146,13 @@ function execute(sim : Sim) {
         sim.alu.compute_cc(sim.context.aluA, sim.context.aluB, alu_fun);
     }
 
-    //TODO : Conditional branch
+    // bcond flag
+    if (hcl.call("is_bch")){
+        sim.context.bcond = sim.alu.compute_bch(sim.context.ifun);
+    }
+    else {
+        sim.context.bcond = false;
+    }
 }
 
 /**
