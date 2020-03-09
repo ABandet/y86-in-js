@@ -19,7 +19,7 @@ test("simulation test", () => {
 
     sim.reset();
     sim.memory.loadProgram(program);
-    expect(sim.continue([])).toBe(simStatus.HALT);
+    expect(sim.continue()).toBe(simStatus.HALT);
     expect(sim.registers.read(registers_enum.eax)).toBe(0x2a);
     expect(sim.registers.read(registers_enum.ebx)).toBe(0x2a);
 });
@@ -31,4 +31,11 @@ test("Breakpoints tests", () => {
     expect(sim.continue([0xc])).toBe(simStatus.AOK);
     expect(sim.registers.read(registers_enum.eax)).toBe(0x2a);
     expect(sim.registers.read(registers_enum.ebx)).toBe(0);
+});
+
+test("JMP Tests", () => {
+    let sim = new Sim();
+    sim.memory.loadProgram(program);
+
+
 });

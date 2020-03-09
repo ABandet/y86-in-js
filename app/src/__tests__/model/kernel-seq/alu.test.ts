@@ -1,4 +1,4 @@
-import {Alu} from "../../../model/kernel-seq/alu";
+import {Alu, JMP_enum} from "../../../model/kernel-seq/alu";
 import {alufct} from "../../../model/kernel-seq/aluEnum";
 import {CC} from "../../../model/kernel-seq/cc";
 
@@ -287,7 +287,7 @@ test("Alu(compute_cc - XOR) test", () => {
 /**
  * Test alu's function with the NONE operation.
  */
-test("Alu - NONE) test", () => {
+test("Alu - NONE test", () => {
     try {
         flags_test(0,0, alufct.A_NONE, true, false, false);
         expect(true).toBe(false);
@@ -311,4 +311,39 @@ test("Alu - NONE) test", () => {
 
 
     expect(true).toBe(true);
+});
+
+
+test("Alu - conditional jump test", () => {
+    let alu = new Alu();
+
+    // test on positive result
+    alu.compute_cc(10,10,alufct.A_ADD);
+    expect(alu.compute_bch(JMP_enum.J_YES)).toBeTruthy();
+    expect(alu.compute_bch(JMP_enum.J_LE)).toBeFalsy();
+    expect(alu.compute_bch(JMP_enum.J_L)).toBeFalsy();
+    expect(alu.compute_bch(JMP_enum.J_E)).toBeFalsy();
+    expect(alu.compute_bch(JMP_enum.J_NE)).toBeTruthy();
+    expect(alu.compute_bch(JMP_enum.J_GE)).toBeTruthy();
+    expect(alu.compute_bch(JMP_enum.J_G)).toBeTruthy();
+
+    // test on negative result
+    alu.compute_cc(0,-10,alufct.A_ADD);
+    expect(alu.compute_bch(JMP_enum.J_YES)).toBeTruthy();
+    expect(alu.compute_bch(JMP_enum.J_LE)).toBeTruthy();
+    expect(alu.compute_bch(JMP_enum.J_L)).toBeTruthy();
+    expect(alu.compute_bch(JMP_enum.J_E)).toBeFalsy();
+    expect(alu.compute_bch(JMP_enum.J_NE)).toBeTruthy();
+    expect(alu.compute_bch(JMP_enum.J_GE)).toBeFalsy();
+    expect(alu.compute_bch(JMP_enum.J_G)).toBeFalsy();
+
+    // test on zero result
+    alu.compute_cc(0,0,alufct.A_ADD);
+    expect(alu.compute_bch(JMP_enum.J_YES)).toBeTruthy();
+    expect(alu.compute_bch(JMP_enum.J_LE)).toBeTruthy();
+    expect(alu.compute_bch(JMP_enum.J_L)).toBeFalsy();
+    expect(alu.compute_bch(JMP_enum.J_E)).toBeTruthy();
+    expect(alu.compute_bch(JMP_enum.J_NE)).toBeFalsy();
+    expect(alu.compute_bch(JMP_enum.J_GE)).toBeTruthy();
+    expect(alu.compute_bch(JMP_enum.J_G)).toBeFalsy();
 });

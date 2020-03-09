@@ -12,4 +12,5 @@ export interface ISimulator {
     insertHclCode(js : string) : void
     getErrorMessage() : string
     setInstructionSet(set : IInstructionSet) : void
+    continue(breakpoints : Array<number>) : simStatus
 }

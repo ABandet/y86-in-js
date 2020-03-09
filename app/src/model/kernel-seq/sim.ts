@@ -39,7 +39,7 @@ export class Sim implements ISimulator {
         return this.status;
     }
 
-    continue(breakpoints : Array<number>) : simStatus {
+    continue(breakpoints : Array<number> = []) : simStatus {
         while(this.status == simStatus.AOK) {
             this.step();
             // breakpoints stop

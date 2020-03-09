@@ -1,6 +1,6 @@
 import {alufct} from "./aluEnum";
 
-enum JMP_enum {
+export enum JMP_enum {
     J_YES,
     J_LE,
     J_L,
