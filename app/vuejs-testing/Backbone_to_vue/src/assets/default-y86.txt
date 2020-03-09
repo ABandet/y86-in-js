@@ -1,0 +1,32 @@
+        .pos 0
+init:   irmovl Stack, %esp      # Set up Stack pointer
+        jmp Main                # Execute main program
+
+        .align 4
+array:  .long 0xd
+        .long 0xc0
+        .long 0xb00
+        .long 0xa000
+
+Main:   irmovl 4,%eax
+        pushl %eax              # Push 4
+        irmovl array, %edx
+        pushl %edx              # Push array
+        call Sum                # Sum(array, 4)
+        popl %ebx
+        popl %ebx
+        halt
+
+Sum:    mrmovl 4(%esp),%edx     # edx = Start
+        mrmovl 8(%esp),%ecx     # ecx = Count
+        irmovl 0, %eax          # sum = 0
+
+Loop:   mrmovl (%edx),%ebx      # get *Start
+        addl %ebx,%eax          # add to sum
+        iaddl 4, %edx           # Start++
+        loop Loop               # Stop when 0
+
+End:    ret                     # result must be abcd in %eax
+
+        .pos 0x95
+        Stack:                  # The stack goes here
