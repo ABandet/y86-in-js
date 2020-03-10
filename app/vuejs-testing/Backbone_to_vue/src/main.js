@@ -4,6 +4,7 @@ import App from './App.vue'
 
 Vue.config.productionTip = false
 
-new Vue({
+// Allows calling app's methods this way: app.getY86Code()
+window.app = new Vue({
   render: h => h(App),
-}).$mount('#app')
+}).$mount('#app').$children[0]

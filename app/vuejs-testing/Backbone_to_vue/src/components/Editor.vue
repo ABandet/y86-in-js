@@ -6,9 +6,6 @@
 </template>
 
 <script>
-//require('brace/mode/hcl.js')
-require('brace/mode/y86.js')
-
 import brace from 'brace'
 
 export default {
@@ -17,40 +14,41 @@ export default {
       type: String,
       required: true
     },
-    value: {
+    initialValue: {
       type: String,
       required: true
     }
   },
   methods: {
     getCode() {
-      return this.value
+      return this.editor.getValue()
     }
   },
   mounted () {
     // Which element of the template should contain the editor
-    this.$ace = brace.edit(this.$el.childNodes[1])
+    this.editor = brace.edit(this.$el.childNodes[1])
 
-    require(`brace/mode/${this.mode}`)
-    require('brace/theme/monokai')
+    // NOTE This only works for our home-made modes, builtins modes cannot be
+    // loaded this way, use `brace/mode/${this.mode}` instead
+    require(`@/assets/brace-modes/${this.mode}`)
 
-    // Somehow using .setOptions() for the mode makes the editor read only
-    this.$ace.getSession().setMode(`ace/mode/${this.mode}`)
-
-    this.$ace.setOptions({
-      theme: 'ace/theme/monokai',
+    this.editor.setOptions({
+      displayIndentGuides: true,
+      fixedWidthGutter: true,
+      highlightActiveLine: true,
+      highlightGutterLine: true,
+      mode: `ace/mode/${this.mode}`,
       newLineMode: 'unix',
-      enableBasicAutocompletion: false,
-      enableLiveAutocompletion: false,
+      printMargin: 80,
+      readOnly: false,
+      showGutter: true,
       tabSize: 4,
       useSoftTabs: true,
-      wrap: true,
-      readOnly: false,
-      printMargin: 80
-    });
+      wrap: true
+    })
 
-    // Set the initial content of the editor to the one provided to this.value
-    this.$ace.setValue(this.value, 1)
+    this.editor.setValue(this.initialValue, 1)
+    this.editor.gotoLine(0);
   }
 }
 </script>

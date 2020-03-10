@@ -1,38 +1,43 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <editor
-      ref="hey"
+    <Editor
+      ref='y86Editor'
       mode='y86'
-      :value='defaultY86Code'
+      :initialValue='y86CodeSample'
+    />
+    <Editor
+      ref='hclEditor'
+      mode='hcl'
+      :initialValue='hclCodeSample'
     />
   </div>
 </template>
 
 <script>
-//import HelloWorld from './components/HelloWorld.vue'
 import Editor from './components/Editor.vue'
 
-import defaultY86Code from '@/assets/default-y86.txt'
-
+import hclCodeSample from '@/assets/code-samples/hcl.txt'
+import y86CodeSample from '@/assets/code-samples/y86.txt'
 
 export default {
   name: 'App',
   data () {
     return {
-      item: {},
-      defaultY86Code: defaultY86Code
+      hclCodeSample,
+      y86CodeSample
     }
   },
   components: {
-    editor: Editor
+    Editor
   },
-   methods: {
-     // TODO find a better name
-     getY86Code() {
-       return this.$refs.hey.getCode()
-     }
-   }
+  methods: {
+    getHclCode() {
+      return this.$refs.hclEditor.getCode()
+    },
+    getY86Code() {
+      return this.$refs.y86Editor.getCode()
+    }
+  }
 }
 </script>
 
