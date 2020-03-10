@@ -14,6 +14,8 @@
 [ \r\t\f]                   /* ignore */
 \#[^\n]+                     return 'COMMENT'
 ":"                         return 'COLON'
+"("                         return 'LPAREN'
+")"                         return 'RPAREN'
 (0x[0-9a-fA-F]+)|(\-?[0-9]+) return 'NUMBER'
 \.pos                      return 'D_POS'
 \.align                     return 'D_ALIGN'
@@ -49,6 +51,11 @@ statement
             $1.comment = $2
             data.out.push($1)
         }
+    | labelized_expression NEW_LINE
+    | labelized_expression COMMENT NEW_LINE
+        { 
+            $1.comment = $2
+        }
     | NEW_LINE
         { 
             data.out.push(undefined)
@@ -57,10 +64,22 @@ statement
         { $$ = new data.Comment($1, @1.first_line) }
     ;
 
+labelized_expression
+    : label expression
+        {
+            data.out.push($1)
+            data.out.push($2)
+            $$ = $2
+        }
+    | label
+        {
+            data.out.push($1)
+            $$ = $1
+        }
+    ;
+
 expression
-    : label 
-        { $$ = $1 }
-    | directive
+    : directive
         { $$ = $1 }
     | instruction
         { $$ = $1 }
@@ -101,15 +120,23 @@ arg_list
 
 arg
     : IDENTIFIER
-        { 
-            $$ = $1
-        }
+        { $$ = $1 }
     | NUMBER
-        { 
-            $$ = $1
-        }
-    | REGISTER
-        { 
-            $$ = $1.substring(1, $1.length)
-        }
+        { $$ = $1 }
+    | register
+        { $$ = $1}
+    | addressFromRegister 
+        { $$ = $1 }
+    ;
+
+addressFromRegister
+    : LPAREN register RPAREN
+        { $$ = new data.AddressFromRegister($2) }
+    | NUMBER LPAREN register RPAREN
+        { $$ = new data.AddressFromRegister($3, $1) }
+    ;
+
+register
+    : REGISTER
+        { $$ = $1.substring(1, $1.length) }
     ;

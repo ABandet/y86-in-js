@@ -16,9 +16,8 @@ test('yas (seq, 32 bits) simple program', () => {
     .pos 0x1abc # Comment
     .align 12
     .long 0x1122
-    Stack:
-        irmovl Stack, %ebp
-        irmovl Stack, %esp
+    Stack: irmovl Stack, %ebp # Comment
+           irmovl Stack, %esp
         
     .long -47
     jmp Stack
@@ -28,7 +27,7 @@ test('yas (seq, 32 bits) simple program', () => {
     .long 10000000000
 `   
     let result = yas.assemble(ys)
-
+    console.log(result.output)
     expect(result.errors.length).toBe(0)
 
     const referenceYo = `

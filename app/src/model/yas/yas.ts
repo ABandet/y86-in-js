@@ -35,6 +35,7 @@ export class Yas implements ICompiler {
                 Directive: Directive,
                 Label: Label,
                 Comment: Comment,
+                AddressFromRegister: AddressFromRegister,
             })
             result.output = this._compile()
         } catch (error) {
@@ -146,4 +147,12 @@ export function createEmptyObjectLine(ys = '') : string {
     return output
 }
 
+class AddressFromRegister {
+    registerName : string
+    offset : number
 
+    constructor(registerName : string, offset : number = 0) {
+        this.registerName = registerName
+        this.offset = offset
+    }
+}
