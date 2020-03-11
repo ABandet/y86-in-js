@@ -1,0 +1,48 @@
+:root {
+  /*--accent: #8ab4f8;
+  --accent-dark: #6ea3f7;
+  --accent-light: #9fc1f9;*/
+  --accent: #2980b9;
+  --accent-dark: #1679b9;
+  --accent-light: #3498d8;
+  --background: #333333;
+  --background-dark: #232323;
+  --background-light: #444444;
+  --foreground: #e2e2e2;
+  --foreground-dark: #dddddd;
+  --foreground-light: #ffffff;
+  --shadow: rgba(35, 35, 35, 0.6);
+  --urgent: #ff5050;
+
+  --Header-background: var(--accent);
+  --Header-foreground: var(--foreground-light);
+
+  --HeaderButton-hover-shadow: var(--shadow);
+  --HeaderButton-disabled-background: var(--Header-background);
+  --HeaderButton-disabled-foreground: var(--Header-foreground);
+  --HeaderButton-enabled-background: var(--accent-light);
+  --HeaderButton-enabled-foreground: var(--Header-foreground);
+
+  --pane-background: var(--background);
+  --pane-foreground: var(--foreground);
+
+  --SettingsDialog-background: var(--background);
+  --SettingsDialog-foreground: var(--foreground);
+  --SettingsDialog-container-background: var(--shadow);
+  --SettingsDialog-close-button-background: var(--urgent);
+  --SettingsDialog-close-button-foreground: var(--foreground-light);
+  --SettingsDialog-heading-foreground: var(--accent-light);
+  --SettingsDialog-icon-foreground: var(--accent);
+  --SettingsDialog-select-background: var(--background-light);
+  --SettingsDialog-select-foreground: var(--foreground-light);
+
+  /* FIXME refactor the style bellow */
+  --inactive-tab-button-background: var(--header-background);
+  --inactive-tab-button-foreground: #dddddd;
+  --inactive-tab-button-hover-background: var(--active-tab-button-background);
+  --inactive-tab-button-hover-foreground: var(--active-tab-button-foreground);
+  --active-tab-button-background: #3498d8;
+  --active-tab-button-foreground: var(--header-foreground);
+  --pane-header-background: var(--active-tab-button-background);
+  --pane-header-foreground: var(--active-tab-button-foreground);
+}
