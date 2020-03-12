@@ -1,0 +1,40 @@
+.stage h3{
+    margin: 20px 0 6px 0;
+    padding: 2px 0 2px 0;
+    border-bottom: 1px solid #ddd;
+
+    font-family: 'Source Sans Pro';
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.stage-indicators {
+    display: -webkit-flex;
+    display: flex;
+}
+
+.Indicator {
+    display: -webkit-flex;
+    display: flex;
+    padding-bottom: 8px;
+
+    font-family: 'Inconsolata';
+    font-size: 14px;
+
+    max-width: 450px;
+    margin-right: 8px;
+}
+
+.Indicator .label {
+    padding-right: 4px;
+    margin-left: 8px;
+    background: #a4a4a4;
+}
+
+.Indicator .value{
+    padding-left: 4px;
+    -webkit-flex: 1 1;
+    flex: 1 1;
+}

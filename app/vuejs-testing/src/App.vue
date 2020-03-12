@@ -10,15 +10,19 @@
       <Editor ref="y86Editor" :strings="strings.Editor" mode="y86" :initialValue="y86CodeSample"/>
       <Editor ref="hclEditor" :strings="strings.Editor" mode="hcl" :initialValue="hclCodeSample"/>
     </div>
+    <CpuState ref="cpu-state" :stages="this.cpuStateJson.stages"/>
   </div>
 </template>
 
 <script>
   import Editor from './components/Editor.vue'
   import Header from './components/Header.vue'
+  import CpuState from './components/CpuState.vue'
   //import Tabs from './components/Tabs.vue'
 
   import settings from '@/assets/settings.json'
+  import cpuStateJson from '@/assets/cpu-state.json'
+
   import hclCodeSample from '@/assets/code-samples/hcl.txt' // FIXME
   import y86CodeSample from '@/assets/code-samples/y86.txt' // FIXME
   import english from '@/assets/strings/en.json'
@@ -31,12 +35,15 @@
         settings,
         strings: "",
         hclCodeSample, // FIXME
-        y86CodeSample // FIXME
+        y86CodeSample, // FIXME
+        CpuState,
+        cpuStateJson
       }
     },
     components: {
       Editor, // FIXME
       Header,
+      CpuState
       //Tabs
     },
     computed: {
