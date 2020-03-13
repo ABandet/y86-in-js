@@ -1,0 +1,35 @@
+:root {
+  --accent: #297fb8;
+  --accent-dark: #1679b9;
+  --accent-light: #3497d8;
+  --background: #e2e2e2;
+  --background-dark: #dddddd;
+  --background-light: #ffffff;
+  --foreground: #333333;
+  --foreground-dark: #232323;
+  --foreground-light: #444444;
+  --shadow: rgba(35, 35, 35, 0.6);
+  --urgent: #ff5050;
+
+  --Header-background: var(--accent);
+  --Header-foreground: var(--background-light);
+
+  --HeaderButton-hover-shadow: var(--shadow);
+  --HeaderButton-disabled-background: var(--Header-background);
+  --HeaderButton-disabled-foreground: var(--Header-foreground);
+  --HeaderButton-enabled-background: var(--accent-light);
+  --HeaderButton-enabled-foreground: var(--Header-foreground);
+
+  --pane-background: var(--background);
+  --pane-foreground: var(--foreground);
+
+  --SettingsDialog-background: var(--background);
+  --SettingsDialog-foreground: var(--foreground);
+  --SettingsDialog-container-background: var(--shadow);
+  --SettingsDialog-close-button-background: var(--urgent);
+  --SettingsDialog-close-button-foreground: var(--foreground-light);
+  --SettingsDialog-heading-foreground: var(--accent-light);
+  --SettingsDialog-icon-foreground: var(--accent);
+  --SettingsDialog-select-background: var(--background-light);
+  --SettingsDialog-select-foreground: var(--foreground-light);
+}

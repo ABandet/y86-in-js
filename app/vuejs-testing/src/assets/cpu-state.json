@@ -1,0 +1,34 @@
+{
+  "stages": [
+    {"name": "update PC", "indicators": [
+      {"name": "valP", "value": 0}]
+    },
+    {"name": "writeback", "indicators": [
+      {"name": "valE", "value": 0},
+      {"name": "valM", "value": 0},
+      {"name": "srcA", "value": 0},
+      {"name": "srcB", "value": 0},
+      {"name": "dstM", "value": "%eax"},
+      {"name": "dstE", "value": "%edx"}]
+    },
+    {"name": "memory", "indicators": [
+      {"name": "valP", "value": 0},
+      {"name": "valA", "value": 0},
+      {"name": "valE", "value": 0}]
+    },
+    {"name": "execute", "indicators": [
+      {"name": "valC", "value": 0},
+      {"name": "valA", "value": 0},
+      {"name": "valB", "value": 0}]
+    },
+    {"name": "decode", "indicators": [
+      {"name": "regA", "value": "regA"},
+      {"name": "regB", "value": "regB"}]
+    },
+    {"name": "fetch", "indicators": [
+      {"name": "icode", "value": 6},
+      {"name": "ifun", "value": 2},
+      {"name": "PC", "value": 10}]
+    }
+  ]
+}

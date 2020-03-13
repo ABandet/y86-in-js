@@ -1,0 +1,15 @@
+{
+  "languages": [
+    { "id": 0, "name": "English", "strings": "" },
+    { "id": 1, "name": "Français", "strings": "" }
+  ],
+  "themes": [
+    { "id": 0, "name": "Dark", "filename": "dark.css" },
+    { "id": 1, "name": "Light", "filename": "light.css" }
+  ],
+  "ui": {
+    "currentTheme": 0,
+    "currentLanguage": 0,
+    "currentTab": 0
+  }
+}

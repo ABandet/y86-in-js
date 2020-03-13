@@ -1,0 +1,50 @@
+{
+  "documentTitle": "Simulateur Y86",
+  "Editor": {
+    "title": "Code source"
+  },
+  "Flags": {
+    "title": "Drapeaux"
+  },
+  "Header": {
+    "title": "Simulateur Y86",
+    "HeaderButton": {
+      "assemble": "Assembler",
+      "reset": "Réinitialiser",
+      "step": "Pas à pas",
+      "continue": "Continuer",
+      "load": "Charger",
+      "save": "Sauvegarder"
+    }
+  },
+  "InstructionSet": {
+    "TODO": ""
+  },
+  "Memory": {
+    "title": "Mémoire"
+  },
+  "ObjectCode": {
+    "title": "Code objet"
+  },
+  "Registers": {
+    "title": "Registres"
+  },
+  "SettingsDialog": {
+    "about": "À propos",
+    "codeSamples": "Échantillons de code (y86)",
+    "documentation": "Documentation",
+    "sourceCode": "Code source (sur GitHub)",
+    "settings": "Paramètres",
+    "theme": "Thème",
+    "language": "Langue"
+  },
+  "Status": {
+    "title": "Statut"
+  },
+  "tabLabel": {
+    "editor": "Éditeur",
+    "execution": "Exécution",
+    "instructionSet": "Jeu d'instructions",
+    "hcl": "HCL"
+  }
+}
