@@ -2,16 +2,18 @@ import { ICompiler, CompilationResult, CompilationError, isCompilationNode } fro
 import * as yasParser from "../yasParser";
 import { IInstructionSet } from "../interfaces/IInstructionSet";
 import { InstructionLine } from "./nodes/instruction";
-import { DirectiveType, Directive } from "./nodes/directive";
+import { Directive } from "./nodes/directive";
 import { Label } from "./nodes/label";
 import { Comment } from './nodes/comment'
+import { YasNode } from "./nodes/yasNode";
+import { Line } from './nodes/line'
 
 export class Yas implements ICompiler {
     registersEnum: any
     instructionSet: IInstructionSet
     wordSize : number
     
-    parserOutput : any[] = []
+    parserOutput : YasNode[] = []
 
     constructor(registersEnum: any, instructionSet: IInstructionSet, wordSize : number) {
         this.registersEnum = registersEnum
@@ -21,6 +23,7 @@ export class Yas implements ICompiler {
 
     assemble(src: string): CompilationResult {
         let result = new CompilationResult()
+
         this.parserOutput = []
 
         try {
@@ -31,13 +34,13 @@ export class Yas implements ICompiler {
                 out: this.parserOutput,
                 CompilationError: CompilationError,
                 InstructionLine: InstructionLine,
-                DirectiveType: DirectiveType,
                 Directive: Directive,
                 Label: Label,
                 Comment: Comment,
                 AddressFromRegister: AddressFromRegister,
+                Line: Line,
             })
-            result.output = this._compile()
+            result = this._compile()
         } catch (error) {
             if(error instanceof CompilationError) {
                 result.errors.push(error);
@@ -49,8 +52,16 @@ export class Yas implements ICompiler {
         return result
     }
 
-    private _compile() : string {
-        let compilationOutputGenerators : Array<() => string> = []
+    private _compile() : CompilationResult {
+        let result = new CompilationResult()
+
+        result.data = {
+            labelToPC: [],
+            lineToPC: [],
+            PCToLine: [],
+        }
+
+        let compilationOutputGenerators : Array<() => void> = []
         
         let ctx = {
             vaddr : 0,
@@ -58,28 +69,28 @@ export class Yas implements ICompiler {
             compilationOutputGenerators: compilationOutputGenerators,
             registersEnum: this.registersEnum,
             instructionSet: this.instructionSet,
-            wordSize: this.wordSize,
+            wordSize: this.wordSize
         }
 
         this.parserOutput.forEach((item) => {
-            if(item === undefined) {
-                compilationOutputGenerators.push(() => {
-                    return createEmptyObjectLine()
-                })
-            } else if(isCompilationNode(item)) {
-                compilationOutputGenerators.push(item.toCode(ctx))
+            if(item instanceof YasNode) {
+                compilationOutputGenerators.push(item.evaluate(ctx))
             } else {
                 throw new Error("An unknown type has been returned by the yas parser")
             }
         })
 
-        let output = "\n"
+        result.output = ''
 
         compilationOutputGenerators.forEach((generator) => {
-            output += generator() + "\n"
+            generator()
         })
 
-        return output
+        this.parserOutput.forEach((node) => {
+            result.output += node.render() + '\n'
+        })
+
+        return result
     }
 }
 

@@ -11,6 +11,7 @@ test('yas (seq, 32 bits) simple program', () => {
     Init:
         irmovl Stack, %ebp
         irmovl Stack, %esp
+        mrmovl 0x100, %ebp
         ret
     
     .pos 0x1abc # Comment
@@ -25,43 +26,48 @@ test('yas (seq, 32 bits) simple program', () => {
     
     # Another comment
     .long 10000000000
+    
 `   
-    let result = yas.assemble(ys)
-    console.log(result.output)
-    expect(result.errors.length).toBe(0)
+    try {
+        
+        let result = yas.assemble(ys)
+        console.log(result.output)
+        console.log(result.errors)
+        expect(result.errors.length).toBe(0)
+    
+        const referenceYo = `
 
-    const referenceYo = `
-
-    0x0000:              |     .pos 0
-    0x0000:              |     Init:
-    0x0000: 30f5c81a0000 |         irmovl Stack, %ebp
-    0x0006: 30f4c81a0000 |         irmovl Stack, %esp
-    0x000c: 90           |         ret
-                         |     
-    0x000d:              |     .pos 0x1abc # Comment
-    0x1abc:              |     .align 12 
-    0x1ac4: 22110000     |     .long 0x1122
-    0x1ac8:              |     Stack:
-    0x1ac8: 30f5c81a0000 |         irmovl Stack, %ebp
-    0x1ace: 30f4c81a0000 |         irmovl Stack, %esp
-                         |         
-    0x1ad4: d1ffffff     |     .long -47
-    0x1ad8: 70c81a0000   |     jmp Stack
-    0x1add: c0f0fdfeffff |     iaddl -259, %eax
-                         |     
-                         |     # Another comment
-    0x1ae3: 00e40b54     |     .long 10000000000
-                         |     
-  
-    `
-
-    let memory = new Memory()
-    memory.loadProgram(result.output)
-
-    let referenceMemory = new Memory()
-    referenceMemory.loadProgram(referenceYo)
-
-    for(let i = 0; i < 0x1c; i++) {
-        expect(memory.readByte(i)).toBe(referenceMemory.readByte(i))
-    }
+        0x0000:              |     .pos 0
+        0x0000:              |     Init:
+        0x0000: 30f5c81a0000 |         irmovl Stack, %ebp
+        0x0006: 30f4c81a0000 |         irmovl Stack, %esp
+        0x000c: 505f00010000 |         mrmovl 0x100, %ebp
+        0x0012: 90           |         ret
+                             |     
+        0x0013:              |     .pos 0x1abc # Comment
+        0x1abc:              |     .align 12
+        0x1ac4: 22110000     |     .long 0x1122
+        0x1ac8: 30f5c81a0000 |     Stack: irmovl Stack, %ebp # Comment
+        0x1ace: 30f4c81a0000 |            irmovl Stack, %esp
+                             |         
+        0x1ad4: d1ffffff     |     .long -47
+        0x1ad8: 70c81a0000   |     jmp Stack
+        0x1add: c0f0fdfeffff |     iaddl -259, %eax
+                             |     
+                             |     # Another comment
+        0x1ae3: 00e40b54     |     .long 10000000000
+                             |     
+      
+        `
+    
+        let memory = new Memory()
+        memory.loadProgram(result.output)
+    
+        let referenceMemory = new Memory()
+        referenceMemory.loadProgram(referenceYo)
+    
+        for(let i = 0; i < 0x1c; i++) {
+            expect(memory.readByte(i)).toBe(referenceMemory.readByte(i))
+        }
+    }catch(e) { console.log(e) }
 })

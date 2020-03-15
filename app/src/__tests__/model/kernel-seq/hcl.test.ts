@@ -28,7 +28,7 @@ test("hcl test", () => {
         hcl.call("func")
     }).toThrow()
 
-    instructionSet.addInstruction(new Instruction("instr", 12, 0, 1, []))
+    instructionSet.addInstruction(new Instruction("instr", 12, 0, []))
 
     // Check of ctx.icode must fail
     expect(() => { 

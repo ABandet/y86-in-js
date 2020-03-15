@@ -17,68 +17,61 @@
 "("                         return 'LPAREN'
 ")"                         return 'RPAREN'
 (0x[0-9a-fA-F]+)|(\-?[0-9]+) return 'NUMBER'
-\.pos                      return 'D_POS'
-\.align                     return 'D_ALIGN'
-\.long                      return 'D_LONG'
+\.[0-9a-zA-Z_]+           return 'DIRECTIVE'
 \%([a-z]+)                 return 'REGISTER'
 ","                          return 'COMMA'
 <<EOF>>                     return 'EOF'
-[^\ ,:\n#]+                  return 'IDENTIFIER'
+[^\ ,:\n#\.]+                  return 'IDENTIFIER'
 .                           return 'INVALID'
 
 /lex
 
-%start final_expression
+%start document
 
 %% /* language grammar */
 
-final_expression
-    : statement_list EOF
+document
+    : line_list EOF
     ;
 
-statement_list
-    : statement
-    | statement statement_list
+line_list
+    : line
+    | line line_list
     ;
 
-statement
-    : expression NEW_LINE
+line
+    : labelized_statement comment NEW_LINE
         { 
-            data.out.push($1)
+            $$ = new data.Line(@1.first_line, $1, $2)
+            data.out.push($$)
         }
-    | expression COMMENT NEW_LINE
+    | statement comment NEW_LINE
         { 
-            $1.comment = $2
-            data.out.push($1)
+            $$ = new data.Line(@1.first_line, [$1], $2)
+            data.out.push($$)
         }
-    | labelized_expression NEW_LINE
-    | labelized_expression COMMENT NEW_LINE
+    | comment NEW_LINE
         { 
-            $1.comment = $2
+            $$ = new data.Line(@1.first_line, [], $1)
+            data.out.push($$)
         }
-    | NEW_LINE
-        { 
-            data.out.push(undefined)
-        }
-    | COMMENT NEW_LINE
-        { $$ = new data.Comment($1, @1.first_line) }
     ;
 
-labelized_expression
-    : label expression
+labelized_statement
+    : label statement
         {
-            data.out.push($1)
-            data.out.push($2)
-            $$ = $2
+            $$ = []
+            $$.push($1)
+            $$.push($2)
         }
     | label
         {
-            data.out.push($1)
-            $$ = $1
+            $$ = []
+            $$.push($1)
         }
     ;
 
-expression
+statement
     : directive
         { $$ = $1 }
     | instruction
@@ -91,12 +84,8 @@ label
     ;
 
 directive
-    : D_POS NUMBER
-        { $$ = new data.Directive(data.DirectiveType.POS, $2, @1.first_line) }
-    | D_ALIGN NUMBER
-        { $$ = new data.Directive(data.DirectiveType.ALIGN, $2, @1.first_line) }
-    | D_LONG NUMBER
-        { $$ = new data.Directive(data.DirectiveType.LONG, $2, @1.first_line) }
+    : DIRECTIVE NUMBER
+        { $$ = new data.Directive($1.substr(1), $2, @1.first_line) }
     ;
 
 instruction
@@ -139,4 +128,11 @@ addressFromRegister
 register
     : REGISTER
         { $$ = $1.substring(1, $1.length) }
+    ;
+
+comment
+    : COMMENT
+        { $$ = $1 }
+    | 
+        { $$ = '' }
     ;

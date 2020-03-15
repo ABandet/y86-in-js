@@ -1,21 +1,23 @@
-import { CompilationToken, ICompilationNode } from '../../interfaces/ICompiler'
+import { ICompilationNode } from '../../interfaces/ICompiler'
 import { createObjectLine } from '../yas'
+import { YasNode } from './yasNode'
 
-export class Label extends CompilationToken implements ICompilationNode {
+export class Label extends YasNode {
     name : string 
-    comment = ""
 
     constructor(name : string, line : number) {
         super(line)
         this.name = name
     }
 
-    toCode(ctx : any) : () => string {
+    evaluate(ctx : any) : () => void {
         const currentVaddr = ctx.vaddr
         ctx.labels.set(this.name, currentVaddr)
 
         return () => {
-            return createObjectLine(currentVaddr, [], this.name + ': ' + this.comment)
+            this.vaddr = currentVaddr
+            this.instructionBytes = []
+            this.statementAsText = this.name + ': '
         }
     }
 }

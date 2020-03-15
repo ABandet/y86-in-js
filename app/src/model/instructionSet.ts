@@ -2,10 +2,10 @@ import { IInstructionSet } from './interfaces/IInstructionSet'
 
 /**
  * Represents the different types an instruction argument can be.
- *  - REG : Register
+ *  - REG : A register name
  *  - MEM : A memory address
  *  - CONST : A constant integer value
- *  - LABEL : The address of a label
+ *  - LABEL : A label name
  */
 export enum InstructionArgType {
     REG     = 0,
@@ -13,6 +13,8 @@ export enum InstructionArgType {
     CONST   = 2,
     LABEL   = 3,
 }
+
+export let wordSize = 4
 
 /**
  * Represents an instruction argument.
@@ -24,23 +26,14 @@ export class InstructionArg {
     type: InstructionArgType
 
     /**
-     * The position of the argument in the encoded instruction.
-     * The position starts at 1 (because of icode and ifun).
-     */
-    position: number
-
-    /**
      * The length in bytes of the argument in the encoded instruction.
      */
     length: number
 
-    constructor(type: InstructionArgType, position: number, length: number) {
+    constructor(type: InstructionArgType) {
         this._checkType(type)
-        this._checkPosition(position, type)
-        this._checkLength(length, type)
 
         this.type = type
-        this.position = position
         this.length = length
     }
 
@@ -53,30 +46,12 @@ export class InstructionArg {
         throw "The given arg type does not exist"
     }
 
-    private _checkPosition(position: number, type : InstructionArgType) {
-        if (position < 1) {
-            throw "An instruction argument position must be in [1;2]"
-        }
-        if(type === InstructionArgType.REG && position != 1) {
-            throw "A register argument must be at position 1"
-        }
-    }
-
-    private _checkLength(length: number, type: InstructionArgType) {
-        if (length < 0 || length > wordSize) {
-            throw "An instruction argument must have a length in [0;" + wordSize + "]. Current : " + length
-        }
-        if (type === InstructionArgType.REG && length != 0 && length != 1) {
-            throw "A register argument must have a length of 0 or 1. Current : " + length
-        }
-    }
-
     /**
      * Creates a register argument using predifined parameters.
      * @param innerPosition The position in the register byte. It can be 0 or 1.
      */
     static newReg(innerPosition : number = 0) : InstructionArg {
-        return new InstructionArg(InstructionArgType.REG, 1, innerPosition)
+        return new InstructionArg(InstructionArgType.REG)
     }
 
     /**
@@ -84,8 +59,8 @@ export class InstructionArg {
      * @param position The position in the encoded instruction
      * @param length The length of the argument in the encoded instruction
      */
-    static newMem(position : number, length : number = wordSize) : InstructionArg {
-        return new InstructionArg(InstructionArgType.MEM, position, length)
+    static newMem() : InstructionArg {
+        return new InstructionArg(InstructionArgType.MEM)
     }
 
     /**
@@ -93,8 +68,8 @@ export class InstructionArg {
      * @param position The position in the encoded instruction
      * @param length The length of the argument in the encoded instruction
      */
-    static newConst(position : number, length : number = wordSize) : InstructionArg {
-        return new InstructionArg(InstructionArgType.CONST, position, length)
+    static newConst() : InstructionArg {
+        return new InstructionArg(InstructionArgType.CONST)
     }
 
     /**
@@ -102,8 +77,8 @@ export class InstructionArg {
      * @param position The position in the encoded instruction
      * @param length The length of the argument in the encoded instruction
      */
-    static newLabel(position : number, length : number = wordSize) : InstructionArg {
-        return new InstructionArg(InstructionArgType.LABEL, position, length)
+    static newLabel() : InstructionArg {
+        return new InstructionArg(InstructionArgType.LABEL)
     }
 }
 
@@ -115,6 +90,12 @@ export class Instruction {
      * How many arguments an instruction can have ?
      */
     private static MAX_ARGS = 2
+
+    private static MAX_REGISTERS_ARGS = 2
+    private static MAX_VALC_ARGS = 1
+
+    private static ICODE_IFUN_BYTES_LENGTH = 1
+    private static REGISTERS_BYTE_LENGTH = 1
 
     /**
      * The name of the instruction. It can not be empty.
@@ -134,20 +115,22 @@ export class Instruction {
     /**
      * Length in bytes of the encoded instructions.
      */
-    length: number
+    length = 0
 
     /**
      * Expected arguments for this instruction.
      */
     args: InstructionArg[] = []
 
-    constructor(name: string, icode: number, ifun: number, length: number, args: InstructionArg[]) {
+    useRegisters = false
+
+    useValC = false
+
+    constructor(name: string, icode: number, ifun: number, args: InstructionArg[]) {
         try {
             this._checkName(name)
             this._checkCodes(icode, ifun)
-            this._checkArgsPosition(args)
-            this._checkRegisters(args)
-            this._checkLengths(length, args)
+            this._checkArgs(args)
         } catch (e) {
             throw name + " : " + e
         }
@@ -155,8 +138,9 @@ export class Instruction {
         this.name = name
         this.icode = icode
         this.ifun = ifun
-        this.length = length
-        this.args = args
+        
+        this._setArgs(args)
+        this._computeLength()
     }
 
     private _checkName(name: string) {
@@ -171,80 +155,70 @@ export class Instruction {
         }
     }
 
-    private _checkArgsPosition(args: InstructionArg[]) {
-        let bitset = Array<boolean>(args.length)
-        let firstRegisterPosition = -1
+    private _checkArgs(args: InstructionArg[]) {
+        let registersArgsCount  = 0
+        let valcArgsCount       = 0
 
-        bitset = bitset.map((item) => {
-            return false
-        })
-
-        args.forEach((arg, index) => {
-            const position = arg.position
-            const isRegister = arg.type === InstructionArgType.REG
-
-            if (position > args.length) {
-                throw "The arg #" + index + " is at position " + position + ". Maximum position is at " + args.length
-            }
-
-            if (bitset[position] && !(firstRegisterPosition == position  && isRegister)) {
-                throw "The position " + position + " is already occuped by another argument"
-            }
-
-            bitset[position] = true
-            if(isRegister) {
-                firstRegisterPosition = position
-            }
-        })
-    }
-
-    private _checkRegisters(args: InstructionArg[]) {
-        let numberOfRegisters = 0
-        let registerInnerPositions : number[] = []
+        if(args.length > Instruction.MAX_ARGS) {
+            throw 'An instruction can not have more than ' + Instruction.MAX_ARGS + ' arguments. Current : ' + args.length
+        }
 
         args.forEach((arg) => {
-            if (arg.type === InstructionArgType.REG) {
-                numberOfRegisters++
-                registerInnerPositions.push(arg.length)
-            }
-            if (numberOfRegisters > 2) {
-                throw "There are more than 2 registers"
-            }
-        })
-
-        if(numberOfRegisters == 2 && registerInnerPositions[0] == registerInnerPositions[1]) {
-            throw "Registers can not have the same inner position (current : " + registerInnerPositions[0] + " and " + registerInnerPositions[1] + ")"
-        }
-    }
-
-    private _checkLengths(length: number, args: InstructionArg[]) {
-        if (length < 0) {
-            throw "An instruction can not have a negative length"
-        }
-        if (args.length > Instruction.MAX_ARGS) {
-            throw "An instruction can not have more than " + Instruction.MAX_ARGS + " arguments. Current : " + args.length
-        }
-
-        let lengthSum = 1 // Start at 1 because of icode / ifun byte
-        let useRegisters = false
-
-        args.forEach((arg) => {
-            if (arg.type === InstructionArgType.REG) {
-                if (!useRegisters) {
-                    useRegisters = true
-                    lengthSum += 1
+            switch(arg.type) {
+                case InstructionArgType.REG: {
+                    registersArgsCount++
+                    break
                 }
-            } else {
-                lengthSum += arg.length
+                case InstructionArgType.MEM: {
+                    registersArgsCount++
+                    valcArgsCount++
+                    break
+                }
+                default: {
+                    valcArgsCount++
+                }
             }
         })
-        if(length != lengthSum) {
-            throw "Instruction length and arguments lengths do not match (length : " + length + ", args length : " + lengthSum + ")"
+
+        if(registersArgsCount > Instruction.MAX_REGISTERS_ARGS) {
+            throw "An instruction can not hold more than " + Instruction.MAX_REGISTERS_ARGS + " registers arguments"
         }
+
+        if(valcArgsCount > Instruction.MAX_VALC_ARGS) {
+            throw "An instruction can not hold more than " + Instruction.MAX_VALC_ARGS + "  valC argument"
+        }
+    }
+
+    private _setArgs(args : InstructionArg[]) {
+        this.useRegisters = this.useValC = false
+
+        args.forEach((arg) => {
+            switch(arg.type) {
+                case InstructionArgType.REG: {
+                    this.useRegisters = true
+                    break
+                }
+                case InstructionArgType.MEM: {
+                    this.useRegisters = true
+                    this.useValC = true
+                    break
+                }
+                default: {
+                    this.useValC = true
+                }
+            }
+        })
+
+        this.args = args
+    }
+
+    private _computeLength() {
+        this.length = Instruction.ICODE_IFUN_BYTES_LENGTH
+
+        this.length += this.useRegisters ? Instruction.REGISTERS_BYTE_LENGTH : 0
+        this.length += this.useValC ? wordSize : 0
     }
 }
-
-export let wordSize = 4
 
 /**
  * Represents a set of instructions.
@@ -300,68 +274,68 @@ export class InstructionSet implements IInstructionSet {
  * Default instructions
  */
 const defaultInstructions: Instruction[] = [
-    new Instruction("nop", 0, 0, 1,
+    new Instruction("nop", 0, 0,
         []),
-    new Instruction("halt", 1, 0, 1,
+    new Instruction("halt", 1, 0,
         []),
-    new Instruction("rrmovl", 2, 0, 2,
-        [InstructionArg.newReg(1), InstructionArg.newReg(0)]),
-    new Instruction("irmovl", 3, 0, wordSize + 2,
-        [InstructionArg.newConst(2), InstructionArg.newReg(0)]),
-    new Instruction("rmmovl", 4, 0, wordSize + 2,
-        [InstructionArg.newReg(1),  InstructionArg.newMem(2)]),
-    new Instruction("mrmovl", 5, 0, 6,
-        [ InstructionArg.newMem(2), InstructionArg.newReg(0)]),
-    new Instruction("addl", 6, 0, 2,
-        [ InstructionArg.newReg(1), InstructionArg.newReg(0)]),
-    new Instruction("subl", 6, 1, 2,
-        [ InstructionArg.newReg(1), InstructionArg.newReg(0)]),
-    new Instruction("andl", 6, 2, 2,
-        [ InstructionArg.newReg(1), InstructionArg.newReg(0)]),
-    new Instruction("xorl", 6, 3, 2,
-        [ InstructionArg.newReg(1), InstructionArg.newReg(0)]),
-    new Instruction("sall", 6, 4, 2,
-        [ InstructionArg.newReg(1), InstructionArg.newReg(0)]),
-    new Instruction("sarl", 6, 5, 2,
-        [ InstructionArg.newReg(1), InstructionArg.newReg(0)]),
-    new Instruction("jmp", 7, 0, 5,
-        [ InstructionArg.newLabel(1)]),
-    new Instruction("jle", 7, 1, 5,
-        [ InstructionArg.newConst(1)]),
-    new Instruction("jl", 7, 2, 5,
-        [ InstructionArg.newConst(1)]),
-    new Instruction("je", 7, 3, 5,
-        [ InstructionArg.newConst(1)]),
-    new Instruction("jne", 7, 4, 5,
-        [ InstructionArg.newConst(1)]),
-    new Instruction("jge", 7, 5, 5,
-        [ InstructionArg.newConst(1)]),
-    new Instruction("jg", 7, 6, 5,
-        [ InstructionArg.newConst(1)]),
-    new Instruction("call", 8, 0, 5,
-        [ InstructionArg.newConst(1)]),
-    new Instruction("ret", 9, 0, 1,
+    new Instruction("rrmovl", 2, 0,
+        [InstructionArg.newReg(), InstructionArg.newReg()]),
+    new Instruction("irmovl", 3, 0,
+        [InstructionArg.newConst(), InstructionArg.newReg()]),
+    new Instruction("rmmovl", 4, 0,
+        [InstructionArg.newReg(),  InstructionArg.newMem()]),
+    new Instruction("mrmovl", 5, 0,
+        [ InstructionArg.newMem(), InstructionArg.newReg()]),
+    new Instruction("addl", 6, 0,
+        [ InstructionArg.newReg(), InstructionArg.newReg()]),
+    new Instruction("subl", 6, 1,
+        [ InstructionArg.newReg(), InstructionArg.newReg()]),
+    new Instruction("andl", 6, 2,
+        [ InstructionArg.newReg(), InstructionArg.newReg()]),
+    new Instruction("xorl", 6, 3,
+        [ InstructionArg.newReg(), InstructionArg.newReg()]),
+    new Instruction("sall", 6, 4,
+        [ InstructionArg.newReg(), InstructionArg.newReg()]),
+    new Instruction("sarl", 6, 5,
+        [ InstructionArg.newReg(), InstructionArg.newReg()]),
+    new Instruction("jmp", 7, 0,
+        [ InstructionArg.newLabel()]),
+    new Instruction("jle", 7, 1,
+        [ InstructionArg.newConst()]),
+    new Instruction("jl", 7, 2,
+        [ InstructionArg.newConst()]),
+    new Instruction("je", 7, 3,
+        [ InstructionArg.newConst()]),
+    new Instruction("jne", 7, 4,
+        [ InstructionArg.newConst()]),
+    new Instruction("jge", 7, 5,
+        [ InstructionArg.newConst()]),
+    new Instruction("jg", 7, 6,
+        [ InstructionArg.newConst()]),
+    new Instruction("call", 8, 0,
+        [ InstructionArg.newConst()]),
+    new Instruction("ret", 9, 0,
         []),
-    new Instruction("pushl", 10, 0, 2,
+    new Instruction("pushl", 10, 0,
         [ InstructionArg.newReg()]),
-    new Instruction("popl", 11, 0, 2,
+    new Instruction("popl", 11, 0,
         [ InstructionArg.newReg()]),
-    new Instruction("iaddl", 12, 0, 6,
-        [ InstructionArg.newConst(2),  InstructionArg.newReg()]),
-    new Instruction("isubl", 12, 1, 6,
-        [ InstructionArg.newConst(2),  InstructionArg.newReg()]),
-    new Instruction("iandl", 12, 2, 6,
-        [ InstructionArg.newConst(2),  InstructionArg.newReg()]),
-    new Instruction("ixorl", 12, 3, 6,
-        [ InstructionArg.newConst(2),  InstructionArg.newReg()]),
-    new Instruction("isall", 12, 4, 6,
-        [ InstructionArg.newConst(2),  InstructionArg.newReg()]),
-    new Instruction("isarl", 12, 5, 6,
-        [ InstructionArg.newConst(2),  InstructionArg.newReg()]),
-    new Instruction("leave", 13, 0, 1,
+    new Instruction("iaddl", 12, 0,
+        [ InstructionArg.newConst(),  InstructionArg.newReg()]),
+    new Instruction("isubl", 12, 1,
+        [ InstructionArg.newConst(),  InstructionArg.newReg()]),
+    new Instruction("iandl", 12, 2,
+        [ InstructionArg.newConst(),  InstructionArg.newReg()]),
+    new Instruction("ixorl", 12, 3,
+        [ InstructionArg.newConst(),  InstructionArg.newReg()]),
+    new Instruction("isall", 12, 4,
+        [ InstructionArg.newConst(),  InstructionArg.newReg()]),
+    new Instruction("isarl", 12, 5,
+        [ InstructionArg.newConst(),  InstructionArg.newReg()]),
+    new Instruction("leave", 13, 0,
         []),
-    new Instruction("jreg", 14, 0, 2,
+    new Instruction("jreg", 14, 0,
         [ InstructionArg.newReg()]),
-    new Instruction("jmem", 15, 0, wordSize + 1,
-        [InstructionArg.newMem(1)]),
+    new Instruction("jmem", 15, 0,
+        [InstructionArg.newMem()]),
 ]

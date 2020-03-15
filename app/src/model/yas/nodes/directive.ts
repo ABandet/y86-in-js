@@ -1,64 +1,53 @@
 import { CompilationToken, ICompilationNode, CompilationError } from '../../interfaces/ICompiler'
 import { stringToNumber, numberToByteArray } from '../../integers'
 import { createObjectLine } from '../yas'
+import { YasNode } from './yasNode'
 
-export enum DirectiveType {
-    POS,
-    ALIGN,
-    LONG,
-}
-
-export class Directive extends CompilationToken implements ICompilationNode {
-    type : DirectiveType
+export class Directive extends YasNode {
+    directiveName : string
     value : string
-    comment = ""
 
-    constructor(type : DirectiveType, value : string, line : number) {
+    constructor(directiveName : string, value : string, line : number) {
         super(line)
-        this.type = type
+        this.directiveName = directiveName
         this.value = value
     }
 
-    toCode(ctx : any) : () => string {
-        const currentVaddr = ctx.vaddr
+    evaluate(ctx : any) : () => void {
+        this.vaddr = ctx.vaddr
 
         try {
             let value = stringToNumber(this.value)
 
-            switch(this.type) {
-                case DirectiveType.ALIGN: {
+            switch(this.directiveName) {
+                case 'align': {
                     if(value < 1) {
                         throw "Alignement value must be higher than 1"
                     }
                     while(ctx.vaddr % value != 0) {
                         ctx.vaddr++
                     }
-                    return() => {
-                        return createObjectLine(currentVaddr, [], '.align ' + this.value + ' ' + this.comment)
-                    }
+                    this.instructionBytes = []
                     break;
                 }
-                case DirectiveType.LONG: {
+                case 'long': {
                     const bytes = numberToByteArray(stringToNumber(this.value), ctx.wordSize, true)
                     ctx.vaddr += bytes.length
     
-                    return () => {
-                        return createObjectLine(currentVaddr, bytes, ".long " + this.value + ' ' + this.comment)
-                    }
+                    this.instructionBytes = bytes
                     break;
                 }
-                case DirectiveType.POS: {
+                case 'pos': {
                     if(value < 0) {
                         throw "An address is expected to be positive"
                     }
                     ctx.vaddr = value
-                    return () => {
-                        return createObjectLine(currentVaddr, [], ".pos " + this.value + ' ' + this.comment)
-                    }
+
+                    this.instructionBytes = []
                     break;
                 }
                 default:
-                    throw "The given directive does not exist"
+                    throw new Error('The directive ".' + this.directiveName + '" does not exist')
             }
         } catch (error) {
             if(error instanceof CompilationError) {
@@ -67,5 +56,8 @@ export class Directive extends CompilationToken implements ICompilationNode {
                 throw new CompilationError(this.line, error)
             }
         }
+
+        this.statementAsText = '.' + this.directiveName + ' ' + this.value
+        return () => { /* Nothing more to evauluate */ }
     }
 }

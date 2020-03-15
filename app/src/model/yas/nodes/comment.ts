@@ -9,7 +9,7 @@ export class Comment extends CompilationToken implements ICompilationNode {
         this.comment = comment
     }
 
-    toCode(ctx : any) : () => string {
+    evaluate(ctx : any) : () => string {
         return () => { return createEmptyObjectLine(this.comment) }
     }
 }

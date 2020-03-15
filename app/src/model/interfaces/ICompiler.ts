@@ -28,9 +28,15 @@ class CompilationResult {
      */
     errors : CompilationError[]
 
-    constructor(output = "", errors = []) {
+    /**
+     * Potential additional data extracted during compilation
+     */
+    data : any
+
+    constructor(output = "", errors = [], data = {}) {
         this.output = output
         this.errors = errors
+        this.data = data
     }
 }
 
@@ -39,12 +45,12 @@ class CompilationResult {
  */
 interface ICompilationNode {
     /**
-     * Transforms the node into targeted code.
-     * The output is encapsulated in a function in order to perform operations
-     * later in time, after all nodes' 'toCode' functions have been called.
+     * Evaluates the node. 
+     * In case the node can not been evaluated directly, a function is returned in order to perform operations
+     * later in time, after all nodes 'evaluate' functions have been called.
      * @param ctx The context given by the compiler
      */
-    toCode(ctx : any) : () => string;
+    evaluate(ctx : any) : () => void;
 }
 
 function isCompilationNode(obj : any) : obj is ICompilationNode {
