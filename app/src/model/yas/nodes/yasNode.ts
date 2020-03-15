@@ -22,7 +22,10 @@ export class YasNode extends CompilationToken implements ICompilationNode {
         return createObjectLine(this.vaddr, this.instructionBytes, this.statementAsText)
     }
 
-    evaluate(ctx : any) : () => void {
+    evaluate(ctx : any) : void {
         throw new Error('Function is not implemented')
+    }
+
+    postEvaluate() : void {
     }
 }

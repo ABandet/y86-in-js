@@ -32,42 +32,38 @@
 
 document
     : line_list EOF
+        {
+            $$ = new data.Document($1)
+            return $$
+        }
     ;
 
 line_list
     : line
-    | line line_list
+        { $$ = [$1] }
+    | line_list line
+        { 
+            $$ = $1
+            $$.push($2)
+        }
     ;
 
 line
-    : labelized_statement comment NEW_LINE
+    : label statement line_comment NEW_LINE
         { 
-            $$ = new data.Line(@1.first_line, $1, $2)
-            data.out.push($$)
+            $$ = new data.Line(@1.first_line, [$1, $2], $3)
         }
-    | statement comment NEW_LINE
+    | label line_comment NEW_LINE
+        {
+            $$ = new data.Line(@1.first_line, [$1], $2)
+        }
+    | statement line_comment NEW_LINE
         { 
             $$ = new data.Line(@1.first_line, [$1], $2)
-            data.out.push($$)
         }
-    | comment NEW_LINE
+    | line_comment NEW_LINE
         { 
             $$ = new data.Line(@1.first_line, [], $1)
-            data.out.push($$)
-        }
-    ;
-
-labelized_statement
-    : label statement
-        {
-            $$ = []
-            $$.push($1)
-            $$.push($2)
-        }
-    | label
-        {
-            $$ = []
-            $$.push($1)
         }
     ;
 
@@ -127,10 +123,10 @@ addressFromRegister
 
 register
     : REGISTER
-        { $$ = $1.substring(1, $1.length) }
+        { $$ = $1.substr(1) }
     ;
 
-comment
+line_comment
     : COMMENT
         { $$ = $1 }
     | 

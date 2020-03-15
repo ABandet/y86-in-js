@@ -11,29 +11,29 @@ export class Line extends YasNode {
         this._comment = comment
     }
 
-    evaluate(ctx : any) : () => void {
-        let laterEvaulationFunctions = this._innerNodes.map((node : YasNode) => {
+    evaluate(ctx : any) : void {
+        this._innerNodes.forEach((node : YasNode) => {
             return node.evaluate(ctx)
         })
+    }
 
-        return () => {
-            laterEvaulationFunctions.forEach((laterEvaulationFunction) => {
-                laterEvaulationFunction()
-            })
+    postEvaluate() : void {
+        this._innerNodes.forEach((node) => {
+            node.postEvaluate()
+        })
 
-            if(this._innerNodes.length > 0) {
-                const lastInnerNode = this._innerNodes[this._innerNodes.length - 1]
+        if(this._innerNodes.length > 0) {
+            const lastInnerNode = this._innerNodes[this._innerNodes.length - 1]
 
-                this.vaddr = lastInnerNode.vaddr
-                this.instructionBytes = lastInnerNode.instructionBytes
-            }
-
-            this._innerNodes.forEach((node) => {
-                this.statementAsText += node.statementAsText + ' '
-            })
-
-            this.statementAsText += this._comment
+            this.vaddr = lastInnerNode.vaddr
+            this.instructionBytes = lastInnerNode.instructionBytes
         }
+
+        this._innerNodes.forEach((node) => {
+            this.statementAsText += node.statementAsText + ' '
+        })
+
+        this.statementAsText += this._comment
     }
 
     render() : string {

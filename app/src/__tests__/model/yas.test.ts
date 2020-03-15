@@ -11,7 +11,7 @@ test('yas (seq, 32 bits) simple program', () => {
     Init:
         irmovl Stack, %ebp
         irmovl Stack, %esp
-        mrmovl 0x100, %ebp
+        mrmovl 0x100(%esp), %ebp
         ret
     
     .pos 0x1abc # Comment
@@ -31,17 +31,15 @@ test('yas (seq, 32 bits) simple program', () => {
     try {
         
         let result = yas.assemble(ys)
-        console.log(result.output)
-        console.log(result.errors)
         expect(result.errors.length).toBe(0)
     
         const referenceYo = `
 
-        0x0000:              |     .pos 0
+        0x0000:              |   .pos 0
         0x0000:              |     Init:
         0x0000: 30f5c81a0000 |         irmovl Stack, %ebp
         0x0006: 30f4c81a0000 |         irmovl Stack, %esp
-        0x000c: 505f00010000 |         mrmovl 0x100, %ebp
+        0x000c: 505400010000 |         mrmovl 0x100(%ebp), %ebp
         0x0012: 90           |         ret
                              |     
         0x0013:              |     .pos 0x1abc # Comment

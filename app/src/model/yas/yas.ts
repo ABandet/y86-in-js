@@ -4,16 +4,14 @@ import { IInstructionSet } from "../interfaces/IInstructionSet";
 import { InstructionLine } from "./nodes/instruction";
 import { Directive } from "./nodes/directive";
 import { Label } from "./nodes/label";
-import { Comment } from './nodes/comment'
 import { YasNode } from "./nodes/yasNode";
 import { Line } from './nodes/line'
+import { Document } from './nodes/document'
 
 export class Yas implements ICompiler {
     registersEnum: any
     instructionSet: IInstructionSet
     wordSize : number
-    
-    parserOutput : YasNode[] = []
 
     constructor(registersEnum: any, instructionSet: IInstructionSet, wordSize : number) {
         this.registersEnum = registersEnum
@@ -24,23 +22,20 @@ export class Yas implements ICompiler {
     assemble(src: string): CompilationResult {
         let result = new CompilationResult()
 
-        this.parserOutput = []
-
         try {
             (<any>yasParser.parser.yy).parseError = (msg : string, hash : any) => {
                 throw new CompilationError(hash.line, msg)
             };
-            yasParser.parse(src, {
-                out: this.parserOutput,
+            let document = <Document> yasParser.parse(src, {
                 CompilationError: CompilationError,
                 InstructionLine: InstructionLine,
                 Directive: Directive,
                 Label: Label,
-                Comment: Comment,
                 AddressFromRegister: AddressFromRegister,
                 Line: Line,
+                Document: Document,
             })
-            result = this._compile()
+            result = this._compile(document)
         } catch (error) {
             if(error instanceof CompilationError) {
                 result.errors.push(error);
@@ -52,43 +47,20 @@ export class Yas implements ICompiler {
         return result
     }
 
-    private _compile() : CompilationResult {
+    private _compile(document : Document) : CompilationResult {
         let result = new CompilationResult()
-
-        result.data = {
-            labelToPC: [],
-            lineToPC: [],
-            PCToLine: [],
-        }
-
-        let compilationOutputGenerators : Array<() => void> = []
         
         let ctx = {
             vaddr : 0,
             labels: new Map(),
-            compilationOutputGenerators: compilationOutputGenerators,
             registersEnum: this.registersEnum,
             instructionSet: this.instructionSet,
             wordSize: this.wordSize
         }
 
-        this.parserOutput.forEach((item) => {
-            if(item instanceof YasNode) {
-                compilationOutputGenerators.push(item.evaluate(ctx))
-            } else {
-                throw new Error("An unknown type has been returned by the yas parser")
-            }
-        })
+        document.evaluate(ctx)
 
-        result.output = ''
-
-        compilationOutputGenerators.forEach((generator) => {
-            generator()
-        })
-
-        this.parserOutput.forEach((node) => {
-            result.output += node.render() + '\n'
-        })
+        result.output = document.render()
 
         return result
     }
@@ -158,12 +130,16 @@ export function createEmptyObjectLine(ys = '') : string {
     return output
 }
 
-class AddressFromRegister {
+export class AddressFromRegister {
     registerName : string
-    offset : number
+    offset : string
 
-    constructor(registerName : string, offset : number = 0) {
+    constructor(registerName : string, offset : string = '0') {
         this.registerName = registerName
         this.offset = offset
+    }
+
+    toString() : string {
+        return this.offset + '(%' + this.registerName + ')'
     }
 }

@@ -10,11 +10,11 @@ export class Label extends YasNode {
         this.name = name
     }
 
-    evaluate(ctx : any) : () => void {
+    evaluate(ctx : any) : void {
         const currentVaddr = ctx.vaddr
         ctx.labels.set(this.name, currentVaddr)
 
-        return () => {
+        this.postEvaluate = () => {
             this.vaddr = currentVaddr
             this.instructionBytes = []
             this.statementAsText = this.name + ': '

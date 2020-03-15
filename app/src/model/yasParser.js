@@ -72,88 +72,98 @@
   }
 */
 var yasParser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[2,25],$V1=[1,11],$V2=[1,12],$V3=[1,10],$V4=[9,26],$V5=[9,20,26],$V6=[2,16],$V7=[1,23],$V8=[1,24],$V9=[1,28],$Va=[1,27],$Vb=[5,9,14,16,26];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[2,24],$V1=[1,7],$V2=[1,11],$V3=[1,10],$V4=[5,10,13,15,25],$V5=[10,19,25],$V6=[2,15],$V7=[1,22],$V8=[1,23],$V9=[1,27],$Va=[1,26],$Vb=[10,25];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"document":3,"line_list":4,"EOF":5,"line":6,"labelized_statement":7,"comment":8,"NEW_LINE":9,"statement":10,"label":11,"directive":12,"instruction":13,"IDENTIFIER":14,"COLON":15,"DIRECTIVE":16,"NUMBER":17,"arg_list":18,"arg":19,"COMMA":20,"register":21,"addressFromRegister":22,"LPAREN":23,"RPAREN":24,"REGISTER":25,"COMMENT":26,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",9:"NEW_LINE",14:"IDENTIFIER",15:"COLON",16:"DIRECTIVE",17:"NUMBER",20:"COMMA",23:"LPAREN",24:"RPAREN",25:"REGISTER",26:"COMMENT"},
-productions_: [0,[3,2],[4,1],[4,2],[6,3],[6,3],[6,2],[7,2],[7,1],[10,1],[10,1],[11,2],[12,2],[13,2],[18,1],[18,3],[18,0],[19,1],[19,1],[19,1],[19,1],[22,3],[22,4],[21,1],[8,1],[8,0]],
+symbols_: {"error":2,"document":3,"line_list":4,"EOF":5,"line":6,"label":7,"statement":8,"line_comment":9,"NEW_LINE":10,"directive":11,"instruction":12,"IDENTIFIER":13,"COLON":14,"DIRECTIVE":15,"NUMBER":16,"arg_list":17,"arg":18,"COMMA":19,"register":20,"addressFromRegister":21,"LPAREN":22,"RPAREN":23,"REGISTER":24,"COMMENT":25,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"EOF",10:"NEW_LINE",13:"IDENTIFIER",14:"COLON",15:"DIRECTIVE",16:"NUMBER",19:"COMMA",22:"LPAREN",23:"RPAREN",24:"REGISTER",25:"COMMENT"},
+productions_: [0,[3,2],[4,1],[4,2],[6,4],[6,3],[6,3],[6,2],[8,1],[8,1],[7,2],[11,2],[12,2],[17,1],[17,3],[17,0],[18,1],[18,1],[18,1],[18,1],[21,3],[21,4],[20,1],[9,1],[9,0]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */, data) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
+case 1:
+
+            this.$ = new data.Document($$[$0-1])
+            return this.$
+        
+break;
+case 2:
+ this.$ = [$$[$0]] 
+break;
+case 3:
+ 
+            this.$ = $$[$0-1]
+            this.$.push($$[$0])
+        
+break;
 case 4:
  
-            this.$ = new data.Line(_$[$0-2].first_line, $$[$0-2], $$[$0-1])
-            data.out.push(this.$)
+            this.$ = new data.Line(_$[$0-3].first_line, [$$[$0-3], $$[$0-2]], $$[$0-1])
         
 break;
 case 5:
- 
+
             this.$ = new data.Line(_$[$0-2].first_line, [$$[$0-2]], $$[$0-1])
-            data.out.push(this.$)
         
 break;
 case 6:
  
-            this.$ = new data.Line(_$[$0-1].first_line, [], $$[$0-1])
-            data.out.push(this.$)
+            this.$ = new data.Line(_$[$0-2].first_line, [$$[$0-2]], $$[$0-1])
         
 break;
 case 7:
-
-            this.$ = []
-            this.$.push($$[$0-1])
-            this.$.push($$[$0])
+ 
+            this.$ = new data.Line(_$[$0-1].first_line, [], $$[$0-1])
         
 break;
-case 8: case 14:
-
-            this.$ = []
-            this.$.push($$[$0])
-        
-break;
-case 9: case 10: case 17: case 18: case 20: case 24:
+case 8: case 9: case 16: case 17: case 19: case 23:
  this.$ = $$[$0] 
 break;
-case 11:
+case 10:
  this.$ = new data.Label($$[$0-1], _$[$0-1].first_line) 
 break;
-case 12:
+case 11:
  this.$ = new data.Directive($$[$0-1].substr(1), $$[$0], _$[$0-1].first_line) 
 break;
-case 13:
+case 12:
  this.$ = new data.InstructionLine($$[$0-1], $$[$0], _$[$0-1].first_line) 
 break;
-case 15:
+case 13:
+
+            this.$ = []
+            this.$.push($$[$0])
+        
+break;
+case 14:
 
             this.$ = $$[$0-2]
             this.$.push($$[$0])
         
 break;
-case 16:
+case 15:
  this.$ = [] 
 break;
-case 19:
+case 18:
  this.$ = $$[$0]
 break;
-case 21:
+case 20:
  this.$ = new data.AddressFromRegister($$[$0-1]) 
 break;
-case 22:
+case 21:
  this.$ = new data.AddressFromRegister($$[$0-1], $$[$0-3]) 
 break;
-case 23:
- this.$ = $$[$0].substring(1, $$[$0].length) 
+case 22:
+ this.$ = $$[$0].substr(1) 
 break;
-case 25:
+case 24:
  this.$ = '' 
 break;
 }
 },
-table: [{3:1,4:2,6:3,7:4,8:6,9:$V0,10:5,11:7,12:8,13:9,14:$V1,16:$V2,26:$V3},{1:[3]},{5:[1,13]},{4:14,5:[2,2],6:3,7:4,8:6,9:$V0,10:5,11:7,12:8,13:9,14:$V1,16:$V2,26:$V3},{8:15,9:$V0,26:$V3},{8:16,9:$V0,26:$V3},{9:[1,17]},o($V4,[2,8],{12:8,13:9,10:18,14:[1,19],16:$V2}),o($V4,[2,9]),o($V4,[2,10]),{9:[2,24]},o($V5,$V6,{18:21,19:22,21:25,22:26,14:$V7,15:[1,20],17:$V8,23:$V9,25:$Va}),{17:[1,29]},{1:[2,1]},{5:[2,3]},{9:[1,30]},{9:[1,31]},o($Vb,[2,6]),o($V4,[2,7]),o($V5,$V6,{18:21,19:22,21:25,22:26,14:$V7,17:$V8,23:$V9,25:$Va}),o([9,14,16,26],[2,11]),o($V4,[2,13],{20:[1,32]}),o($V5,[2,14]),o($V5,[2,17]),o($V5,[2,18],{23:[1,33]}),o($V5,[2,19]),o($V5,[2,20]),o([9,20,24,26],[2,23]),{21:34,25:$Va},o($V4,[2,12]),o($Vb,[2,4]),o($Vb,[2,5]),{14:$V7,17:$V8,19:35,21:25,22:26,23:$V9,25:$Va},{21:36,25:$Va},{24:[1,37]},o($V5,[2,15]),{24:[1,38]},o($V5,[2,21]),o($V5,[2,22])],
-defaultActions: {10:[2,24],13:[2,1],14:[2,3]},
+table: [{3:1,4:2,6:3,7:4,8:5,9:6,10:$V0,11:8,12:9,13:$V1,15:$V2,25:$V3},{1:[3]},{5:[1,12],6:13,7:4,8:5,9:6,10:$V0,11:8,12:9,13:$V1,15:$V2,25:$V3},o($V4,[2,2]),{8:14,9:15,10:$V0,11:8,12:9,13:[1,16],15:$V2,25:$V3},{9:17,10:$V0,25:$V3},{10:[1,18]},o($V5,$V6,{17:20,18:21,20:24,21:25,13:$V7,14:[1,19],16:$V8,22:$V9,24:$Va}),o($Vb,[2,8]),o($Vb,[2,9]),{10:[2,23]},{16:[1,28]},{1:[2,1]},o($V4,[2,3]),{9:29,10:$V0,25:$V3},{10:[1,30]},o($V5,$V6,{17:20,18:21,20:24,21:25,13:$V7,16:$V8,22:$V9,24:$Va}),{10:[1,31]},o($V4,[2,7]),o([10,13,15,25],[2,10]),o($Vb,[2,12],{19:[1,32]}),o($V5,[2,13]),o($V5,[2,16]),o($V5,[2,17],{22:[1,33]}),o($V5,[2,18]),o($V5,[2,19]),o([10,19,23,25],[2,22]),{20:34,24:$Va},o($Vb,[2,11]),{10:[1,35]},o($V4,[2,5]),o($V4,[2,6]),{13:$V7,16:$V8,18:36,20:24,21:25,22:$V9,24:$Va},{20:37,24:$Va},{23:[1,38]},o($V4,[2,4]),o($V5,[2,14]),{23:[1,39]},o($V5,[2,20]),o($V5,[2,21])],
+defaultActions: {10:[2,23],12:[2,1]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -628,31 +638,31 @@ options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:return 9
+case 0:return 10
 break;
 case 1:/* ignore whitespace other than newlines */
 break;
 case 2:/* ignore */
 break;
-case 3:return 26
+case 3:return 25
 break;
-case 4:return 15
+case 4:return 14
 break;
-case 5:return 23
+case 5:return 22
 break;
-case 6:return 24
+case 6:return 23
 break;
-case 7:return 17
+case 7:return 16
 break;
-case 8:return 16
+case 8:return 15
 break;
-case 9:return 25
+case 9:return 24
 break;
-case 10:return 20
+case 10:return 19
 break;
 case 11:return 5
 break;
-case 12:return 14
+case 12:return 13
 break;
 case 13:return 'INVALID'
 break;

@@ -50,7 +50,9 @@ interface ICompilationNode {
      * later in time, after all nodes 'evaluate' functions have been called.
      * @param ctx The context given by the compiler
      */
-    evaluate(ctx : any) : () => void;
+    evaluate(ctx : any) : void;
+
+    postEvaluate() : void;
 }
 
 function isCompilationNode(obj : any) : obj is ICompilationNode {

@@ -13,7 +13,7 @@ export class Directive extends YasNode {
         this.value = value
     }
 
-    evaluate(ctx : any) : () => void {
+    evaluate(ctx : any) : void {
         this.vaddr = ctx.vaddr
 
         try {
@@ -58,6 +58,5 @@ export class Directive extends YasNode {
         }
 
         this.statementAsText = '.' + this.directiveName + ' ' + this.value
-        return () => { /* Nothing more to evauluate */ }
     }
 }
