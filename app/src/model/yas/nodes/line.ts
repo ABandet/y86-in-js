@@ -17,9 +17,9 @@ export class Line extends YasNode {
         })
     }
 
-    postEvaluate() : void {
+    postEvaluate(ctx : any) : void {
         this._innerNodes.forEach((node) => {
-            node.postEvaluate()
+            node.postEvaluate(ctx)
         })
 
         if(this._innerNodes.length > 0) {
@@ -42,5 +42,11 @@ export class Line extends YasNode {
         } else {
             return super.render()
         }
+    }
+
+    forEachInnerNode(callback : (node : YasNode) => void) {
+        this._innerNodes.forEach((node) => {
+            callback(node)
+        })
     }
 }

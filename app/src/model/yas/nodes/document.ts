@@ -2,6 +2,8 @@ import { ICompilationNode } from '../../interfaces/ICompiler'
 import { createObjectLine } from '../yas'
 import { YasNode } from './yasNode'
 import { Line } from './line'
+import { Label } from './label'
+import { call } from 'model/kernel-seq/hcl'
 
 export class Document extends YasNode {
     private _lines : Line[]
@@ -16,7 +18,7 @@ export class Document extends YasNode {
             line.evaluate(ctx)
         })
         this._lines.forEach((line) => {
-            line.postEvaluate()
+            line.postEvaluate(ctx)
         })
     }
 
@@ -28,5 +30,11 @@ export class Document extends YasNode {
         })
 
         return output
+    }
+
+    forEachLine(callback : (line : Line) => void) {
+        this._lines.forEach((line) => {
+            callback(line)
+        })
     }
 }

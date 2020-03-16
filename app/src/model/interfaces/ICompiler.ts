@@ -1,3 +1,5 @@
+import { ProgramData } from "model/yas/programData"
+
 /**
  * Interface of every compilers.
  */
@@ -52,7 +54,7 @@ interface ICompilationNode {
      */
     evaluate(ctx : any) : void;
 
-    postEvaluate() : void;
+    postEvaluate(ctx : any) : void;
 }
 
 function isCompilationNode(obj : any) : obj is ICompilationNode {

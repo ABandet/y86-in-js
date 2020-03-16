@@ -1,23 +1,22 @@
-import { ICompilationNode } from '../../interfaces/ICompiler'
-import { createObjectLine } from '../yas'
 import { YasNode } from './yasNode'
 
 export class Label extends YasNode {
-    name : string 
+    private _name : string 
 
     constructor(name : string, line : number) {
         super(line)
-        this.name = name
+        this._name = name
     }
 
     evaluate(ctx : any) : void {
-        const currentVaddr = ctx.vaddr
-        ctx.labels.set(this.name, currentVaddr)
+        this.vaddr = ctx.vaddr
+        this.instructionBytes = []
+        this.statementAsText = this._name + ': '
+        
+        ctx.labels.set(this._name, this.vaddr)
+    }
 
-        this.postEvaluate = () => {
-            this.vaddr = currentVaddr
-            this.instructionBytes = []
-            this.statementAsText = this.name + ': '
-        }
+    getName() : string {
+        return this._name
     }
 }

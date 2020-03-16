@@ -26,6 +26,6 @@ export class YasNode extends CompilationToken implements ICompilationNode {
         throw new Error('Function is not implemented')
     }
 
-    postEvaluate() : void {
+    postEvaluate(ctx : any) : void {
     }
 }

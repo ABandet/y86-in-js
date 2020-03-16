@@ -32,7 +32,7 @@ test('yas (seq, 32 bits) simple program', () => {
         
         let result = yas.assemble(ys)
         expect(result.errors.length).toBe(0)
-    
+        
         const referenceYo = `
 
         0x0000:              |   .pos 0

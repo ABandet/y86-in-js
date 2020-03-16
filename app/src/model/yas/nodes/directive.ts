@@ -1,6 +1,5 @@
-import { CompilationToken, ICompilationNode, CompilationError } from '../../interfaces/ICompiler'
+import { CompilationError } from '../../interfaces/ICompiler'
 import { stringToNumber, numberToByteArray } from '../../integers'
-import { createObjectLine } from '../yas'
 import { YasNode } from './yasNode'
 
 export class Directive extends YasNode {

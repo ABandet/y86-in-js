@@ -31,55 +31,6 @@ export class InstructionLine extends YasNode {
             this.statementAsText = this._getRepresentation(instruction)
             this.vaddr = ctx.vaddr
             ctx.vaddr += instruction.length
-
-            this.postEvaluate = () => {
-                let sizeInBytes = 1
-                sizeInBytes += instruction.useRegisters ? 1 : 0
-                sizeInBytes += instruction.useValC ? ctx.wordSize : 0
-                
-                this.instructionBytes = new Array<number>(0)
-                
-                for(let i = 0; i < sizeInBytes; i++) {
-                    this.instructionBytes.push(0)
-                }
-
-                this.instructionBytes[0] |= instruction.icode << 4
-                this.instructionBytes[0] |= instruction.ifun
-
-                if(instruction.useRegisters) {
-                    this.instructionBytes[REG_POSITION] = 0xff
-                }
-
-                let oneRegisterAlreadyWritten = false
-
-                instruction.args.forEach((arg, index) => {
-                    const userArg = this.args[index]
-
-                    switch(arg.type) {
-                        case InstructionArgType.REG: {
-                            this._processRegister(ctx, this.instructionBytes, userArg, oneRegisterAlreadyWritten)
-                            oneRegisterAlreadyWritten = true
-                            break
-                        }
-                        case InstructionArgType.MEM: {
-                            this._processMem(ctx, this.instructionBytes, userArg, oneRegisterAlreadyWritten)
-                            oneRegisterAlreadyWritten = true
-                            break
-                        }
-                        case InstructionArgType.LABEL: {
-                            this._processLabel(ctx, this.instructionBytes, userArg)
-                            break
-                        }
-                        case InstructionArgType.CONST: {
-                            this._processConst(ctx, this.instructionBytes, userArg)
-                            break
-                        }
-                        default: {
-                            throw new Error("The given arg type is not defined")
-                        }
-                    }
-                })
-            }
         } catch(error) {
             if(error instanceof CompilationError) {
                 throw error
@@ -87,6 +38,57 @@ export class InstructionLine extends YasNode {
                 throw new CompilationError(this.line, error)
             }
         }
+    }
+
+    postEvaluate(ctx : any) {
+        const instruction = ctx.instructionSet.getHandle().get(this.name) as Instruction
+
+        let sizeInBytes = 1
+        sizeInBytes += instruction.useRegisters ? 1 : 0
+        sizeInBytes += instruction.useValC ? ctx.wordSize : 0
+        
+        this.instructionBytes = new Array<number>(0)
+        
+        for(let i = 0; i < sizeInBytes; i++) {
+            this.instructionBytes.push(0)
+        }
+
+        this.instructionBytes[0] |= instruction.icode << 4
+        this.instructionBytes[0] |= instruction.ifun
+
+        if(instruction.useRegisters) {
+            this.instructionBytes[REG_POSITION] = 0xff
+        }
+
+        let oneRegisterAlreadyWritten = false
+
+        instruction.args.forEach((arg, index) => {
+            const userArg = this.args[index]
+
+            switch(arg.type) {
+                case InstructionArgType.REG: {
+                    this._processRegister(ctx, this.instructionBytes, userArg, oneRegisterAlreadyWritten)
+                    oneRegisterAlreadyWritten = true
+                    break
+                }
+                case InstructionArgType.MEM: {
+                    this._processMem(ctx, this.instructionBytes, userArg, oneRegisterAlreadyWritten)
+                    oneRegisterAlreadyWritten = true
+                    break
+                }
+                case InstructionArgType.LABEL: {
+                    this._processLabel(ctx, this.instructionBytes, userArg)
+                    break
+                }
+                case InstructionArgType.CONST: {
+                    this._processConst(ctx, this.instructionBytes, userArg)
+                    break
+                }
+                default: {
+                    throw new Error("The given arg type is not defined")
+                }
+            }
+        })
     }
 
     private _getRepresentation(instruction : Instruction) {

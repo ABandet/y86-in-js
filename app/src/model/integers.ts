@@ -1,4 +1,4 @@
-export { INT32_MAX, INT32_MIN, UINT32_MAX, numberToByteArray, stringToNumber, changeEndianess }
+export { INT32_MAX, INT32_MIN, UINT32_MAX, numberToByteArray, stringToNumber, changeEndianess, isByte, byteArrayToNumber }
 
 const INT32_MAX = (1 << 30) * 2 - 1 // '* 2'  is a little hack to counter js' floatting points
 const INT32_MIN = 1 << 31
@@ -18,6 +18,25 @@ function numberToByteArray(value : number, maxBytes : number = UINT32_MAX, padTo
     }
 
     return bytes
+}
+
+function isByte(value : number) : boolean {
+    return value >= -128 && value <= 255
+}
+
+function byteArrayToNumber(bytes : number[]) : number {
+    let result = 0
+
+    bytes.forEach((byte) => {
+        if(isByte(byte)) {
+            result *= 256
+            result += byte
+        } else {
+            throw new Error('Byte out of range, received ' + byte)
+        }
+    })
+
+    return result
 }
 
 function stringToNumber(strValue : string) : number {

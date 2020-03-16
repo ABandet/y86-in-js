@@ -4,9 +4,9 @@ import { IInstructionSet } from "../interfaces/IInstructionSet";
 import { InstructionLine } from "./nodes/instruction";
 import { Directive } from "./nodes/directive";
 import { Label } from "./nodes/label";
-import { YasNode } from "./nodes/yasNode";
 import { Line } from './nodes/line'
 import { Document } from './nodes/document'
+import { ProgramData } from './programData'
 
 export class Yas implements ICompiler {
     registersEnum: any
@@ -36,6 +36,7 @@ export class Yas implements ICompiler {
                 Document: Document,
             })
             result = this._compile(document)
+            result.data = new ProgramData(document)
         } catch (error) {
             if(error instanceof CompilationError) {
                 result.errors.push(error);

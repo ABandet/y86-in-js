@@ -1,5 +1,5 @@
 import { MemoryException } from "../exceptions/simulatorException"
-import { numberToByteArray } from "../integers"
+import { numberToByteArray, isByte } from "../integers"
 
 class Memory {
     /**
@@ -71,7 +71,7 @@ class Memory {
 
         let value = 0
         for(let i = 0; i < bytes.length; i++) {
-            if(!Memory.isByte(bytes[i])) {
+            if(!isByte(bytes[i])) {
                 throw "Can not insert something else than a byte on a word (byte : " + bytes[i] + ")"
             }
             value |= bytes[i] << (i * 8)
@@ -80,15 +80,11 @@ class Memory {
         return value
     }
 
-    static isByte(value : number) : boolean {
-        return value >= -128 && value <= 255
-    }
-
     /**
      * Returns the 4 HSB of the current byte.
      */
     static HI4(value : number) : number {
-        if(!Memory.isByte(value)) {
+        if(!isByte(value)) {
             throw "Memory.HI4() was expecting a byte as argument (current : " + value + ")"
         }
         return (value >> 4) & 0xf
@@ -98,7 +94,7 @@ class Memory {
      * Returns the 4 LSB of the current byte.
      */
     static LO4(value : number) : number {
-        if(!Memory.isByte(value)) {
+        if(!isByte(value)) {
             throw "Memory.LO4() was expecting a byte as argument (current : " + value + ")"
         }
         return value & 0xf
