@@ -1,0 +1,7 @@
+{
+  "flags": [
+    {"name": "OF", "value" : 0},
+    {"name": "SF", "value" : 0},
+    {"name": "ZF", "value" : 0}
+  ]
+}

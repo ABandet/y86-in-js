@@ -1,0 +1,25 @@
+.status-container h3 {
+    margin: 45px 0 6px 0;
+    padding: 2px 0 2px 0;
+    border-bottom: 1px solid #ddd;
+
+    font-family: 'Source Sans Pro';
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.status {
+    display: -webkit-flex;
+    display: flex;
+}
+
+.status .label {
+    padding-left: 4px;
+    background: #a4a4a4;
+
+    width: 10px;
+    margin-right: 30px;
+}
+

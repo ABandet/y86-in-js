@@ -1,0 +1,40 @@
+
+.flags-container{
+    height: fit-content;
+    padding: 8px;
+}
+
+.flags-container h3{
+    margin: 20px 0 6px 0;
+    padding: 2px 0 2px 0;
+    border-bottom: 1px solid #ddd;
+
+    font-family: 'Source Sans Pro';
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.flags .flag {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex: 1 1;
+    flex: 1 1;
+    padding: 0 8px 0 0;
+}
+
+.flag .label {
+    width: 25px;
+    margin: 0 0 6px 0;;
+    padding-rigth: 8px;
+}
+
+.flag .value {
+    padding: 0 5px 0 10px;
+}
+
+.flags .label {
+    padding-left: 4px;
+    background: #a4a4a4;
+}

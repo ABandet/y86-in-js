@@ -1,0 +1,60 @@
+.registers {
+    display: -webkit-flex;
+    display: flex;
+    padding: 8px;
+
+    font-family: 'Inconsolata';
+    font-size: 14px;
+
+    max-width: 450px;
+}
+
+.registers .column {
+    -webkit-flex: 1 1;
+    flex: 1 1;
+}
+
+.registers .register_column {
+    width: 75%;
+}
+
+.registers .label {
+    padding-left: 4px;
+    background: #a4a4a4;
+}
+
+.registers .register {
+    display: -webkit-flex;
+    display: flex;
+}
+
+.registers .register div,
+.registers .status div,
+.registers .pc div {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.registers .register .value_hex,
+.registers .register .value_dec {
+    -webkit-flex: 1 1;
+    flex: 1 1;
+}
+
+.registers .register .label {
+    width: 36px;
+    margin-right: 8px;
+    padding-left: 8px;
+}
+
+.registers h3 {
+    margin: 20px 0 6px 0;
+    padding: 2px 0 2px 0;
+    border-bottom: 1px solid #ddd;
+
+    font-family: 'Source Sans Pro';
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}

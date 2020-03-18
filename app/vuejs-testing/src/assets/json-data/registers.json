@@ -1,0 +1,12 @@
+{
+  "registers": [
+    {"name": "%eax", "value_hex": "0x00000000", "value_dec" : 0},
+    {"name": "%ebx", "value_hex": "0x00000000", "value_dec" : 0},
+    {"name": "%ecx", "value_hex": "0x00000000", "value_dec" : 0},
+    {"name": "%edx", "value_hex": "0x00000000", "value_dec" : 0},
+    {"name": "%ebx", "value_hex": "0x00000000", "value_dec" : 0},
+    {"name": "%esx", "value_hex": "0x00000000", "value_dec" : 0},
+    {"name": "%esi", "value_hex": "0x00000000", "value_dec" : 0},
+    {"name": "%edi", "value_hex": "0x00000000", "value_dec" : 0}
+    ]
+}

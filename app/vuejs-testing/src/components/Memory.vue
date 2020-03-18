@@ -6,7 +6,6 @@
             <div class="address">Addr</div>
             <div class="value">Value</div>
         </div>
-        <transition>
             <div class="mem-words">
                 <div class="stack-pointers">
                     <div class="ebp" v-bind:style="{top : ebp + 'px'}"><i class="fa fa-caret-left"></i> EBP</div>
@@ -17,7 +16,6 @@
                     <div class="value">{{ word.value }}</div>
                 </div>
             </div>
-        </transition>
     </div>
 
 </template>
@@ -27,12 +25,13 @@
     export default {
         name: "Memory",
         props: {
-            words: {
+            jsonMemory: {
                 required:true
             }
         },
         data () {
             return {
+                words : this.jsonMemory.words,
                 esp : 0,
                 ebp : 0,
             }

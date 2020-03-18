@@ -19,13 +19,13 @@
     export default {
         name: "CpuState",
         props: {
-            cpu_state: {
+            jsonCpuStat: {
                 required:true
             }
         },
         data() {
             return {
-                stages : this.cpu_state.stages
+                stages : this.jsonCpuStat.stages
             }
         },
         methods:{

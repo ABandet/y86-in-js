@@ -11,8 +11,13 @@
       <Editor ref="hclEditor" :strings="strings.Editor" mode="hcl" :initialValue="hclCodeSample"/>
     </div>
     <div class="vertical-pane">
-      <CpuState ref="cpu-state" :cpu_state="this.cpuStateJson"/>
-      <Memory ref="memory" :words="this.memoryJson.words"/>
+      <CpuState ref="cpu-state" :jsonCpuStat="this.cpuStateJson"/>
+      <Registers ref="registers" :jsonReg="this.registersJson"/>
+      <div class="horizontal-pane">
+        <Flags ref="flags" :jsonFlags="this.flagsJson"/>
+        <Status ref="status" :jsonStatus="this.statusJson"/>
+      </div>
+      <Memory ref="memory" :jsonMemory="this.memoryJson"/>
     </div>
   </div>
 </template>
@@ -21,17 +26,23 @@
   import Editor from './components/Editor.vue'
   import Header from './components/Header.vue'
   import CpuState from './components/CpuState.vue'
+  import Memory from "./components/Memory"
+  import Registers from "./components/Registers"
+  import Flags from "./components/Flags"
+  import Status from "./components/Status"
   //import Tabs from './components/Tabs.vue'
 
   import settings from '@/assets/settings.json'
-  import cpuStateJson from '@/assets/cpu-state.json'
-  import memoryJson from '@/assets/memory.json'
+  import cpuStateJson from '@/assets/json-data/cpu-state.json'
+  import memoryJson from '@/assets/json-data/memory.json'
+  import registersJson from '@/assets/json-data/registers.json'
+  import flagsJson from '@/assets/json-data/flags.json'
+  import statusJson from '@/assets/json-data/status.json'
 
   import hclCodeSample from '@/assets/code-samples/hcl.txt' // FIXME
   import y86CodeSample from '@/assets/code-samples/y86.txt' // FIXME
   import english from '@/assets/strings/en.json'
   import french from '@/assets/strings/fr.json'
-  import Memory from "./components/Memory";
 
   export default {
     name: 'App',
@@ -44,14 +55,23 @@
         CpuState,
         cpuStateJson,
         Memory,
-        memoryJson
+        memoryJson,
+        Registers,
+        registersJson,
+        Flags,
+        flagsJson,
+        Status,
+        statusJson
       }
     },
     components: {
-      Memory,
       Editor, // FIXME
       Header,
-      CpuState
+      CpuState,
+      Flags,
+      Memory,
+      Registers,
+      Status
       //Tabs
     },
     computed: {

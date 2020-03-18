@@ -1,0 +1,7 @@
+{
+  "status_list": [
+    {"name": "STAT", "value" : "AOK"},
+    {"name": "ERR", "value" : ""},
+    {"name": "PC", "value" : 0}
+  ]
+}
