@@ -10,7 +10,10 @@
       <Editor ref="y86Editor" :strings="strings.Editor" mode="y86" :initialValue="y86CodeSample"/>
       <Editor ref="hclEditor" :strings="strings.Editor" mode="hcl" :initialValue="hclCodeSample"/>
     </div>
-    <CpuState ref="cpu-state" :stages="this.cpuStateJson.stages"/>
+    <div class="vertical-pane">
+      <CpuState ref="cpu-state" :cpu_state="this.cpuStateJson"/>
+      <Memory ref="memory" :words="this.memoryJson.words"/>
+    </div>
   </div>
 </template>
 
@@ -22,11 +25,13 @@
 
   import settings from '@/assets/settings.json'
   import cpuStateJson from '@/assets/cpu-state.json'
+  import memoryJson from '@/assets/memory.json'
 
   import hclCodeSample from '@/assets/code-samples/hcl.txt' // FIXME
   import y86CodeSample from '@/assets/code-samples/y86.txt' // FIXME
   import english from '@/assets/strings/en.json'
   import french from '@/assets/strings/fr.json'
+  import Memory from "./components/Memory";
 
   export default {
     name: 'App',
@@ -37,10 +42,13 @@
         hclCodeSample, // FIXME
         y86CodeSample, // FIXME
         CpuState,
-        cpuStateJson
+        cpuStateJson,
+        Memory,
+        memoryJson
       }
     },
     components: {
+      Memory,
       Editor, // FIXME
       Header,
       CpuState

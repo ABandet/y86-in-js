@@ -9,9 +9,6 @@
       {"name": "srcA", "value": 0},
       {"name": "srcB", "value": 0},
       {"name": "dstM", "value": "%eax"},
-      {"name": "dstE", "value": "%edx"}]
-    },
-    {"name": "memory", "indicators": [
       {"name": "valP", "value": 0},
       {"name": "valA", "value": 0},
       {"name": "valE", "value": 0}]
