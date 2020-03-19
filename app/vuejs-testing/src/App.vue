@@ -11,12 +11,16 @@
       <Editor ref="hclEditor" :strings="strings.Editor" mode="hcl" :initialValue="hclCodeSample"/>
     </div>
     <div class="vertical-pane">
-      <CpuState ref="cpu-state" :jsonCpuStat="this.cpuStateJson"/>
-      <Registers ref="registers" :jsonReg="this.registersJson"/>
       <div class="horizontal-pane">
-        <Flags ref="flags" :jsonFlags="this.flagsJson"/>
-        <Status ref="status" :jsonStatus="this.statusJson"/>
+        <CpuState ref="cpu-state" :jsonCpuStat="this.cpuStateJson"/>
+        <div class="vertical-pane">
+          <Registers ref="registers" :jsonReg="this.registersJson"/>
+          <div class="horizontal-pane">
+            <Flags ref="flags" :jsonFlags="this.flagsJson"/>
+            <Status ref="status" :jsonStatus="this.statusJson"/>
+          </div></div>
       </div>
+      <ObjectCode ref="object-code" :init-code="this.objectCodeSample"/>
       <Memory ref="memory" :jsonMemory="this.memoryJson"/>
     </div>
   </div>
@@ -30,6 +34,7 @@
   import Registers from "./components/Registers"
   import Flags from "./components/Flags"
   import Status from "./components/Status"
+  import ObjectCode from "./components/ObjectCode"
   //import Tabs from './components/Tabs.vue'
 
   import settings from '@/assets/settings.json'
@@ -41,6 +46,8 @@
 
   import hclCodeSample from '@/assets/code-samples/hcl.txt' // FIXME
   import y86CodeSample from '@/assets/code-samples/y86.txt' // FIXME
+  import objectCodeSample from '@/assets/code-samples/object_code.txt' // FIXME
+
   import english from '@/assets/strings/en.json'
   import french from '@/assets/strings/fr.json'
 
@@ -60,14 +67,16 @@
         registersJson,
         Flags,
         flagsJson,
-        Status,
-        statusJson
+        statusJson,
+        ObjectCode,
+        objectCodeSample
       }
     },
     components: {
       Editor, // FIXME
       Header,
       CpuState,
+      ObjectCode,
       Flags,
       Memory,
       Registers,
@@ -115,7 +124,6 @@
   }
 
   .vertical-pane {
-    height: 100%;
     display: flex;
     flex-direction: row;
   }

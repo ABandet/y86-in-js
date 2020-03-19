@@ -25,6 +25,9 @@
 }
 
 .flag .label {
+    padding-left: 4px;
+    background: #a4a4a4;
+
     width: 25px;
     margin: 0 0 6px 0;;
     padding-rigth: 8px;
@@ -32,9 +35,4 @@
 
 .flag .value {
     padding: 0 5px 0 10px;
-}
-
-.flags .label {
-    padding-left: 4px;
-    background: #a4a4a4;
 }

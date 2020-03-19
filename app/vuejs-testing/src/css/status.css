@@ -10,16 +10,19 @@
     text-transform: uppercase;
 }
 
-.status {
-    display: -webkit-flex;
-    display: flex;
+.status_list {
+    width: 250px;
+    display: block;
 }
 
 .status .label {
-    padding-left: 4px;
-    background: #a4a4a4;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex: 1 1;
+    flex: 1 1;
 
-    width: 10px;
-    margin-right: 30px;
+    padding-left: 14px;
+    margin-right: 20px;
+    background: #a4a4a4;
 }
 

@@ -2,7 +2,7 @@
     <div class="status-container" >
 
         <h3>Status</h3>
-        <div class="status_list horizontal-pane">
+        <div class="status_list">
             <div class="status vertical-pane" v-for="status in status_list" v-bind:key="status.id">
                 <div class="label">{{ status.name }}</div>
                 <div class="value">{{ status.value }}</div>

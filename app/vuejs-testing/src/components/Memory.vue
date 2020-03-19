@@ -1,6 +1,6 @@
 <template>
     <div class="memory">
-        <h2>Memory</h2>
+        <h1>Memory</h1>
 
         <div class="mem-header">
             <div class="address">Addr</div>

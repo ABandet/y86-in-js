@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <h2>Processor State</h2>
+    <div class="processor-state">
+        <h1>Processor State</h1>
 
         <div class="stage" v-for="stage in stages" v-bind:key="stage.id">
             <h3>{{stage.name}}</h3>
