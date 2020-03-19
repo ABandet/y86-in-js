@@ -1,7 +1,7 @@
 <template>
     <div class="flags-container" >
 
-        <h3>Flags</h3>
+        <h2>Flags</h2>
         <div class="flags vertical-pane">
             <div class="flag" v-for="flag in flags" v-bind:key="flag.id">
                 <div class="label">{{ flag.name }}</div>

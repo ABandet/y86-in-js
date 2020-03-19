@@ -2,7 +2,7 @@
     <div class="registers">
 
         <div class="column register_column">
-            <h3>Registers</h3>
+            <h2>Registers</h2>
             <div class="register" v-for="register in registers" v-bind:key="register.id">
                 <div class="label">{{ register.name }}</div>
                 <div class="value_hex">{{ register.value_hex }}</div>

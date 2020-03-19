@@ -1,8 +1,11 @@
-
-
-.object {
-    height: 100%;
-    width: 50%;
+.object h1 {
+    display: block;
+    font-size: 2em;
+    margin-block-start: 0.67em;
+    margin-block-end: 0.67em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
 }
 
 .object .lines-wrapper {
@@ -11,7 +14,7 @@
     display: flex;
     -webkit-flex-direction: column;
     flex-direction: column;
-
+    height: 88%;
 }
 
 .lines {
@@ -43,10 +46,15 @@
 
 .object-code-line-error {
     color: #e74c3c;
+    padding: 0 8px;
 }
 
 .object-code-line-error .line-no {
-    width: 80px;
+    flex: 1;
+}
+
+.object-code-line-error .source {
+    flex: 5;
 }
 
 .object-code-line .highlighted {

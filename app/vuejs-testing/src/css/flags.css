@@ -1,12 +1,12 @@
 
 .flags-container{
     height: fit-content;
-    padding: 8px;
+    padding: 8px 0 8px 8px;
 }
 
-.flags-container h3{
-    margin: 20px 0 6px 0;
-    padding: 2px 0 2px 0;
+.flags-container h2{
+    margin: 13px 0 6px 0;
+    padding: 2px 0 2px 8px;
     border-bottom: 1px solid #ddd;
 
     font-family: 'Source Sans Pro';

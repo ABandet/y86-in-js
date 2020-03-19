@@ -20,7 +20,7 @@
             <Status ref="status" :jsonStatus="this.statusJson"/>
           </div></div>
       </div>
-      <ObjectCode ref="object-code" :init-code="this.objectCodeSample"/>
+      <ObjectCode ref="object-code" :obj-code="this.objectCodeSample" :err="errorsJson"/>
       <Memory ref="memory" :jsonMemory="this.memoryJson"/>
     </div>
   </div>
@@ -43,6 +43,7 @@
   import registersJson from '@/assets/json-data/registers.json'
   import flagsJson from '@/assets/json-data/flags.json'
   import statusJson from '@/assets/json-data/status.json'
+  import errorsJson from '@/assets/json-data/errors.json'
 
   import hclCodeSample from '@/assets/code-samples/hcl.txt' // FIXME
   import y86CodeSample from '@/assets/code-samples/y86.txt' // FIXME
@@ -69,7 +70,8 @@
         flagsJson,
         statusJson,
         ObjectCode,
-        objectCodeSample
+        objectCodeSample,
+        errorsJson
       }
     },
     components: {

@@ -1,6 +1,6 @@
-.status-container h3 {
+.status-container h2 {
     margin: 45px 0 6px 0;
-    padding: 2px 0 2px 0;
+    padding: 2px 0 2px 8px;
     border-bottom: 1px solid #ddd;
 
     font-family: 'Source Sans Pro';

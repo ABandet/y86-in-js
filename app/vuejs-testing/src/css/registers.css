@@ -1,12 +1,24 @@
 .registers {
     display: -webkit-flex;
     display: flex;
-    padding: 8px;
+    padding-right: 8px;
 
     font-family: 'Inconsolata';
     font-size: 14px;
 
     max-width: 450px;
+}
+
+.registers h2 {
+    margin: 20px 0 6px 0;
+    padding: 2px 0 2px 8px;
+    border-bottom: 1px solid #ddd;
+
+    font-family: 'Source Sans Pro';
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
 }
 
 .registers .column {
@@ -45,16 +57,4 @@
     width: 36px;
     margin-right: 8px;
     padding-left: 8px;
-}
-
-.registers h3 {
-    margin: 20px 0 6px 0;
-    padding: 2px 0 2px 0;
-    border-bottom: 1px solid #ddd;
-
-    font-family: 'Source Sans Pro';
-    font-weight: 600;
-    font-size: 16px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
 }

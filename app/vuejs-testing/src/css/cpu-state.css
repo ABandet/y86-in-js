@@ -9,9 +9,9 @@
 
 }
 
-.stage h3{
+.stage h2{
     margin: 20px 0 6px 0;
-    padding: 2px 0 2px 0;
+    padding: 2px 0 2px 8px;
     border-bottom: 1px solid #ddd;
 
     font-family: 'Source Sans Pro';
