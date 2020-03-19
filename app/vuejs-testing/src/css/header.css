@@ -1,0 +1,56 @@
+
+#header {
+    display: flex;
+    padding: 6px;
+    background-color: var(--Header-background);
+    color: var(--Header-foreground);
+}
+
+#header > div > * {
+    margin: 0 4px;
+}
+
+#left-group {
+    flex: 1;
+}
+
+#left-group,
+#right-group {
+    display: flex;
+    align-items: center;
+}
+
+#header #title {
+    margin-bottom: -4px;
+    padding: 0 10px;
+    font-size: 24px;
+}
+
+#header > div > button,
+#SettingsDialog-button {
+    padding: 6px 10px;
+    background-color: var(--HeaderButton-enabled-background);
+    color: var(--HeaderButton-enabled-foreground);
+    font-size: 16px;
+    transition-duration: all .3s;
+    transition: opacity .5s;
+    opacity: 1;
+}
+
+#header > div > button:hover,
+#SettingsDialog-button:hover {
+    box-shadow: 3px 3px 0 0 var(--HeaderButton-hover-shadow);
+}
+
+#header > div > button:disabled {
+    cursor: default;
+    opacity: 0;
+}
+
+#header > div > button > i {
+    font-size: 16px;
+}
+
+#header > #left-group > button > i {
+    padding-right: 8px;
+}

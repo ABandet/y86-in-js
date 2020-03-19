@@ -118,20 +118,6 @@
   }
 </script>
 
-<style>
-  /* TODO remove once the app is properly filled with content */
-  #app {
-    background-color: var(--pane-background);
-    color: var(--pane-foreground);
-  }
+<style src="./css/app.css">
 
-  .vertical-pane {
-    display: flex;
-    flex-direction: row;
-  }
-
-  .vertical-pane > div {
-    width: 50%;
-    flex-grow: 1;
-  }
 </style>
