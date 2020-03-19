@@ -1,0 +1,90 @@
+.memory {
+    -webkit-flex: 0 0 auto;
+    flex: 1;
+
+    font-family: 'Inconsolata', serif;
+    font-size: 14px;
+}
+
+.memory h1 {
+    display: block;
+    font-size: 2em;
+    margin-block-start: 0.67em;
+    margin-block-end: 0.67em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+}
+
+.memory .mem-header,
+.memory .word {
+    display: -webkit-flex;
+    display: flex;
+}
+
+.memory .mem-header {
+    margin: 5px 8px 0 5px;
+
+    font-family: 'Source Sans Pro', serif;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.memory .mem-words {
+    margin: 2px 8px 8px 0;
+    border: 2px solid #ccc;
+    width: 250px;
+    height: 550px;
+    overflow-y: auto;
+}
+
+.memory .address {
+    width: 35px;
+}
+
+.memory .value {
+    margin-left: 5px;
+}
+
+.memory .mem-header .value {
+    margin-left: 6px;
+}
+
+.memory .mem-words .address {
+    padding-left: 4px;
+
+    background: #a4a4a4;
+}
+
+.stack-pointers {
+    position: relative;
+}
+
+.memory .ebp,
+.memory .esp {
+    position: absolute;
+    top: 0;
+    width: 36px;
+
+    font-weight: 700;
+
+    -webkit-transition: top 400ms ease-out;
+    -o-transition: top 400ms ease-out;
+    transition: top 400ms ease-out;
+}
+
+.memory .ebp {
+    right: 44px;
+
+    color: #c0392b;
+}
+
+.memory .esp {
+    right: 5px;
+    color: #16a085;
+}
+
+.memory .modified {
+    color: #4444ff;
+}

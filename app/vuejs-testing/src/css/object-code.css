@@ -1,0 +1,69 @@
+.object h1 {
+    display: block;
+    font-size: 2em;
+    margin-block-start: 0.67em;
+    margin-block-end: 0.67em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+}
+
+.object .lines-wrapper {
+    border-left: 1px solid #ddd;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    height: 88%;
+}
+
+.lines {
+    position: relative;
+    margin: 8px;
+    border: 2px solid #ddd;
+    padding: 4px 0;
+    -webkit-flex: 1 1;
+    flex: 1 1;
+
+    /*background: #f0f0f0;*/
+
+    overflow-x: auto;
+    overflow-y: auto;
+
+    box-shadow: inset 0px 0px 8px rgba(0,0,0,0.02);
+}
+
+.object-code-line {
+    display: -webkit-flex;
+    display: flex;
+    height: 15px;
+    padding: 0 8px;
+
+    font-family: 'Inconsolata';
+    font-size: 14px;
+    white-space: pre;
+}
+
+.object-code-line-error {
+    color: #e74c3c;
+    padding: 0 8px;
+}
+
+.object-code-line-error .line-no {
+    flex: 1;
+}
+
+.object-code-line-error .source {
+    flex: 5;
+}
+
+.object-code-line .highlighted {
+    background: #1ba11c;
+    margin: -1px 0;
+    border-top: 1px solid #45ada8;
+    border-bottom: 1px solid #45ada8;
+}
+
+.object-code-line.highlighted + .object-code-line.highlighted {
+    margin-top: -2px;
+}

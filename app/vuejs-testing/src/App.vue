@@ -10,7 +10,19 @@
       <Editor ref="y86Editor" :strings="strings.Editor" mode="y86" :initialValue="y86CodeSample"/>
       <Editor ref="hclEditor" :strings="strings.Editor" mode="hcl" :initialValue="hclCodeSample"/>
     </div>
-    <CpuState ref="cpu-state" :stages="this.cpuStateJson.stages"/>
+    <div class="vertical-pane">
+      <div class="horizontal-pane">
+        <CpuState ref="cpu-state" :jsonCpuStat="this.cpuStateJson"/>
+        <div class="vertical-pane">
+          <Registers ref="registers" :jsonReg="this.registersJson"/>
+          <div class="horizontal-pane">
+            <Flags ref="flags" :jsonFlags="this.flagsJson"/>
+            <Status ref="status" :jsonStatus="this.statusJson"/>
+          </div></div>
+      </div>
+      <ObjectCode ref="object-code" :obj-code="this.objectCodeSample" :err="errorsJson"/>
+      <Memory ref="memory" :jsonMemory="this.memoryJson"/>
+    </div>
   </div>
 </template>
 
@@ -18,13 +30,25 @@
   import Editor from './components/Editor.vue'
   import Header from './components/Header.vue'
   import CpuState from './components/CpuState.vue'
+  import Memory from "./components/Memory"
+  import Registers from "./components/Registers"
+  import Flags from "./components/Flags"
+  import Status from "./components/Status"
+  import ObjectCode from "./components/ObjectCode"
   //import Tabs from './components/Tabs.vue'
 
   import settings from '@/assets/settings.json'
-  import cpuStateJson from '@/assets/cpu-state.json'
+  import cpuStateJson from '@/assets/json-data/cpu-state.json'
+  import memoryJson from '@/assets/json-data/memory.json'
+  import registersJson from '@/assets/json-data/registers.json'
+  import flagsJson from '@/assets/json-data/flags.json'
+  import statusJson from '@/assets/json-data/status.json'
+  import errorsJson from '@/assets/json-data/errors.json'
 
   import hclCodeSample from '@/assets/code-samples/hcl.txt' // FIXME
   import y86CodeSample from '@/assets/code-samples/y86.txt' // FIXME
+  import objectCodeSample from '@/assets/code-samples/object_code.txt' // FIXME
+
   import english from '@/assets/strings/en.json'
   import french from '@/assets/strings/fr.json'
 
@@ -37,13 +61,28 @@
         hclCodeSample, // FIXME
         y86CodeSample, // FIXME
         CpuState,
-        cpuStateJson
+        cpuStateJson,
+        Memory,
+        memoryJson,
+        Registers,
+        registersJson,
+        Flags,
+        flagsJson,
+        statusJson,
+        ObjectCode,
+        objectCodeSample,
+        errorsJson
       }
     },
     components: {
       Editor, // FIXME
       Header,
-      CpuState
+      CpuState,
+      ObjectCode,
+      Flags,
+      Memory,
+      Registers,
+      Status
       //Tabs
     },
     computed: {
@@ -79,21 +118,6 @@
   }
 </script>
 
-<style>
-  /* TODO remove once the app is properly filled with content */
-  #app {
-    background-color: var(--pane-background);
-    color: var(--pane-foreground);
-  }
+<style src="./css/app.css">
 
-  .vertical-pane {
-    height: 100%;
-    display: flex;
-    flex-direction: row;
-  }
-
-  .vertical-pane > div {
-    width: 50%;
-    flex-grow: 1;
-  }
 </style>

@@ -1,0 +1,28 @@
+.status-container h2 {
+    margin: 45px 0 6px 0;
+    padding: 2px 0 2px 8px;
+    border-bottom: 1px solid #ddd;
+
+    font-family: 'Source Sans Pro';
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.status_list {
+    width: 250px;
+    display: block;
+}
+
+.status .label {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex: 1 1;
+    flex: 1 1;
+
+    padding-left: 14px;
+    margin-right: 20px;
+    background: #a4a4a4;
+}
+

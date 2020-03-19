@@ -1,0 +1,7 @@
+{
+  "sources": [
+    {"lineno": "Line 13", "source": "Not a register: \"%ea\""},
+    {"lineno": "Line 17", "source": "Invalid instruction \"cal\""},
+    {"lineno": "Line 19", "source": "Not a register: \"%eb\""}
+  ]
+}
