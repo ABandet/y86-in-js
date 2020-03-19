@@ -17,11 +17,11 @@
 "("                         return 'LPAREN'
 ")"                         return 'RPAREN'
 (0x[0-9a-fA-F]+)|(\-?[0-9]+) return 'NUMBER'
-\.[0-9a-zA-Z_]+           return 'DIRECTIVE'
 \%([a-z]+)                 return 'REGISTER'
 ","                          return 'COMMA'
 <<EOF>>                     return 'EOF'
-[^\ ,:\n#\.]+                  return 'IDENTIFIER'
+[a-zA-Z][0-9a-zA-Z_]*               return 'IDENTIFIER'
+\.[a-zA-Z][0-9a-zA-Z_]*                 return 'DIRECTIVE_IDENTIFIER'
 .                           return 'INVALID'
 
 /lex
@@ -80,8 +80,10 @@ label
     ;
 
 directive
-    : DIRECTIVE NUMBER
-        { $$ = new data.Directive($1.substr(1), $2, @1.first_line) }
+    : DIRECTIVE_IDENTIFIER NUMBER
+        { 
+            $$ = new data.Directive($1.substr(1), $2, @1.first_line) 
+        }
     ;
 
 instruction

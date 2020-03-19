@@ -13,4 +13,6 @@ export interface ISimulator {
     getErrorMessage() : string
     setInstructionSet(set : IInstructionSet) : void
     continue(breakpoints : Array<number>) : simStatus
+    getNewPC() : number
+    setNewPC(newPC : number) : void
 }

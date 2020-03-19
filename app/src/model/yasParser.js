@@ -75,8 +75,8 @@ var yasParser = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[2,24],$V1=[1,7],$V2=[1,11],$V3=[1,10],$V4=[5,10,13,15,25],$V5=[10,19,25],$V6=[2,15],$V7=[1,22],$V8=[1,23],$V9=[1,27],$Va=[1,26],$Vb=[10,25];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"document":3,"line_list":4,"EOF":5,"line":6,"label":7,"statement":8,"line_comment":9,"NEW_LINE":10,"directive":11,"instruction":12,"IDENTIFIER":13,"COLON":14,"DIRECTIVE":15,"NUMBER":16,"arg_list":17,"arg":18,"COMMA":19,"register":20,"addressFromRegister":21,"LPAREN":22,"RPAREN":23,"REGISTER":24,"COMMENT":25,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",10:"NEW_LINE",13:"IDENTIFIER",14:"COLON",15:"DIRECTIVE",16:"NUMBER",19:"COMMA",22:"LPAREN",23:"RPAREN",24:"REGISTER",25:"COMMENT"},
+symbols_: {"error":2,"document":3,"line_list":4,"EOF":5,"line":6,"label":7,"statement":8,"line_comment":9,"NEW_LINE":10,"directive":11,"instruction":12,"IDENTIFIER":13,"COLON":14,"DIRECTIVE_IDENTIFIER":15,"NUMBER":16,"arg_list":17,"arg":18,"COMMA":19,"register":20,"addressFromRegister":21,"LPAREN":22,"RPAREN":23,"REGISTER":24,"COMMENT":25,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"EOF",10:"NEW_LINE",13:"IDENTIFIER",14:"COLON",15:"DIRECTIVE_IDENTIFIER",16:"NUMBER",19:"COMMA",22:"LPAREN",23:"RPAREN",24:"REGISTER",25:"COMMENT"},
 productions_: [0,[3,2],[4,1],[4,2],[6,4],[6,3],[6,3],[6,2],[8,1],[8,1],[7,2],[11,2],[12,2],[17,1],[17,3],[17,0],[18,1],[18,1],[18,1],[18,1],[21,3],[21,4],[20,1],[9,1],[9,0]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */, data) {
 /* this == yyval */
@@ -125,7 +125,9 @@ case 10:
  this.$ = new data.Label($$[$0-1], _$[$0-1].first_line) 
 break;
 case 11:
- this.$ = new data.Directive($$[$0-1].substr(1), $$[$0], _$[$0-1].first_line) 
+ 
+            this.$ = new data.Directive($$[$0-1].substr(1), $$[$0], _$[$0-1].first_line) 
+        
 break;
 case 12:
  this.$ = new data.InstructionLine($$[$0-1], $$[$0], _$[$0-1].first_line) 
@@ -654,21 +656,21 @@ case 6:return 23
 break;
 case 7:return 16
 break;
-case 8:return 15
+case 8:return 24
 break;
-case 9:return 24
+case 9:return 19
 break;
-case 10:return 19
+case 10:return 5
 break;
-case 11:return 5
+case 11:return 13
 break;
-case 12:return 13
+case 12:return 15
 break;
 case 13:return 'INVALID'
 break;
 }
 },
-rules: [/^(?:\n)/,/^(?:[^\S\n]+)/,/^(?:[ \r\t\f])/,/^(?:#[^\n]+)/,/^(?::)/,/^(?:\()/,/^(?:\))/,/^(?:(0x[0-9a-fA-F]+)|(-?[0-9]+))/,/^(?:\.[0-9a-zA-Z_]+)/,/^(?:%([a-z]+))/,/^(?:,)/,/^(?:$)/,/^(?:[^\ ,:\n#\.]+)/,/^(?:.)/],
+rules: [/^(?:\n)/,/^(?:[^\S\n]+)/,/^(?:[ \r\t\f])/,/^(?:#[^\n]+)/,/^(?::)/,/^(?:\()/,/^(?:\))/,/^(?:(0x[0-9a-fA-F]+)|(-?[0-9]+))/,/^(?:%([a-z]+))/,/^(?:,)/,/^(?:$)/,/^(?:[a-zA-Z][0-9a-zA-Z_]*)/,/^(?:\.[a-zA-Z][0-9a-zA-Z_]*)/,/^(?:.)/],
 conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13],"inclusive":true}}
 });
 return lexer;

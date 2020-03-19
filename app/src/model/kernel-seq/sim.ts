@@ -135,4 +135,12 @@ export class Sim implements ISimulator {
     setInstructionSet(set : IInstructionSet) {
         hcl.setInstructionSet(set);
     }
+
+    getNewPC() : number {
+        return this.context.newPC
+    }
+
+    setNewPC(newPC : number) : void {
+        this.context.newPC = newPC
+    }
 }

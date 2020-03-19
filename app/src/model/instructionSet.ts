@@ -25,16 +25,10 @@ export class InstructionArg {
      */
     type: InstructionArgType
 
-    /**
-     * The length in bytes of the argument in the encoded instruction.
-     */
-    length: number
-
     constructor(type: InstructionArgType) {
         this._checkType(type)
 
         this.type = type
-        this.length = length
     }
 
     private _checkType(type: InstructionArgType) {
