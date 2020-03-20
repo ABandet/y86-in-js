@@ -22,6 +22,13 @@ let rmmovl_prog : string =
     "  0x0000: 402f00010000 | rmmovl %edx, 0x100\n" +
     "                       | \n";
 
+let addl_prog : string =
+    "  0x0000: 6011         | addl %ecx, %ecx\n" +
+    "                       | \n";
+let subl_prog : string =
+    "  0x0000: 6111         | subl %ecx,%ecx\n" +
+    "                       | \n";
+
 /**
  * Some macro
  */
@@ -132,5 +139,101 @@ test("Test with rmmovl", () => {
     updatePC(sim);
     expect(sim.context.valP).toBe(6);
     expect(sim.context.newPC).toBe(sim.context.pc + 6);
+
+});
+
+test("Test with addl", () => {
+    let sim = load_sim(addl_prog);
+
+    // pre context
+    sim.registers.write(registers_enum.ecx, 0x200);
+
+    fetch(sim);
+    expect(sim.context.icode).toBe(0x6);
+    expect(sim.context.ifun).toBe(0);
+    expect(sim.context.rb).toBe(registers_enum.ecx);
+    expect(sim.context.ra).toBe(registers_enum.ecx);
+    expect(sim.context.valC).toBe(0x0);
+    expect(sim.context.valP).toBe(sim.context.pc + 2);
+
+    decode(sim);
+    expect(sim.context.valA).toBe(0x200);
+    expect(sim.context.valB).toBe(0x200);
+
+    execute(sim);
+    expect(sim.context.valE).toBe(0x400);
+
+    memory(sim);
+
+    writeBack(sim);
+    expect(sim.registers.read(registers_enum.ecx)).toBe(0x400);
+
+    updatePC(sim);
+    expect(sim.context.valP).toBe(2);
+    expect(sim.context.newPC).toBe(sim.context.pc + 2);
+
+});
+
+test("Test with addl", () => {
+    let sim = load_sim(addl_prog);
+
+    // pre context
+    sim.registers.write(registers_enum.ecx, 0x200);
+
+    fetch(sim);
+    expect(sim.context.icode).toBe(0x6);
+    expect(sim.context.ifun).toBe(0);
+    expect(sim.context.rb).toBe(registers_enum.ecx);
+    expect(sim.context.ra).toBe(registers_enum.ecx);
+    expect(sim.context.valC).toBe(0x0);
+    expect(sim.context.valP).toBe(sim.context.pc + 2);
+
+    decode(sim);
+    expect(sim.context.valA).toBe(0x200);
+    expect(sim.context.valB).toBe(0x200);
+
+    execute(sim);
+    expect(sim.context.valE).toBe(0x400);
+
+    memory(sim);
+
+    writeBack(sim);
+    expect(sim.registers.read(registers_enum.ecx)).toBe(0x400);
+
+    updatePC(sim);
+    expect(sim.context.valP).toBe(2);
+    expect(sim.context.newPC).toBe(sim.context.pc + 2);
+
+});
+
+test("Test with subl", () => {
+    let sim = load_sim(subl_prog);
+
+    // pre context
+    sim.registers.write(registers_enum.ecx, 0x200);
+
+    fetch(sim);
+    expect(sim.context.icode).toBe(0x6);
+    expect(sim.context.ifun).toBe(1);
+    expect(sim.context.rb).toBe(registers_enum.ecx);
+    expect(sim.context.ra).toBe(registers_enum.ecx);
+    expect(sim.context.valC).toBe(0x0);
+    expect(sim.context.valP).toBe(sim.context.pc + 2);
+
+    decode(sim);
+    expect(sim.context.valA).toBe(0x200);
+    expect(sim.context.valB).toBe(0x200);
+
+    execute(sim);
+    expect(sim.context.valE).toBe(0);
+
+    memory(sim);
+
+    writeBack(sim);
+    expect(sim.registers.read(registers_enum.ecx)).toBe(0);
+
+    updatePC(sim);
+    expect(sim.context.valP).toBe(2);
+    expect(sim.context.newPC).toBe(sim.context.pc + 2);
 
 });

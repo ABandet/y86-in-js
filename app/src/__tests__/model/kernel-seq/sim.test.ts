@@ -32,10 +32,3 @@ test("Breakpoints tests", () => {
     expect(sim.registers.read(registers_enum.eax)).toBe(0x2a);
     expect(sim.registers.read(registers_enum.ebx)).toBe(0);
 });
-
-test("JMP Tests", () => {
-    let sim = new Sim();
-    sim.memory.loadProgram(program);
-
-
-});

@@ -1,7 +1,7 @@
 enum alufct {
     A_ADD,
-    A_AND,
     A_SUB,
+    A_AND,
     A_XOR,
     A_NONE
 };
